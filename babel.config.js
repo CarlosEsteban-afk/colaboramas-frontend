@@ -1,0 +1,21 @@
+module.exports = function (api) {
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+    plugins: [
+      [
+        'inline-react-svg',
+        {
+          svgo: true,
+          svgoConfig: {
+            multipass: true,
+            plugins: [
+              { name: 'removeDimensions', active: true },
+              { name: 'removeAttrs', params: { attrs: '(data-name)' } },
+            ],
+          },
+        },
+      ],
+    ],
+  };
+};
