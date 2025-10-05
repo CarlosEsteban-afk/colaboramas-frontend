@@ -1,4 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { lightTheme } from "../theme"; // ajusta la ruta según tu proyecto
 
 type Props = {
   name: string;
@@ -9,7 +11,12 @@ type Props = {
 
 export default function UserCard({ name, title, location, tags }: Props) {
   return (
-    <View style={styles.card}>
+    <LinearGradient
+      colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.card}
+    >
       <Text style={styles.name}>{name}</Text>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.location}>{location}</Text>
@@ -25,32 +32,30 @@ export default function UserCard({ name, title, location, tags }: Props) {
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Contactar</Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "linear-gradient(90deg, #8A2BE2, #E94057)",
     borderRadius: 16,
     padding: 16,
     marginHorizontal: 20,
     marginTop: 16,
-    backgroundColor: "#E94057",
   },
   name: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#fff",
+    color: lightTheme.colors.background, // blanco sobre gradiente
   },
   title: {
     fontSize: 14,
-    color: "#fff",
+    color: lightTheme.colors.background,
     marginTop: 4,
   },
   location: {
     fontSize: 12,
-    color: "#f5f5f5",
+    color: lightTheme.colors["muted-foreground"],
     marginTop: 2,
   },
   tagsContainer: {
@@ -60,24 +65,24 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tag: {
-    backgroundColor: "rgba(255,255,255,0.2)",
+    backgroundColor: "rgba(255,255,255,0.2)", // puedes crear un color desde el tema si quieres
     borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
   tagText: {
-    color: "#fff",
+    color: lightTheme.colors.background,
     fontSize: 12,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: lightTheme.colors["accent-blue"],
     paddingVertical: 8,
     borderRadius: 8,
     marginTop: 12,
     alignItems: "center",
   },
   buttonText: {
-    color: "#fff",
+    color: lightTheme.colors.background,
     fontWeight: "600",
   },
 });
