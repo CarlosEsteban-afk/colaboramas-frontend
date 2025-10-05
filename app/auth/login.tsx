@@ -54,14 +54,15 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: "bold", textAlign: "center", marginBottom: 30, color: "#fff" },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "#3188F2",
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     backgroundColor: "#fff",
+    color: "#3188F2",
   },
   button: {
-    backgroundColor: "#3A7AFE",
+    backgroundColor: "#3188F2",
     padding: 14,
     borderRadius: 8,
     alignItems: "center",
