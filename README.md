@@ -34,6 +34,7 @@ npm install
 2. Iniciar el servidor de desarrollo de Expo:
 
 ```bash
+npx expo prebuild
 npx expo start
 ```
 3. Opciones para correr la app:
