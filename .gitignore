@@ -48,13 +48,8 @@ web-build/
 *.map
 
 # React Native build folders
-android/.gradle/
-android/app/build/
-android/build/
-ios/build/
-ios/Pods/
-ios/DerivedData/
-
+android/
+ios/
 *.iml
 *.hprof
 
