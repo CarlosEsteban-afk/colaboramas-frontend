@@ -1,84 +1,110 @@
-
-
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { lightTheme } from "../../theme";
+import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { lightTheme } from "../../theme";
+import useRegister from "./hooks/useRegister";
 
-export default function Register() {
+export default function RegisterScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const {
+    name,
+    setName,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    errors,
+    handleRegister,
+  } = useRegister();
 
-  const handleRegister = () => {
+  const onRegister = () => {
+    const success = handleRegister();
+    if (!success) {
+      Alert.alert("Error", "Revisa tus datos o el correo ya está registrado");
+      return;
+    }
     router.push("/home");
   };
 
   return (
-     <LinearGradient
-          colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.container}
+    <View className="flex-1 bg-white justify-center px-4">
+        <View className="rounded-2xl overflow-hidden aspect-square">
+      <LinearGradient
+        colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        className="flex-1 p-8 shadow-xl"
+      >
+        <Text className="text-white text-3xl font-bold text-center mb-8">
+          Crear Cuenta
+        </Text>
+
+        {/* Nombre */}
+        <TextInput
+          className="border border-white/60 bg-white/90 rounded-2xl px-5 py-3 mb-4 text-blue-600 text-base"
+          placeholder="Nombre completo"
+          placeholderTextColor="#6B7280"
+          value={name}
+          onChangeText={setName}
+        />
+
+        {/* Correo */}
+        <TextInput
+          className={`border rounded-2xl px-5 py-3 mb-1 bg-white/90 text-blue-600 text-base ${
+            errors.email ? "border-red-500" : "border-white/60"
+          }`}
+          placeholder="Correo electrónico"
+          placeholderTextColor="#6B7280"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+        {errors.email ? <Text className="text-red-500 text-sm mb-3">{errors.email}</Text> : <View className="mb-3" />}
+
+        {/* Contraseña */}
+        <TextInput
+          className={`border rounded-2xl px-5 py-3 mb-1 bg-white/90 text-blue-600 text-base ${
+            errors.password ? "border-red-500" : "border-white/60"
+          }`}
+          placeholder="Contraseña"
+          placeholderTextColor="#6B7280"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        {/* Confirmar contraseña */}
+        <TextInput
+          className={`border rounded-2xl px-5 py-3 mb-2 bg-white/90 text-blue-600 text-base ${
+            errors.password ? "border-red-500" : "border-white/60"
+          }`}
+          placeholder="Repetir Contraseña"
+          placeholderTextColor="#6B7280"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+        {errors.password ? <Text className="text-red-500 text-sm mb-4">{errors.password}</Text> : <View className="mb-4" />}
+
+        {/* Botón Registrar */}
+        <TouchableOpacity
+          className="bg-blue-500 py-3 rounded-2xl items-center mb-4"
+          onPress={onRegister}
         >
-    <View style={styles.container}>
-      <Text style={styles.title}>Crear Cuenta</Text>
+          <Text className="text-white font-semibold text-base">Registrarse</Text>
+        </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre completo"
-        value={name}
-        onChangeText={setName}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Registrarse</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => router.push("/auth/login")}>
-        <Text style={styles.linkText}>¿Ya tienes cuenta? Inicia sesión</Text>
-      </TouchableOpacity>
-    </View></LinearGradient>
+        {/* Link Login */}
+        <TouchableOpacity onPress={() => router.push("/auth/login")}>
+          <Text className="text-center text-white underline mt-2">
+            ¿Ya tienes cuenta? Inicia sesión
+          </Text>
+        </TouchableOpacity>
+      </LinearGradient>
+      </View>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: "center", padding: 20 },
-    title: { fontSize: 26, fontWeight: "bold", textAlign: "center", marginBottom: 30, color: "#fff" },
-    input: {
-        borderWidth: 1,
-        borderColor: "#3188F2",
-        backgroundColor: "#fff",   
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 12,
-        color: "#3188F2", 
-    },
-    button: {
-        backgroundColor: "#3188F2",
-        padding: 14,
-        borderRadius: 8,
-        alignItems: "center",
-        marginBottom: 10,
-    },
-    buttonText: { color: "#fff", fontWeight: "600" },
-    linkText: { textAlign: "center", color: "#3A7AFE", marginTop: 10 },
-});
