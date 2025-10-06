@@ -1,0 +1,20 @@
+{
+  "home": {
+    "recommendations": "Recomendaciones",
+    "events": "Eventos",
+    "details": "Ver detalles"
+  },
+  "user": {
+    "contact": "Contactar"
+  },
+  "event": {
+    "types": {
+      "Congreso": "Congreso",
+      "Concurso": "Concurso",
+      "Charla": "Charla",
+      "Conferencia": "Conferencia"
+    }
+  }
+}
+
+

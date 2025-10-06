@@ -1,7 +1,10 @@
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../theme"; // ajusta la ruta según tu proyecto
-
+import { useTranslation } from "react-i18next";
+import i18n from '../i18n';
+i18n.changeLanguage('en'); // o 'en'
 type Props = {
   name: string;
   title: string;
@@ -10,6 +13,7 @@ type Props = {
 };
 
 export default function UserCard({ name, title, location, tags }: Props) {
+  const { t } = useTranslation();
   return (
     <LinearGradient
       colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
@@ -30,7 +34,7 @@ export default function UserCard({ name, title, location, tags }: Props) {
       </View>
 
       <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Contactar</Text>
+        <Text style={styles.buttonText}>{t("user.contact")}</Text>
       </TouchableOpacity>
     </LinearGradient>
   );

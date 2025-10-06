@@ -3,6 +3,7 @@ import { View, Text, ScrollView } from "react-native";
 import BottomBar from "../components/BottomBar";
 import UserCard from "../components/UserCard";
 import EventCard, { EventItem } from "../components/EventCard";
+import { useTranslation } from "react-i18next";
 
 export default function Home() {
   const recommendations = [
@@ -59,6 +60,8 @@ export default function Home() {
     Conferencia: "#82A50B",
   };
 
+  const { t } = useTranslation();
+
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF" }}>
       <ScrollView
@@ -67,24 +70,13 @@ export default function Home() {
           paddingBottom: 80, // espacio para la BottomBar
         }}
       >
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>
-          Recomendaciones
-        </Text>
+        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>{t("home.recommendations")}</Text>
 
         {recommendations.map((rec, index) => (
           <UserCard key={index} {...rec} />
         ))}
 
-        <Text
-          style={{
-            fontSize: 22,
-            fontWeight: "bold",
-            marginTop: 24,
-            marginBottom: 8,
-          }}
-        >
-          Eventos
-        </Text>
+        <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 24, marginBottom: 8 }}>{t("home.events")}</Text>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 4 }}>
           {events.map((ev) => (

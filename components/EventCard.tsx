@@ -1,5 +1,7 @@
+import React from "react";
 import { View, Text, Pressable } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTranslation } from "react-i18next";
 
 export type EventItem = {
   id: string;
@@ -22,6 +24,7 @@ const TYPE_COLOR: Record<string, string> = {
 };
 
 export default function EventCard({ event, onPress }: Props) {
+  const { t } = useTranslation();
   const color = TYPE_COLOR[event.type] ?? "#6B31E8";
 
   return (
@@ -51,7 +54,9 @@ export default function EventCard({ event, onPress }: Props) {
             paddingVertical: 4,
           }}
         >
-          <Text style={{ color: "#FFF", fontWeight: "600" }}>{event.type}</Text>
+          <Text style={{ color: "#FFF", fontWeight: "600" }}>
+            {t(`event.types.${event.type}`, event.type)}
+          </Text>
         </View>
 
         {/* Placeholder para una imagen/portada del evento */}
@@ -93,7 +98,7 @@ export default function EventCard({ event, onPress }: Props) {
             }}
             onPress={onPress}
           >
-            <Text style={{ color: color, fontWeight: "600" }}>Ver detalles</Text>
+            <Text style={{ color: color, fontWeight: "600" }}>{t("home.details")}</Text>
           </Pressable>
         </View>
       </View>
