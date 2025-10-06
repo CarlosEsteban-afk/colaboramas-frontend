@@ -1,7 +1,8 @@
-import { Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { MaterialIcons } from "@expo/vector-icons";
 import { lightTheme } from "../../theme";
 
 export default function Login() {
@@ -9,65 +10,54 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    router.push("/home");
-  };
+  const handleLogin = () => router.push("/home");
 
   return (
     <LinearGradient
       colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.container}
+      style={{ flex: 1 }}
     >
-      <Text style={styles.title}>Iniciar Sesión</Text>
+      <View className="flex-1 justify-center px-5">
+        <Text className="text-2xl font-bold text-center mb-6 text-white">
+          Iniciar Sesión
+        </Text>
+        <Text className="text-base text-center mb-5 text-white">
+          Y comienza a conectar con la comunidad académica de NN
+        </Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
+        <MaterialIcons name="home" size={32} color="white" style={{ alignSelf: "center", marginBottom: 16 }} />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <TextInput
+          className="border border-blue-500 rounded-lg p-3 mb-3 bg-white text-blue-500"
+          placeholder="Correo electrónico"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Entrar</Text>
-      </TouchableOpacity>
+        <TextInput
+          className="border border-blue-500 rounded-lg p-3 mb-3 bg-white text-blue-500"
+          placeholder="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
-      <TouchableOpacity onPress={() => router.push("/auth/register")}>
-        <Text style={styles.linkText}>¿No tienes cuenta? Regístrate</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-blue-500 py-3 rounded-lg items-center mb-3"
+          onPress={handleLogin}
+        >
+          <Text className="text-white font-semibold">Entrar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => router.push("/auth/register")}>
+          <Text className="text-center text-white mt-2">
+            ¿No tienes cuenta? Regístrate
+          </Text>
+        </TouchableOpacity>
+      </View>
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  title: { fontSize: 26, fontWeight: "bold", textAlign: "center", marginBottom: 30, color: "#fff" },
-  input: {
-    borderWidth: 1,
-    borderColor: "#3188F2",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    backgroundColor: "#fff",
-    color: "#3188F2",
-  },
-  button: {
-    backgroundColor: "#3188F2",
-    padding: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  buttonText: { color: "#fff", fontWeight: "600" },
-  linkText: { textAlign: "center", color: "#fff", marginTop: 10 },
-});
