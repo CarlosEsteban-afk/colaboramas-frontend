@@ -2,9 +2,8 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { MaterialIcons } from "@expo/vector-icons";
 import { lightTheme } from "../../theme";
-
+import { Monicon } from "@monicon/native";
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -27,7 +26,7 @@ export default function Login() {
           Y comienza a conectar con la comunidad académica de NN
         </Text>
 
-        <MaterialIcons name="home" size={32} color="white" style={{ alignSelf: "center", marginBottom: 16 }} />
+        <Monicon name="hugeicons:student" size={32} color="white" style={{ alignSelf: "center", marginBottom: 16 }} />
 
         <TextInput
           className="border border-blue-500 rounded-lg p-3 mb-3 bg-white text-blue-500"

@@ -13,6 +13,8 @@
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
     "@expo/vector-icons": "^15.0.2",
+    "@monicon/metro": "^1.2.2",
+    "@monicon/native": "^1.2.2",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "expo": "~54.0.10",
@@ -34,7 +36,6 @@
     "react-dom": "19.1.0",
     "react-native": "0.81.4",
     "react-native-gesture-handler": "~2.28.0",
-    "react-native-iconify": "^2.0.3",
     "react-native-reanimated": "~4.1.1",
     "react-native-svg": "15.12.1",
     "react-native-web": "~0.21.0",
@@ -43,6 +44,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.28.4",
+    "@iconify-json/hugeicons": "^1.2.17",
+    "@iconify-json/mdi": "^1.2.3",
+    "@iconify/json": "^2.2.392",
     "@types/react": "~19.1.0",
     "babel-plugin-inline-react-svg": "^2.0.2",
     "babel-preset-expo": "^54.0.3",
