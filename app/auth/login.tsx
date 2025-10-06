@@ -4,21 +4,27 @@ import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import { Monicon } from "@monicon/native";
-
+import { useAuth } from "../context/AuthContext"; 
 
 export default function Login() {
   const router = useRouter();
+  const { login } = useAuth(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); 
 
-  const handleLogin = () => router.push("/home");
+  const handleLogin = () => {
+    const success = login(email, password); 
+    if (success) {
+      router.push("/home"); 
+    } else {
+      setError("Correo o contraseña incorrectos"); 
+    }
+  };
 
   return (
     <LinearGradient
-      colors={[
-        lightTheme.colors["primary-pink"],
-        lightTheme.colors["primary-purple"],
-      ]}
+      colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={{ flex: 1 }}
@@ -32,6 +38,7 @@ export default function Login() {
           Conéctate con la comunidad académica{"\n"}y comparte tu experiencia
         </Text>
 
+        {/* Input Email */}
         <View className="flex-row items-center border border-blue-500 rounded-lg px-2 py-1.5 mb-3 bg-white/90 w-[full] self-center">
           <Monicon name="hugeicons:student" size={20} color="#3b82f6" />
           <TextInput
@@ -44,7 +51,8 @@ export default function Login() {
           />
         </View>
 
-        <View className="flex-row items-center border border-blue-500 rounded-lg px-2 py-1.5 mb-3 bg-white/90 w-[full] self-center">
+        {/* Input Contraseña */}
+        <View className="flex-row items-center border border-blue-500 rounded-lg px-2 py-1.5 mb-1 bg-white/90 w-[full] self-center">
           <Monicon name="fluent-mdl2:lock" size={20} color="#3b82f6" />
           <TextInput
             className="flex-1 text-blue-500 text-sm"
@@ -55,17 +63,10 @@ export default function Login() {
             secureTextEntry
           />
         </View>
-        <TouchableOpacity
-          //onPress={() => router.push("/auth/forgot-password")}
-          className="self-center mb-3"
-        >
-          <View className="flex-row items-center">
-            <Monicon name="info" size={15} />
-            <Text className="text-black text-xs underline ml-2">
-              ¿Olvidaste tu contraseña?
-            </Text>
-          </View>
-        </TouchableOpacity>
+
+        {error ? (
+          <Text className="text-red-500 text-sm mb-3 text-center">{error}</Text>
+        ) : null}
 
         <TouchableOpacity
           className="bg-blue-500 py-2.5 rounded-lg items-center mb-2 w-[70%] self-center"
@@ -77,9 +78,7 @@ export default function Login() {
         <TouchableOpacity onPress={() => router.push("/auth/preregister")}>
           <View className="flex-row justify-center mt-2">
             <Text className="text-gray-200 text-sm">¿No tienes cuenta? </Text>
-            <Text className="text-blue-500 font-semibold text-sm">
-              Regístrate
-            </Text>
+            <Text className="text-blue-500 font-semibold text-sm">Regístrate</Text>
           </View>
         </TouchableOpacity>
       </View>
