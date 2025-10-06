@@ -8,12 +8,13 @@ let finalConfig= withNativeWind(config, { input: "./app/global.css" });
 
 finalConfig = withMonicon(finalConfig, {
   icons: [
+    "fluent-mdl2:lock",
     "hugeicons:student",
     "mdi:school",         
     "feather:activity",
     "logos:active-campaign",
   ],
-  collections: ["hugeicons","mdi"],   
+  collections: [],   
 });
 
 module.exports = finalConfig 
