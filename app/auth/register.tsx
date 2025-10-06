@@ -31,11 +31,12 @@ export default function RegisterScreen() {
 
   return (
     <View className="flex-1 bg-white justify-center px-4">
+        <View className="rounded-2xl overflow-hidden aspect-square">
       <LinearGradient
         colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        className="rounded-4xl p-8 shadow-xl"
+        className="flex-1 p-8 shadow-xl"
       >
         <Text className="text-white text-3xl font-bold text-center mb-8">
           Crear Cuenta
@@ -103,6 +104,7 @@ export default function RegisterScreen() {
           </Text>
         </TouchableOpacity>
       </LinearGradient>
+      </View>
     </View>
   );
 }
