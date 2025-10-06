@@ -1,10 +1,10 @@
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import { Monicon } from "@monicon/native";
-import React from "react";
+
 
 export default function Login() {
   const router = useRouter();
@@ -74,7 +74,7 @@ export default function Login() {
           <Text className="text-white font-semibold text-base">Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push("/auth/register")}>
+        <TouchableOpacity onPress={() => router.push("/auth/preregister")}>
           <View className="flex-row justify-center mt-2">
             <Text className="text-gray-200 text-sm">¿No tienes cuenta? </Text>
             <Text className="text-blue-500 font-semibold text-sm">

@@ -1,84 +1,78 @@
-
-
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
-import React, { useState } from "react";
-import { lightTheme } from "../../theme";
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
+import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
+import { lightTheme } from "../../theme";
+import useRegister from "./hooks/useRegister";
 
 export default function Register() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-
-  const handleRegister = () => {
-    router.push("/home");
-  };
+  const {
+    name, setName,
+    email, setEmail,
+    password, setPassword,
+    confirmPassword, setConfirmPassword,
+    errors, handleRegister
+  } = useRegister();
 
   return (
-     <LinearGradient
+    <View className="flex-1 bg-white">
+      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", padding: 20 }}>
+        <LinearGradient
           colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.container}
+          className="rounded-4xl p-8 shadow-2xl"
         >
-    <View style={styles.container}>
-      <Text style={styles.title}>Crear Cuenta</Text>
+          <Text className="text-white text-3xl font-bold text-center mb-10">Crear Cuenta</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre completo"
-        value={name}
-        onChangeText={setName}
-      />
+          <TextInput
+            className="border border-white/60 bg-white/90 rounded-3xl px-5 py-4 mb-5 text-blue-600 text-base"
+            placeholder="Nombre completo"
+            placeholderTextColor="#6B7280"
+            value={name}
+            onChangeText={setName}
+          />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Correo electrónico"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
+          <TextInput
+            className={`border rounded-3xl px-5 py-4 mb-1 bg-white/90 text-blue-600 text-base ${errors.email ? "border-red-500" : "border-white/60"}`}
+            placeholder="Correo electrónico"
+            placeholderTextColor="#6B7280"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          {errors.email ? <Text className="text-red-500 text-sm mb-4">{errors.email}</Text> : <View className="mb-4" />}
 
-      <TextInput
-        style={styles.input}
-        placeholder="Contraseña"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+          <TextInput
+            className={`border rounded-3xl px-5 py-4 mb-1 bg-white/90 text-blue-600 text-base ${errors.password ? "border-red-500" : "border-white/60"}`}
+            placeholder="Contraseña"
+            placeholderTextColor="#6B7280"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Registrarse</Text>
-      </TouchableOpacity>
+          <TextInput
+            className={`border rounded-3xl px-5 py-4 mb-3 bg-white/90 text-blue-600 text-base ${errors.password ? "border-red-500" : "border-white/60"}`}
+            placeholder="Repetir Contraseña"
+            placeholderTextColor="#6B7280"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+          />
+          {errors.password ? <Text className="text-red-500 text-sm mb-5">{errors.password}</Text> : <View className="mb-5" />}
 
-      <TouchableOpacity onPress={() => router.push("/auth/login")}>
-        <Text style={styles.linkText}>¿Ya tienes cuenta? Inicia sesión</Text>
-      </TouchableOpacity>
-    </View></LinearGradient>
+          <TouchableOpacity
+            className="bg-blue-500 py-4 rounded-3xl items-center mb-5"
+            onPress={handleRegister}
+          >
+            <Text className="text-white font-semibold text-lg">Registrarse</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <Text className="text-center text-white underline mt-2">¿Ya tienes cuenta? Inicia sesión</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </ScrollView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-    container: { flex: 1, justifyContent: "center", padding: 20 },
-    title: { fontSize: 26, fontWeight: "bold", textAlign: "center", marginBottom: 30, color: "#fff" },
-    input: {
-        borderWidth: 1,
-        borderColor: "#3188F2",
-        backgroundColor: "#fff",   
-        borderRadius: 8,
-        padding: 12,
-        marginBottom: 12,
-        color: "#3188F2", 
-    },
-    button: {
-        backgroundColor: "#3188F2",
-        padding: 14,
-        borderRadius: 8,
-        alignItems: "center",
-        marginBottom: 10,
-    },
-    buttonText: { color: "#fff", fontWeight: "600" },
-    linkText: { textAlign: "center", color: "#3A7AFE", marginTop: 10 },
-});
