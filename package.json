@@ -15,6 +15,7 @@
     "@expo/vector-icons": "^15.0.2",
     "@monicon/metro": "^1.2.2",
     "@monicon/native": "^1.2.2",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "expo": "~54.0.10",

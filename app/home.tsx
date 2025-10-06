@@ -1,22 +1,63 @@
+import React from "react";
 import { View, Text, ScrollView } from "react-native";
 import BottomBar from "../components/BottomBar";
 import UserCard from "../components/UserCard";
+import EventCard, { EventItem } from "../components/EventCard";
 
 export default function Home() {
   const recommendations = [
     {
       name: "Alicia Mora",
-      role: "Psicóloga",
+      title: "Psicóloga",
       location: "Temuco, Chile",
       tags: ["Psicología social", "Género"],
     },
     {
       name: "Marcelo Santander",
-      role: "Estudiante de Trabajo Social",
+      title: "Estudiante de Trabajo Social",
       location: "Temuco, Chile",
       tags: ["Psicología social", "Antropología"],
     },
   ];
+
+  const events: EventItem[] = [
+    {
+      id: "ev-1",
+      title: "2do Congreso Internacional de Ciencias de la Rehabilitación",
+      date: "23 y 24 de Octubre, 2025",
+      place: "Santiago, Chile",
+      type: "Congreso",
+    },
+    {
+      id: "ev-2",
+      title: "Concurso ANID FAPESQ 2025",
+      date: "10 Septiembre, 2025",
+      place: "Chile",
+      type: "Concurso",
+    },
+    {
+      id: "ev-3",
+      title: "Charlas de Innovación en Salud",
+      date: "15 Noviembre, 2025",
+      place: "Temuco, Chile",
+      type: "Charla",
+    },
+    {
+      id: "ev-4",
+      title: "Conferencia ANDI-FAU",
+      date: "30 Noviembre, 2025",
+      place: "Valdivia, Chile",
+      type: "Conferencia",
+    },
+  ];
+
+  // Colores por si se requiere fuera de EventCard en el futuro
+  const typeColor: Record<string, string> = {
+    Congreso: "#6B31E8",
+    Concurso: "#E91E63",
+    Charla: "#EE6C21",
+    Conferencia: "#82A50B",
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF" }}>
@@ -45,6 +86,11 @@ export default function Home() {
           Eventos
         </Text>
 
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 4 }}>
+          {events.map((ev) => (
+            <EventCard key={ev.id} event={ev} onPress={() => {}} />
+          ))}
+        </ScrollView>
       </ScrollView>
 
       <BottomBar />
