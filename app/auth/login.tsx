@@ -1,11 +1,17 @@
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
+import { useRouter } from "expo-router";
 import { Monicon } from "@monicon/native";
 import { useAuth } from "../../hooks/useAuth";
 import { useUser } from "../../hooks/useUser";
+import AuthLayout from "../authLayout";
+
 export default function Login() {
   const router = useRouter();
   const { signIn } = useAuth();
@@ -15,84 +21,69 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    // buscar usuario en tu "users" o API
     const found = users.find(
       (u) => u.email === email && u.password === password
     );
-
     if (found) {
-      setUser(found); 
-      await signIn(); 
+      setUser(found);
+      await signIn();
       router.push("/home");
     } else {
       setError("Correo o contraseña incorrectos");
     }
   };
+
   return (
-    <LinearGradient
-      colors={[
-        lightTheme.colors["primary-pink"],
-        lightTheme.colors["primary-purple"],
-      ]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={{ flex: 1 }}
+    <AuthLayout
+      title="Iniciar Sesión"
+      subtitle="Conéctate con la comunidad académica y comparte tu experiencia"
+      showLogo
     >
-      <View className="flex-1 justify-center px-6">
-        <Text className="text-2xl font-bold text-center mb-3 text-white">
-          Iniciar Sesión
-        </Text>
-
-        <Text className="text-sm text-center mb-6 text-white leading-tight">
-          Conéctate con la comunidad académica{"\n"}y comparte tu experiencia
-        </Text>
-
-        {/* Input Email */}
-        <View className="flex-row items-center border border-blue-500 rounded-lg px-2 py-1.5 mb-3 bg-white/90 w-[full] self-center">
-          <Monicon name="hugeicons:student" size={20} color="#3b82f6" />
-          <TextInput
-            className="flex-1 text-blue-500 text-sm"
-            placeholder="Correo electrónico"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            placeholderTextColor="#3b82f6"
-          />
-        </View>
-
-        {/* Input Contraseña */}
-        <View className="flex-row items-center border border-blue-500 rounded-lg px-2 py-1.5 mb-1 bg-white/90 w-[full] self-center">
-          <Monicon name="fluent-mdl2:lock" size={20} color="#3b82f6" />
-          <TextInput
-            className="flex-1 text-blue-500 text-sm"
-            placeholder="Contraseña"
-            value={password}
-            onChangeText={setPassword}
-            placeholderTextColor="#3b82f6"
-            secureTextEntry
-          />
-        </View>
-
-        {error ? (
-          <Text className="text-red-500 text-sm mb-3 text-center">{error}</Text>
-        ) : null}
-
-        <TouchableOpacity
-          className="bg-blue-500 py-2.5 rounded-lg items-center mb-2 w-[70%] self-center"
-          onPress={handleLogin}
-        >
-          <Text className="text-white font-semibold text-base">Entrar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push("/auth/preregister")}>
-          <View className="flex-row justify-center mt-2">
-            <Text className="text-gray-200 text-sm">¿No tienes cuenta? </Text>
-            <Text className="text-blue-500 font-semibold text-sm">
-              Regístrate
-            </Text>
-          </View>
-        </TouchableOpacity>
+      <View className="flex-row items-center border border-blue-400 rounded-2xl px-4 py-3 mb-4 bg-white/90">
+        <Monicon name="hugeicons:student" size={20} color="#3b82f6" />
+        <View className="w-2" />
+        <TextInput
+          className="flex-1 text-blue-600 text-base"
+          placeholder="Correo electrónico"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          placeholderTextColor="#3b82f6"
+          autoCapitalize="none"
+        />
       </View>
-    </LinearGradient>
+
+      <View className="flex-row items-center border border-blue-400 rounded-2xl px-4 py-3 mb-4 bg-white/90">
+        <Monicon name="fluent-mdl2:lock" size={20} color="#3b82f6" />
+        <View className="w-2" />
+        <TextInput
+          className="flex-1 text-blue-600 text-base"
+          placeholder="Contraseña"
+          value={password}
+          onChangeText={setPassword}
+          placeholderTextColor="#3b82f6"
+          secureTextEntry
+        />
+      </View>
+
+      {error ? (
+        <Text className="text-red-500 text-sm mb-4 text-center">{error}</Text>
+      ) : (
+        <View className="mb-4" />
+      )}
+
+      <TouchableOpacity
+        className="bg-blue-500 py-3 rounded-2xl items-center mb-4 w-4/5 self-center"
+        onPress={handleLogin}
+      >
+        <Text className="text-white font-semibold text-base">Entrar</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push("/auth/preregister")}>
+        <Text className="text-center text-blue-300 underline text-sm">
+          ¿No tienes cuenta? Regístrate
+        </Text>
+      </TouchableOpacity>
+    </AuthLayout>
   );
 }

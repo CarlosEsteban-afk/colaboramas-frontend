@@ -1,100 +1,74 @@
 import React from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  Touchable,
-  TouchableOpacity,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme";
+import { View, Text, TouchableOpacity, useWindowDimensions } from "react-native";
+import AuthLayout from "../authLayout"; 
 import { router } from "expo-router";
 
-export default function CommunityConnectCard() {
+export default function PreRegister() {
+  const { width } = useWindowDimensions();
+  const cardWidth = Math.min(Math.max(width * 0.85, 300), 500);
+
   return (
-    <LinearGradient
-      colors={[
-        lightTheme.colors["primary-pink"],
-        lightTheme.colors["primary-purple"],
-      ]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      className="flex-1 justify-center items-center px-6 py-12"
+    <AuthLayout
+      showLogo
+      title="Conecta con tu comunidad"
+      subtitle="La plataforma que une investigadores y comunicadores para crear colaboraciones"
+      card={false}
     >
-      <ScrollView
-        contentContainerStyle={{
-          alignItems: "center",
-          justifyContent: "center",
-          paddingVertical: 40,
-        }}
-        showsVerticalScrollIndicator={false}
+      <TouchableOpacity
+        style={{ width: cardWidth, alignSelf: "center" }}
+        className="rounded-2xl p-5 border-2 border-purple-500 bg-[#A881FD] mb-8 shadow-md"
+        onPress={() => router.push("/auth/register")}
+        activeOpacity={0.9}
       >
-        <View className="w-24 h-24 bg-violet-700 rounded-2xl mb-6 justify-center items-center shadow-lg">
-          <View className="w-12 h-10 bg-violet-400 rounded-md" />
-        </View>
+        <Text className="text-black text-lg font-semibold text-center mb-1">
+          Investigadores
+        </Text>
+        <Text className="text-black text-sm font-medium text-center mb-4">
+          Académicos y estudiantes de postgrado
+        </Text>
 
-        <View className="w-80 mb-10">
-          <Text className="text-white text-xl font-bold text-center mb-1">
-            Conecta con tu comunidad
-          </Text>
-          <Text className="text-white text-sm font-medium text-center opacity-90">
-            La plataforma que une investigadores y comunicadores para crear
-            colaboraciones
-          </Text>
-        </View>
+        {[
+          "Comparte intereses y proyectos",
+          "Conecta con otros investigadores",
+          "Conoce eventos y concursos",
+        ].map((txt, i) => (
+          <View
+            key={i}
+            className="bg-white border border-purple-400 rounded-full py-2 mb-2"
+          >
+            <Text className="text-center text-purple-600 text-xs font-semibold">
+              {txt}
+            </Text>
+          </View>
+        ))}
+      </TouchableOpacity>
 
-        <TouchableOpacity
-          className="w-80 rounded-2xl p-5 border-2 border-purple-500 bg-[#A881FD] mb-8 shadow-md"
-          onPress={() => router.push("/auth/register")}
-        >
-          <Text className="text-black text-lg font-semibold text-center mb-1">
-            Investigadores
-          </Text>
-          <Text className="text-black text-sm font-medium text-center mb-4">
-            Académicos y estudiantes de postgrado
-          </Text>
+      <TouchableOpacity
+        style={{ width: cardWidth, alignSelf: "center" }}
+        className="rounded-2xl p-5 bg-[#EC6895] border border-pink-400 shadow-md mb-12"
+        onPress={() => router.push("/auth/register")}
+        activeOpacity={0.9}
+      >
+        <Text className="text-black text-lg font-semibold text-center mb-1">
+          Comunicador/a
+        </Text>
+        <Text className="text-black text-sm font-medium text-center mb-4">
+          Periodistas, divulgadores y profesionales de comunicación
+        </Text>
 
-          {[
-            "Comparte intereses y proyectos",
-            "Conecta con otros investigadores",
-            "Conoce eventos y concursos",
-          ].map((txt, i) => (
+        {["Comparte intereses y proyectos", "Conecta con investigadores"].map(
+          (txt, i) => (
             <View
               key={i}
-              className="bg-white border border-purple-400 rounded-full py-2 mb-2"
+              className="bg-white border border-pink-400 rounded-full py-2 mb-2"
             >
-              <Text className="text-center text-purple-600 text-xs font-semibold">
+              <Text className="text-center text-pink-600 text-xs font-semibold">
                 {txt}
               </Text>
             </View>
-          ))}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          className="w-80 rounded-2xl p-5 bg-[#EC6895] border border-pink-400 shadow-md"
-          onPress={() => router.push("/auth/register")}
-        >
-          <Text className="text-black text-lg font-semibold text-center mb-1">
-            Comunicador/a
-          </Text>
-          <Text className="text-black text-sm font-medium text-center mb-4">
-            Periodistas, divulgadores y profesionales de comunicación
-          </Text>
-
-          {["Comparte intereses y proyectos", "Conecta con investigadores"].map(
-            (txt, i) => (
-              <View
-                key={i}
-                className="bg-white border border-pink-400 rounded-full py-2 mb-2"
-              >
-                <Text className="text-center text-pink-600 text-xs font-semibold">
-                  {txt}
-                </Text>
-              </View>
-            )
-          )}
-        </TouchableOpacity>
-      </ScrollView>
-    </LinearGradient>
+          )
+        )}
+      </TouchableOpacity>
+    </AuthLayout>
   );
 }
