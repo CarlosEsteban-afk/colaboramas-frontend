@@ -7,8 +7,7 @@ import { AuthProvider } from "./context/AuthContext";
 
 export default function AuthLayout() {
   return (
-    // eslint-disable-next-line react/no-children-prop
-    <AuthProvider children={""}>
+    <AuthProvider>
       <LinearGradient
         colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
         start={{ x: 0, y: 0 }}

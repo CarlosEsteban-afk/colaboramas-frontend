@@ -1,6 +1,7 @@
 import { View, Text, ScrollView } from "react-native";
 import BottomBar from "../components/BottomBar";
 import UserCard from "../components/UserCard";
+import React from "react";
 
 export default function Home() {
   const recommendations = [
@@ -23,7 +24,7 @@ export default function Home() {
       <ScrollView
         contentContainerStyle={{
           padding: 16,
-          paddingBottom: 80, // espacio para la BottomBar
+          paddingBottom: 80,
         }}
       >
         <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>
@@ -31,7 +32,7 @@ export default function Home() {
         </Text>
 
         {recommendations.map((rec, index) => (
-          <UserCard key={index} {...rec} />
+          <UserCard title={""} key={index} {...rec} />
         ))}
 
         <Text
