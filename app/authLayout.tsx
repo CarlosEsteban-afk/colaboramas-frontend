@@ -3,11 +3,8 @@ import { Slot } from "expo-router";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../theme";
-import { AuthProvider } from "./context/AuthContext";
-
 export default function AuthLayout() {
   return (
-    <AuthProvider>
       <LinearGradient
         colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
         start={{ x: 0, y: 0 }}
@@ -18,6 +15,5 @@ export default function AuthLayout() {
           <Slot />
         </View>
       </LinearGradient>
-    </AuthProvider>
   );
 }

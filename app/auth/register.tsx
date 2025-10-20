@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
-import useRegister from "./hooks/useRegister";
+import useRegister from "../../hooks/useRegister";
 
 export default function RegisterScreen() {
   const router = useRouter();

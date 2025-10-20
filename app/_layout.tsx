@@ -1,11 +1,13 @@
 import React from "react";
 import { Stack } from "expo-router";
-import { AuthProvider } from "./context/AuthContext";
-
+import { AuthProvider } from "../providers/AuthProvider";
+import { UserProvider } from "../providers/UserProvider";
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <Stack />
+      <UserProvider>
+        <Stack />
+      </UserProvider>
     </AuthProvider>
   );
 }

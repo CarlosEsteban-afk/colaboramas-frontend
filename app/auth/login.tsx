@@ -4,27 +4,36 @@ import React, { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import { Monicon } from "@monicon/native";
-import { useAuth } from "../context/AuthContext"; 
-
+import { useAuth } from "../../hooks/useAuth";
+import { useUser } from "../../hooks/useUser";
 export default function Login() {
   const router = useRouter();
-  const { login } = useAuth(); 
+  const { signIn } = useAuth();
+  const { users, setUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    const success = login(email, password); 
-    if (success) {
-      router.push("/home"); 
+  const handleLogin = async () => {
+    // buscar usuario en tu "users" o API
+    const found = users.find(
+      (u) => u.email === email && u.password === password
+    );
+
+    if (found) {
+      setUser(found); 
+      await signIn(); 
+      router.push("/home");
     } else {
-      setError("Correo o contraseña incorrectos"); 
+      setError("Correo o contraseña incorrectos");
     }
   };
-
   return (
     <LinearGradient
-      colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
+      colors={[
+        lightTheme.colors["primary-pink"],
+        lightTheme.colors["primary-purple"],
+      ]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={{ flex: 1 }}
@@ -78,7 +87,9 @@ export default function Login() {
         <TouchableOpacity onPress={() => router.push("/auth/preregister")}>
           <View className="flex-row justify-center mt-2">
             <Text className="text-gray-200 text-sm">¿No tienes cuenta? </Text>
-            <Text className="text-blue-500 font-semibold text-sm">Regístrate</Text>
+            <Text className="text-blue-500 font-semibold text-sm">
+              Regístrate
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
