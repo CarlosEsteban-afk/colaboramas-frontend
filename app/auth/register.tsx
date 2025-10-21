@@ -1,9 +1,8 @@
-import { View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
-import { useRouter } from "expo-router";
 import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme";
-import useRegister from "./hooks/useRegister";
+import { TextInput, TouchableOpacity, Text, Alert } from "react-native";
+import { useRouter } from "expo-router";
+import useRegister from "../../hooks/useRegister";
+import AuthLayout from "../authLayout";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -30,81 +29,62 @@ export default function RegisterScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white justify-center px-4">
-        <View className="rounded-2xl overflow-hidden aspect-square">
-      <LinearGradient
-        colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        className="flex-1 p-8 shadow-xl"
+    
+    <AuthLayout title="Crear Cuenta" card cardGradient showLogo={false}>
+      <TextInput
+        className="border border-white/50 bg-white/90 rounded-2xl px-5 py-3 mb-4 text-blue-600 text-base"
+        placeholder="Nombre completo"
+        placeholderTextColor="#6B7280"
+        value={name}
+        onChangeText={setName}
+      />
+
+      <TextInput
+        className={`border rounded-2xl px-5 py-3 mb-2 bg-white/90 text-blue-600 text-base ${
+          errors.email ? "border-red-500" : "border-white/50"
+        }`}
+        placeholder="Correo electrónico"
+        placeholderTextColor="#6B7280"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+
+      <TextInput
+        className={`border rounded-2xl px-5 py-3 mb-2 bg-white/90 text-blue-600 text-base ${
+          errors.password ? "border-red-500" : "border-white/50"
+        }`}
+        placeholder="Contraseña"
+        placeholderTextColor="#6B7280"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+
+      <TextInput
+        className={`border rounded-2xl px-5 py-3 mb-4 bg-white/90 text-blue-600 text-base ${
+          errors.password ? "border-red-500" : "border-white/50"
+        }`}
+        placeholder="Repetir contraseña"
+        placeholderTextColor="#6B7280"
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
+
+      <TouchableOpacity
+        className="bg-blue-500 py-3 rounded-2xl items-center mb-4 w-4/5 self-center"
+        onPress={onRegister}
       >
-        <Text className="text-white text-3xl font-bold text-center mb-8">
-          Crear Cuenta
+        <Text className="text-white font-semibold text-base">Registrarse</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => router.push("/auth/login")}>
+        <Text className="text-center text-blue-300 underline text-sm">
+          ¿Ya tienes cuenta? Inicia sesión
         </Text>
-
-        {/* Nombre */}
-        <TextInput
-          className="border border-white/60 bg-white/90 rounded-2xl px-5 py-3 mb-4 text-blue-600 text-base"
-          placeholder="Nombre completo"
-          placeholderTextColor="#6B7280"
-          value={name}
-          onChangeText={setName}
-        />
-
-        {/* Correo */}
-        <TextInput
-          className={`border rounded-2xl px-5 py-3 mb-1 bg-white/90 text-blue-600 text-base ${
-            errors.email ? "border-red-500" : "border-white/60"
-          }`}
-          placeholder="Correo electrónico"
-          placeholderTextColor="#6B7280"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        {errors.email ? <Text className="text-red-500 text-sm mb-3">{errors.email}</Text> : <View className="mb-3" />}
-
-        {/* Contraseña */}
-        <TextInput
-          className={`border rounded-2xl px-5 py-3 mb-1 bg-white/90 text-blue-600 text-base ${
-            errors.password ? "border-red-500" : "border-white/60"
-          }`}
-          placeholder="Contraseña"
-          placeholderTextColor="#6B7280"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-
-        {/* Confirmar contraseña */}
-        <TextInput
-          className={`border rounded-2xl px-5 py-3 mb-2 bg-white/90 text-blue-600 text-base ${
-            errors.password ? "border-red-500" : "border-white/60"
-          }`}
-          placeholder="Repetir Contraseña"
-          placeholderTextColor="#6B7280"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
-        {errors.password ? <Text className="text-red-500 text-sm mb-4">{errors.password}</Text> : <View className="mb-4" />}
-
-        {/* Botón Registrar */}
-        <TouchableOpacity
-          className="bg-blue-500 py-3 rounded-2xl items-center mb-4"
-          onPress={onRegister}
-        >
-          <Text className="text-white font-semibold text-base">Registrarse</Text>
-        </TouchableOpacity>
-
-        {/* Link Login */}
-        <TouchableOpacity onPress={() => router.push("/auth/login")}>
-          <Text className="text-center text-white underline mt-2">
-            ¿Ya tienes cuenta? Inicia sesión
-          </Text>
-        </TouchableOpacity>
-      </LinearGradient>
-      </View>
-    </View>
+      </TouchableOpacity>
+    </AuthLayout>
   );
 }

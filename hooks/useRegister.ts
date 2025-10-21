@@ -1,9 +1,9 @@
-// app/hooks/useRegister.tsx
 import { useState, useEffect } from "react";
-import { useAuth } from "../../context/AuthContext";
-
+import { useUser } from "./useUser";
+import { useAuth } from "./useAuth";
 export default function useRegister() {
-  const { register } = useAuth();
+  const { registerUser } = useUser();     
+  const { signIn } = useAuth();           
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -11,7 +11,6 @@ export default function useRegister() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({ email: "", password: "" });
 
-  // Validación en tiempo real
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setErrors(prev => ({
@@ -26,9 +25,10 @@ export default function useRegister() {
     }));
   }, [email, password, confirmPassword]);
 
-  const handleRegister = (): boolean => {
+  const handleRegister = async (): Promise<boolean> => {
     if (!errors.email && !errors.password && email && password && confirmPassword) {
-      const success = register({ name, email, password });
+      const success = await registerUser({ name, email, password });
+      if (success) await signIn(); 
       return success;
     }
     return false;

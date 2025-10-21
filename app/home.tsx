@@ -67,13 +67,13 @@ export default function Home() {
       <ScrollView
         contentContainerStyle={{
           padding: 16,
-          paddingBottom: 80, // espacio para la BottomBar
+          paddingBottom: 80,
         }}
       >
         <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>{t("home.recommendations")}</Text>
 
         {recommendations.map((rec, index) => (
-          <UserCard key={index} {...rec} />
+          <UserCard title={""} key={index} {...rec} />
         ))}
 
         <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 24, marginBottom: 8 }}>{t("home.events")}</Text>

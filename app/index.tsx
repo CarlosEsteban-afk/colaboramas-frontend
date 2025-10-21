@@ -1,14 +1,15 @@
-// @@iconify-code-gen
 import React from "react";
 import { Redirect } from "expo-router";
+import { AuthProvider } from "../providers/AuthProvider";
+import { UserProvider } from "../providers/UserProvider";
 import "./global.css";
-import { AuthProvider } from "./context/AuthContext";
 
- export default function Index() {
+export default function Index() {
   return (
-    // eslint-disable-next-line react/no-children-prop
-    <AuthProvider children={""}>
-      <Redirect href="/auth/login" />
+    <AuthProvider>
+      <UserProvider>
+        <Redirect href="/auth/login" />
+      </UserProvider>
     </AuthProvider>
   );
 }
