@@ -4,17 +4,25 @@ const { withMonicon } = require("@monicon/metro");
 
 const config = getDefaultConfig(__dirname);
 
-let finalConfig= withNativeWind(config, { input: "./app/global.css" });
+let finalConfig = withNativeWind(config, { input: "./app/global.css" });
 
 finalConfig = withMonicon(finalConfig, {
   icons: [
     "fluent-mdl2:lock",
+    "fluent-mdl2:view",
     "hugeicons:student",
-    "mdi:school",         
+    "mdi:school",
+    "mdi-light:eye-off",
     "feather:activity",
     "logos:active-campaign",
+    "mdi:home-outline",
+    "feather:search",
+    "mdi:calendar",
+    "fluent:alert-20-regular",
+    "mdi:account-circle-outline",
+    "mdi:cog",
   ],
-  collections: [],   
+  collections: [], 
 });
 
-module.exports = finalConfig 
+module.exports = finalConfig;

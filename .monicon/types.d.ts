@@ -4,10 +4,18 @@ import "@monicon/icon-loader";
 declare module "@monicon/icon-loader" {
   export type MoniconIconName = 
 	| "fluent-mdl2:lock"
+	| "fluent-mdl2:view"
 	| "hugeicons:student"
 	| "mdi:school"
+	| "mdi-light:eye-off"
 	| "feather:activity"
-	| "logos:active-campaign";
+	| "logos:active-campaign"
+	| "mdi:home-outline"
+	| "feather:search"
+	| "mdi:calendar"
+	| "fluent:alert-20-regular"
+	| "mdi:account-circle-outline"
+	| "mdi:cog";
 
   export type MoniconProps = {
     /**

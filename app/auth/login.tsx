@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Dimensions,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { Monicon } from "@monicon/native";
 import { useAuth } from "../../hooks/useAuth";
@@ -19,7 +13,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false);
   const handleLogin = async () => {
     const found = users.find(
       (u) => u.email === email && u.password === password
@@ -62,8 +56,15 @@ export default function Login() {
           value={password}
           onChangeText={setPassword}
           placeholderTextColor="#3b82f6"
-          secureTextEntry
+          secureTextEntry={!showPassword}
         />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <Monicon
+            name={showPassword ? "fluent-mdl2:view" : "mdi-light:eye-off"}
+            size={20}
+            color="#3b82f6"
+          />
+        </TouchableOpacity>
       </View>
 
       {error ? (
@@ -76,7 +77,9 @@ export default function Login() {
         className="bg-blue-500 py-3 rounded-2xl items-center mb-4 w-4/5 self-center"
         onPress={handleLogin}
       >
-        <Text className="text-white font-semibold text-base">Entrar</Text>
+        <Text className="text-white font-semibold text-base">
+          Iniciar Sesión
+        </Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.push("/auth/preregister")}>

@@ -1,11 +1,12 @@
 import React from "react";
 import { View, Text, ScrollView } from "react-native";
 import BottomBar from "../components/BottomBar";
+import TopBar from "../components/TopBar"; // <-- Importa TopBar
 import UserCard from "../components/UserCard";
 import EventCard, { EventItem } from "../components/EventCard";
 import { useTranslation } from "react-i18next";
 
-export default function Home() {
+export default function Home({ navigation }) {
   const recommendations = [
     {
       name: "Alicia Mora",
@@ -52,39 +53,48 @@ export default function Home() {
     },
   ];
 
-  // Colores por si se requiere fuera de EventCard en el futuro
-  const typeColor: Record<string, string> = {
-    Congreso: "#6B31E8",
-    Concurso: "#E91E63",
-    Charla: "#EE6C21",
-    Conferencia: "#82A50B",
-  };
-
   const { t } = useTranslation();
+
+  const handleConfigPress = () => {
+    // Aquí puedes navegar a la pantalla de configuración
+    navigation.navigate("ConfigScreen");
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF" }}>
+      {/* TopBar */}
+      <TopBar onConfigPress={handleConfigPress} />
+
       <ScrollView
         contentContainerStyle={{
           padding: 16,
-          paddingBottom: 80,
+          paddingBottom: 80, // para que no choque con BottomBar
         }}
       >
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>{t("home.recommendations")}</Text>
+        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>
+          {t("home.recommendations")}
+        </Text>
 
         {recommendations.map((rec, index) => (
           <UserCard title={""} key={index} {...rec} />
         ))}
 
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 24, marginBottom: 8 }}>{t("home.events")}</Text>
+        <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 24, marginBottom: 8 }}>
+          {t("home.events")}
+        </Text>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 4 }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12, paddingVertical: 4 }}
+        >
           {events.map((ev) => (
             <EventCard key={ev.id} event={ev} onPress={() => {}} />
           ))}
         </ScrollView>
       </ScrollView>
 
+      {/* BottomBar */}
       <BottomBar />
     </View>
   );

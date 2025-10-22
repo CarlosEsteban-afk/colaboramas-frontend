@@ -4,6 +4,7 @@ import { initI18n } from "../i18n";
 import LanguageToggle from "../components/LanguageToggle";
 import { AuthProvider } from "../providers/AuthProvider";
 import { UserProvider } from "../providers/UserProvider";
+
 export default function RootLayout() {
   useEffect(() => {
     initI18n();
@@ -12,7 +13,11 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <UserProvider>
-        <Stack />
+        <Stack
+          screenOptions={{
+            headerShown: false, 
+          }}
+        />
       </UserProvider>
     </AuthProvider>
   );
