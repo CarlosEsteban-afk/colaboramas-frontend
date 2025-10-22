@@ -1,12 +1,16 @@
 import React from "react";
 import { View, Text, ScrollView } from "react-native";
-import BottomBar from "../components/BottomBar";
-import TopBar from "../components/TopBar"; // <-- Importa TopBar
-import UserCard from "../components/UserCard";
-import EventCard, { EventItem } from "../components/EventCard";
+import { useRouter } from "expo-router";
+import BottomBar from "../../components/BottomBar";
+import TopBar from "../../components/TopBar";
+import UserCard from "../../components/UserCard";
+import EventCard, { EventItem } from "../../components/EventCard";
 import { useTranslation } from "react-i18next";
 
-export default function Home({ navigation }) {
+export default function Home() {
+  const router = useRouter();
+  const { t } = useTranslation();
+
   const recommendations = [
     {
       name: "Alicia Mora",
@@ -53,22 +57,18 @@ export default function Home({ navigation }) {
     },
   ];
 
-  const { t } = useTranslation();
-
   const handleConfigPress = () => {
-    // Aquí puedes navegar a la pantalla de configuración
-    navigation.navigate("ConfigScreen");
+    router.push("/screens/Settings");
   };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF" }}>
-      {/* TopBar */}
       <TopBar onConfigPress={handleConfigPress} />
 
       <ScrollView
         contentContainerStyle={{
           padding: 16,
-          paddingBottom: 80, // para que no choque con BottomBar
+          paddingBottom: 80,
         }}
       >
         <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>
@@ -79,7 +79,14 @@ export default function Home({ navigation }) {
           <UserCard title={""} key={index} {...rec} />
         ))}
 
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 24, marginBottom: 8 }}>
+        <Text
+          style={{
+            fontSize: 22,
+            fontWeight: "bold",
+            marginTop: 24,
+            marginBottom: 8,
+          }}
+        >
           {t("home.events")}
         </Text>
 

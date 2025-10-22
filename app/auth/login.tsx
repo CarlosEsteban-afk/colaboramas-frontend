@@ -21,7 +21,7 @@ export default function Login() {
     if (found) {
       setUser(found);
       await signIn();
-      router.push("/home");
+      router.push("/screens/Home");
     } else {
       setError("Correo o contraseña incorrectos");
     }

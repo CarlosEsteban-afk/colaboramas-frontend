@@ -25,7 +25,7 @@ export default function RegisterScreen() {
       Alert.alert("Error", "Revisa tus datos o el correo ya está registrado");
       return;
     }
-    router.push("/home");
+    router.push("/screens/Home");
   };
 
   return (
