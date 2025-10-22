@@ -14,6 +14,16 @@
       "Charla": "Charla",
       "Conferencia": "Conferencia"
     }
+  },
+  "settings": {
+    "title": "Configuración",
+    "back": "Volver",
+    "language": "Idioma",
+    "privacy": "Privacidad y seguridad",
+    "about": "Acerca de",
+    "deleteAccount": "Eliminar cuenta",
+    "termsOfService": "Términos de servicio",
+    "appInfo": "Información de la app"
   }
 }
 

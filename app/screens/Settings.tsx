@@ -5,10 +5,12 @@ import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
 import { useRouter } from "expo-router";
 import i18n from "../../i18n";
+import { useTranslation } from "react-i18next"; //importa el useTranslation para usar el i18n
 
 export default function Settings() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
+  const { t } = useTranslation();//inicializa el i18n
   const [currentLanguage, setCurrentLanguage] = useState(
     i18n.isInitialized ? i18n.language : 'en'
   );
@@ -31,14 +33,20 @@ export default function Settings() {
 
   const configs = [
     { 
-      label: "Language", 
+      label: t("settings.language"), 
       value: currentLanguage === 'en' ? "English" : "Español", 
       icon: "mdi:translate-variant",
       onPress: toggleLanguage
     },
-    { label: "Privacy and security", value: "Terms of service", icon: "mdi:shield-check" },
-    { label: "About", value: "App info", icon: "mdi:help-circle" },
-  ];
+    { 
+      label: t("settings.privacy"), 
+      value: t("settings.termsOfService"), 
+      icon: "mdi:shield-check" 
+    }, { 
+      label: t("settings.about"), 
+      value: t("settings.appInfo"), 
+      icon: "mdi:help-circle" 
+    },];
 
   return (
     <SafeAreaView
@@ -56,12 +64,13 @@ export default function Settings() {
           size={24}
           color={lightTheme.colors["primary-purple"]}
         />
-        <Text className="ml-2 text-base font-semibold text-primary-purple">Back</Text>
+        <Text className="ml-2 text-base font-semibold text-primary-purple">{t("settings.back")}</Text>
       </TouchableOpacity>
 
       {/* Título */}
-      <Text className="text-xl font-bold text-center mb-4">Settings</Text>
-
+      <Text className="text-xl font-bold text-center mb-4">
+        {t("settings.title")}
+      </Text>
       <ScrollView
         contentContainerStyle={{ paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
@@ -103,7 +112,7 @@ export default function Settings() {
           activeOpacity={0.7}
           onPress={() => console.log("Eliminar cuenta pressed")}
         >
-          <Text className="text-red-600 font-semibold text-base">Delete account</Text>
+          <Text className="text-red-600 font-semibold text-base"> {t("settings.deleteAccount")}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

@@ -14,6 +14,16 @@
       "Charla": "Talk",
       "Conferencia": "Conference"
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "back": "Back",
+    "language": "Language",
+    "privacy": "Privacy and security",
+    "about": "About",
+    "deleteAccount": "Delete account",
+    "termsOfService": "Terms of service",
+    "appInfo": "App info"
   }
 }
 
