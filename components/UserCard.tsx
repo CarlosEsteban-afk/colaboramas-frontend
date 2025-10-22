@@ -1,6 +1,8 @@
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../theme"; 
+import { useTranslation } from "react-i18next";
 
 type Props = {
   name: string;
@@ -10,6 +12,7 @@ type Props = {
 };
 
 export default function UserCard({ name, title, location, tags }: Props) {
+  const { t } = useTranslation();
   return (
     <LinearGradient
       colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
@@ -30,7 +33,7 @@ export default function UserCard({ name, title, location, tags }: Props) {
       </View>
 
       <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Contactar</Text>
+        <Text style={styles.buttonText}>{t("user.contact")}</Text>
       </TouchableOpacity>
     </LinearGradient>
   );
@@ -46,7 +49,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "700",
-    color: lightTheme.colors.background, // blanco sobre gradiente
+    color: lightTheme.colors.background, 
   },
   title: {
     fontSize: 14,
@@ -65,7 +68,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tag: {
-    backgroundColor: "rgba(255,255,255,0.2)", // puedes crear un color desde el tema si quieres
+    backgroundColor: "rgba(255,255,255,0.2)", 
     borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 8,
