@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../theme"; // ajusta la ruta según tu proyecto
+import { lightTheme } from "../theme"; 
 
 type Props = {
   name: string;

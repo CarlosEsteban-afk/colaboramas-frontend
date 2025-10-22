@@ -18,7 +18,7 @@ export const UserContext = createContext<UserContextType | undefined>(undefined)
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>([]); // <- lista de usuarios
+  const [users, setUsers] = useState<User[]>([]);
 
   const registerUser = async (newUser: User): Promise<boolean> => {
     const exists = users.some(u => u.email === newUser.email);
