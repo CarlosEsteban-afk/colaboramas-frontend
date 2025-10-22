@@ -21,6 +21,10 @@ finalConfig = withMonicon(finalConfig, {
     "fluent:alert-20-regular",
     "mdi:account-circle-outline",
     "mdi:cog",
+    "mdi:arrow-left",
+    "mdi:translate-variant",
+    "mdi:shield-check",
+    "mdi:help-circle",
   ],
   collections: [], 
 });

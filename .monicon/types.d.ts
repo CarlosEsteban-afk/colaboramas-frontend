@@ -15,7 +15,11 @@ declare module "@monicon/icon-loader" {
 	| "mdi:calendar"
 	| "fluent:alert-20-regular"
 	| "mdi:account-circle-outline"
-	| "mdi:cog";
+	| "mdi:cog"
+	| "mdi:arrow-left"
+	| "mdi:translate-variant"
+	| "mdi:shield-check"
+	| "mdi:help-circle";
 
   export type MoniconProps = {
     /**

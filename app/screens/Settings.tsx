@@ -1,17 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
+import { useRouter } from "expo-router";
+import i18n from "../../i18n";
 
-export default function Settings({ navigation }: any) {
+export default function Settings() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const [currentLanguage, setCurrentLanguage] = useState(
+    i18n.isInitialized ? i18n.language : 'en'
+  );
+
+  useEffect(() => {
+    const handleLanguageChange = (lng: string) => {
+      setCurrentLanguage(lng);
+    };
+
+    i18n.on('languageChanged', handleLanguageChange);
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, []);
+
+  const toggleLanguage = () => {
+    const newLang = currentLanguage === 'en' ? 'es' : 'en';
+    i18n.changeLanguage(newLang);
+  };
 
   const configs = [
-    { label: "Idioma", value: "Español", icon: "mdi:translate" },
-    { label: "Políticas", value: "Políticas de servicio", icon: "mdi:shield-outline" },
-    { label: "Notificaciones", value: "Activadas", icon: "mdi:bell-outline" },
-    { label: "Seguridad", value: "Alta", icon: "mdi:lock-outline" },
+    { 
+      label: "Language", 
+      value: currentLanguage === 'en' ? "English" : "Español", 
+      icon: "mdi:translate-variant",
+      onPress: toggleLanguage
+    },
+    { label: "Privacy and security", value: "Terms of service", icon: "mdi:shield-check" },
+    { label: "About", value: "App info", icon: "mdi:help-circle" },
   ];
 
   return (
@@ -23,18 +49,18 @@ export default function Settings({ navigation }: any) {
       <TouchableOpacity
         className="mb-4 flex-row items-center"
         activeOpacity={0.7}
-        onPress={() => navigation?.goBack()}
+        onPress={() => router.back()}
       >
         <Monicon
           name="mdi:arrow-left"
           size={24}
           color={lightTheme.colors["primary-purple"]}
         />
-        <Text className="ml-2 text-base font-semibold text-primary-purple">Volver</Text>
+        <Text className="ml-2 text-base font-semibold text-primary-purple">Back</Text>
       </TouchableOpacity>
 
       {/* Título */}
-      <Text className="text-xl font-bold text-center mb-4">Configuración</Text>
+      <Text className="text-xl font-bold text-center mb-4">Settings</Text>
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -46,7 +72,7 @@ export default function Settings({ navigation }: any) {
               <TouchableOpacity
                 className="flex-row items-center p-4"
                 activeOpacity={0.7}
-                onPress={() => console.log(`${conf.label} pressed`)}
+                onPress={conf.onPress || (() => console.log(`${conf.label} pressed`))}
               >
                 <Monicon
                   name={conf.icon}
@@ -67,17 +93,19 @@ export default function Settings({ navigation }: any) {
               )}
             </React.Fragment>
           ))}
-
-          {/* Botón rojo de eliminar cuenta */}
-          <TouchableOpacity
-            className="p-4 items-center"
-            activeOpacity={0.7}
-            onPress={() => console.log("Eliminar cuenta pressed")}
-          >
-            <Text className="text-red-600 font-semibold text-base">Eliminar cuenta</Text>
-          </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Botón rojo de eliminar cuenta - Fixed at bottom */}
+      <View className="bg-white rounded-lg shadow-sm mt-4">
+        <TouchableOpacity
+          className="p-6 items-center"
+          activeOpacity={0.7}
+          onPress={() => console.log("Eliminar cuenta pressed")}
+        >
+          <Text className="text-red-600 font-semibold text-base">Delete account</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

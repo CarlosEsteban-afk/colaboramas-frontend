@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../theme"; 
+import { lightTheme } from "../theme"; // ajusta la ruta según tu proyecto
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "700",
-    color: lightTheme.colors.background, 
+    color: lightTheme.colors.background, // blanco sobre gradiente
   },
   title: {
     fontSize: 14,
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tag: {
-    backgroundColor: "rgba(255,255,255,0.2)", 
+    backgroundColor: "rgba(255,255,255,0.2)", // puedes crear un color desde el tema si quieres
     borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 8,
