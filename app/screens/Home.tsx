@@ -1,31 +1,17 @@
 import React from "react";
-<<<<<<<< HEAD:app/screens/Home.tsx
-import { View, Text, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import BottomBar from "../../components/BottomBar";
 import TopBar from "../../components/TopBar";
-import UserCard from "../../components/UserCard";
 import EventCard, { EventItem } from "../../components/EventCard";
-========
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import UserCard from "../../components/UserCard";
-import EventCard, { EventItem } from "../../components/EventCard";
 import { Monicon } from "@monicon/native";
->>>>>>>> 6de591733e6feca07cc040294a5775f79b4faf29:app/home/index.tsx
 import { useTranslation } from "react-i18next";
-import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
 
-<<<<<<<< HEAD:app/screens/Home.tsx
-export default function Home() {
-  const router = useRouter();
-  const { t } = useTranslation();
-
-========
->>>>>>>> 6de591733e6feca07cc040294a5775f79b4faf29:app/home/index.tsx
   const recommendations = [
     {
       name: "Alicia Mora",
@@ -72,7 +58,6 @@ export default function Home() {
     },
   ];
 
-<<<<<<<< HEAD:app/screens/Home.tsx
   const handleConfigPress = () => {
     router.push("/screens/Settings");
   };
@@ -80,9 +65,6 @@ export default function Home() {
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF" }}>
       <TopBar onConfigPress={handleConfigPress} />
-========
-  return (
-    <View style={{ flex: 1, backgroundColor: "#FFF" }}>
       {/* Icono de configuración */}
       <View
         style={{
@@ -97,7 +79,6 @@ export default function Home() {
           <Monicon name="ic:outline-settings" size={26} color="#6B31E8" />
         </TouchableOpacity>
       </View>
->>>>>>>> 6de591733e6feca07cc040294a5775f79b4faf29:app/home/index.tsx
 
       <ScrollView
         contentContainerStyle={{
@@ -134,12 +115,9 @@ export default function Home() {
           ))}
         </ScrollView>
       </ScrollView>
-<<<<<<<< HEAD:app/screens/Home.tsx
 
       {/* BottomBar */}
       <BottomBar />
-========
->>>>>>>> 6de591733e6feca07cc040294a5775f79b4faf29:app/home/index.tsx
     </View>
   );
 }

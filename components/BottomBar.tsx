@@ -1,24 +1,21 @@
 import React, { useState } from "react";
-import { TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../theme";
 import { useRouter, useSegments } from "expo-router";
 
-
 export default function BottomBar() {
   const router = useRouter();
   const segments = useSegments();
-  const currentRoute = segments[1] || "index"; // ejemplo: home/index
-
-  const [activeIndex, setActiveIndex] = useState(0);
+  const currentRoute = segments[1] || "home"; // ejemplo: home/index
 
   const items = [
-    { label: "Inicio", icon: "mdi:home-outline" },
-    { label: "Buscar", icon: "feather:search" },
-    { label: "Eventos", icon: "mdi:calendar" },
-    { label: "Contactos", icon: "fluent:alert-20-regular" },
-    { label: "Perfil", icon: "mdi:account-circle-outline" },
+    { label: "Inicio", icon: "mdi:home-outline", route: "/home" },
+    { label: "Buscar", icon: "feather:search", route: "/home/search" },
+    { label: "Eventos", icon: "mdi:calendar", route: "/home/events" },
+    { label: "Contactos", icon: "fluent:alert-20-regular", route: "/home/contacts" },
+    { label: "Perfil", icon: "mdi:account-circle-outline", route: "/home/profile" },
   ];
 
   return (
@@ -33,6 +30,7 @@ export default function BottomBar() {
     >
       {items.map((item, index) => {
         const isActive = currentRoute === item.route.split("/").pop();
+
         return (
           <TouchableOpacity
             key={index}
