@@ -11,7 +11,7 @@ type Props = {
   tags: string[];
 };
 
-export default function UserCard({ name, title, location, tags }: Props) {
+export default function UserCard({ name, title, location, tags = [] }: Props) {
   const { t } = useTranslation();
   return (
     <LinearGradient
@@ -24,13 +24,16 @@ export default function UserCard({ name, title, location, tags }: Props) {
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.location}>{location}</Text>
 
-      <View style={styles.tagsContainer}>
-        {tags.map((tag, index) => (
-          <View key={index} style={styles.tag}>
-            <Text style={styles.tagText}>{tag}</Text>
-          </View>
-        ))}
-      </View>
+      {Array.isArray(tags) && tags.length > 0 && (
+        <View style={styles.tagsContainer}>
+          {tags.map((tag, index) => (
+            <View key={index} style={styles.tag}>
+              <Text style={styles.tagText}>{tag}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
 
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>{t("user.contact")}</Text>
@@ -41,7 +44,7 @@ export default function UserCard({ name, title, location, tags }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 16,
+    borderRadius: 6,
     padding: 16,
     marginHorizontal: 20,
     marginTop: 16,
@@ -68,7 +71,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tag: {
-    backgroundColor: "rgba(255,255,255,0.2)", // puedes crear un color desde el tema si quieres
+    backgroundColor: lightTheme.colors["orange"], // puedes crear un color desde el tema si quieres
     borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 8,
@@ -76,11 +79,13 @@ const styles = StyleSheet.create({
   tagText: {
     color: lightTheme.colors.background,
     fontSize: 12,
+    fontWeight: 16
   },
   button: {
     backgroundColor: lightTheme.colors["accent-blue"],
-    paddingVertical: 8,
-    borderRadius: 8,
+    width: 80,
+    paddingVertical: 6,
+    borderRadius: 6,
     marginTop: 12,
     alignItems: "center",
   },

@@ -1,11 +1,15 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
-import BottomBar from "../components/BottomBar";
-import UserCard from "../components/UserCard";
-import EventCard, { EventItem } from "../components/EventCard";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import UserCard from "../../components/UserCard";
+import EventCard, { EventItem } from "../../components/EventCard";
+import { Monicon } from "@monicon/native";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "expo-router";
 
-export default function Home() {
+export default function HomeScreen() {
+  const router = useRouter();
+  const { t } = useTranslation();
+
   const recommendations = [
     {
       name: "Alicia Mora",
@@ -52,40 +56,58 @@ export default function Home() {
     },
   ];
 
-  // Colores por si se requiere fuera de EventCard en el futuro
-  const typeColor: Record<string, string> = {
-    Congreso: "#6B31E8",
-    Concurso: "#E91E63",
-    Charla: "#EE6C21",
-    Conferencia: "#82A50B",
-  };
-
-  const { t } = useTranslation();
-
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF" }}>
+      {/* Icono de configuración */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-end",
+          alignItems: "center",
+          paddingHorizontal: 16,
+          paddingTop: 12,
+        }}
+      >
+        <TouchableOpacity onPress={() => router.push("/settings")}>
+          <Monicon name="ic:outline-settings" size={26} color="#6B31E8" />
+        </TouchableOpacity>
+      </View>
+
       <ScrollView
         contentContainerStyle={{
           padding: 16,
           paddingBottom: 80,
         }}
       >
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>{t("home.recommendations")}</Text>
+        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>
+          {t("home.recommendations")}
+        </Text>
 
         {recommendations.map((rec, index) => (
           <UserCard title={""} key={index} {...rec} />
         ))}
 
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 24, marginBottom: 8 }}>{t("home.events")}</Text>
+        <Text
+          style={{
+            fontSize: 22,
+            fontWeight: "bold",
+            marginTop: 24,
+            marginBottom: 8,
+          }}
+        >
+          {t("home.events")}
+        </Text>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 4 }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12, paddingVertical: 4 }}
+        >
           {events.map((ev) => (
             <EventCard key={ev.id} event={ev} onPress={() => {}} />
           ))}
         </ScrollView>
       </ScrollView>
-
-      <BottomBar />
     </View>
   );
 }

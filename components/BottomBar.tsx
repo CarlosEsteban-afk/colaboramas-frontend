@@ -1,15 +1,21 @@
 import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../theme"; // ajusta la ruta según tu proyecto
+import { Monicon } from "@monicon/native";
+import { useRouter, useSegments } from "expo-router";
+import { lightTheme } from "../theme";
 
 export default function BottomBar() {
+  const router = useRouter();
+  const segments = useSegments();
+  const currentRoute = segments[1] || "index"; // ejemplo: home/index
+
   const items = [
-    { label: "Inicio" },
-    { label: "Buscar" },
-    { label: "Eventos" },
-    { label: "Notificaciones" },
-    { label: "Perfil" },
+    { label: "Inicio", icon: "material-symbols:home-outline-rounded", route: "/home" },
+    { label: "Buscar", icon: "heroicons:magnifying-glass", route: "/home/search" },
+    { label: "Eventos", icon: "material-symbols:calendar-today-outline", route: "/home/events" },
+    { label: "Contactos", icon: "material-symbols-light:connect-without-contact", route: "/home/contacts" },
+    { label: "Perfil", icon: "material-symbols:account-circle-full", route: "/home/profile" },
   ];
 
   return (
@@ -22,17 +28,31 @@ export default function BottomBar() {
       end={{ x: 1, y: 1 }}
       style={styles.container}
     >
-      {items.map((item, index) => (
-        <TouchableOpacity
-          key={index}
-          style={styles.item}
-          activeOpacity={0.8}
-        >
-          {/* 🔜 Icono (ejemplo futuro)
-          <Iconify icon="mdi:home-outline" size={24} color="#fff" /> */}
-          <Text style={styles.label}>{item.label}</Text>
-        </TouchableOpacity>
-      ))}
+      {items.map((item, index) => {
+        const isActive = currentRoute === item.route.split("/").pop();
+        return (
+          <TouchableOpacity
+            key={index}
+            style={styles.item}
+            activeOpacity={0.8}
+            onPress={() => router.push(item.route)}
+          >
+            <Monicon
+              name={item.icon}
+              size={22}
+              color={isActive ? lightTheme.colors["green-light"] : "#fff"}
+            />
+            <Text
+              style={[
+                styles.label,
+                { color: isActive ? lightTheme.colors["green-light"] : "#fff" },
+              ]}
+            >
+              {item.label}
+            </Text>
+          </TouchableOpacity>
+        );
+      })}
     </LinearGradient>
   );
 }
@@ -52,7 +72,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 11,
-    color: "#fff",
     marginTop: 2,
   },
 });
