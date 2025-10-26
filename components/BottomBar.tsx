@@ -17,7 +17,7 @@ export default function BottomBar() {
     { label: "Inicio", icon: "mdi:home-outline" },
     { label: "Buscar", icon: "feather:search" },
     { label: "Eventos", icon: "mdi:calendar" },
-    { label: "Notificaciones", icon: "fluent:alert-20-regular" },
+    { label: "Contactos", icon: "fluent:alert-20-regular" },
     { label: "Perfil", icon: "mdi:account-circle-outline" },
   ];
 
