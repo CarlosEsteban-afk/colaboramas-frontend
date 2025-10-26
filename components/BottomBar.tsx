@@ -3,8 +3,14 @@ import { TouchableOpacity, Text } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../theme";
+import { useRouter, useSegments } from "expo-router";
+
 
 export default function BottomBar() {
+  const router = useRouter();
+  const segments = useSegments();
+  const currentRoute = segments[1] || "index"; // ejemplo: home/index
+
   const [activeIndex, setActiveIndex] = useState(0);
 
   const items = [
@@ -23,29 +29,27 @@ export default function BottomBar() {
       ]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      className="flex-row h-24"
+      style={styles.container}
     >
       {items.map((item, index) => {
-        const isActive = index === activeIndex;
-
+        const isActive = currentRoute === item.route.split("/").pop();
         return (
           <TouchableOpacity
             key={index}
+            style={styles.item}
             activeOpacity={0.8}
-            onPress={() => setActiveIndex(index)}
-            className={`flex-1 justify-center items-center ${
-              isActive ? "bg-white/20" : ""
-            }`} 
+            onPress={() => router.push(item.route)}
           >
             <Monicon
               name={item.icon}
-              size={isActive ? 32 : 28} 
-              color={isActive ? "#FFD700" : "#fff"}
+              size={isActive ? 32 : 28}
+              color={isActive ? lightTheme.colors["green-light"] : "#fff"}
             />
             <Text
-              className={`text-sm mt-1 ${
-                isActive ? "text-yellow-400 font-bold" : "text-white"
-              }`}
+              style={[
+                styles.label,
+                { color: isActive ? lightTheme.colors["green-light"] : "#fff" },
+              ]}
             >
               {item.label}
             </Text>
@@ -55,3 +59,22 @@ export default function BottomBar() {
     </LinearGradient>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    height: 70,
+    paddingHorizontal: 16,
+  },
+  item: {
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  },
+  label: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+});
