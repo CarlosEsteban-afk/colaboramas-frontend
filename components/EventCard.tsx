@@ -14,6 +14,7 @@ export type EventItem = {
 type Props = {
   event: EventItem;
   onPress?: () => void;
+  horizontal?: boolean;
 };
 
 const TYPE_COLOR: Record<string, string> = {
@@ -23,14 +24,14 @@ const TYPE_COLOR: Record<string, string> = {
   Conferencia: "#82A50B",
 };
 
-export default function EventCard({ event, onPress }: Props) {
+export default function EventCard({ event, onPress, horizontal = false }: Props) {
   const { t } = useTranslation();
   const color = TYPE_COLOR[event.type] ?? "#6B31E8";
 
   return (
     <View
       style={{
-        width: "100%",
+        width: horizontal ? 260 : "100%",
         borderRadius: 6,
         backgroundColor: "#F6F6F6",
         overflow: "hidden",

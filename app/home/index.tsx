@@ -97,7 +97,7 @@ export default function HomeScreen() {
           contentContainerStyle={{ gap: 12, paddingVertical: 4 }}
         >
           {events.map((ev) => (
-            <EventCard key={ev.id} event={ev} onPress={() => {}} />
+            <EventCard key={ev.id} event={ev} onPress={() => {}} horizontal />
           ))}
         </ScrollView>
       </ScrollView>
