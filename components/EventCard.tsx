@@ -30,7 +30,7 @@ export default function EventCard({ event, onPress }: Props) {
   return (
     <View
       style={{
-        width: 260,
+        width: "100%",
         borderRadius: 6,
         backgroundColor: "#F6F6F6",
         overflow: "hidden",
