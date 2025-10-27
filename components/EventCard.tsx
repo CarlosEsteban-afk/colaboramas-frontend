@@ -31,7 +31,7 @@ export default function EventCard({ event, onPress }: Props) {
     <View
       style={{
         width: 260,
-        borderRadius: 14,
+        borderRadius: 6,
         backgroundColor: "#F6F6F6",
         overflow: "hidden",
       }}
@@ -63,7 +63,7 @@ export default function EventCard({ event, onPress }: Props) {
         <View
           style={{
             height: 110,
-            borderRadius: 10,
+            borderRadius: 6,
             backgroundColor: "rgba(255,255,255,0.25)",
             marginTop: 10,
           }}
@@ -90,7 +90,7 @@ export default function EventCard({ event, onPress }: Props) {
         >
           <Pressable
             style={{
-              borderRadius: 10,
+              borderRadius: 6,
               borderWidth: 1,
               borderColor: color,
               paddingVertical: 6,

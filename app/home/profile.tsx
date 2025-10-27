@@ -8,12 +8,13 @@ import BottomBar from "../../components/BottomBar";
 export default function ProfileScreen() {
   return (
     <View style={styles.container}>
+        <Text style={styles.title}>Perfil</Text>
+        <Text style={styles.text}>Gestiona tu información personal.</Text>
+
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <Text style={styles.appTitle}>Agora</Text>
 
         {/* User Card */}
         <View style={{ marginBottom: 20 }}>
@@ -97,15 +98,19 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   scrollContainer: {
-    alignItems: "center",
-    paddingVertical: 24,
     paddingBottom: 120,
   },
-  appTitle: {
-    fontSize: 20,
+  title: {
+    fontSize: 22,
     fontWeight: "600",
     color: lightTheme.colors["primary-purple"],
-    marginBottom: 16,
+    alignSelf:"center",
+    paddingTop: 20
+  },
+  text: {
+    color: lightTheme.colors["dark-gray"],
+    alignSelf:"center",
+    marginBottom: 20
   },
   section: {
     width: "90%",
@@ -135,6 +140,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 8,
     marginTop: 4,
+    marginLeft: 20
   },
   tag: {
     paddingHorizontal: 10,

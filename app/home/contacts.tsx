@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: lightTheme.colors["dark-gray"],
     opacity: 0.6,
     borderRadius: 0,
+
   },
   tabText: {
     fontSize: 16,
@@ -106,6 +107,6 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   tabTextInactive: {
-    color: "rgba(255,255,255,0.8)",
+    color: "#fff",
   },
 });

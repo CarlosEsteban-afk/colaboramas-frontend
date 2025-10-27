@@ -45,9 +45,12 @@ export default function UserCard({ name, title, location, tags = [] }: Props) {
 const styles = StyleSheet.create({
   card: {
     borderRadius: 6,
-    padding: 16,
+    padding: 20,
     marginHorizontal: 20,
     marginTop: 16,
+    maxWidth: 300,
+    alignSelf:"center",
+    width: "100%",
   },
   name: {
     fontSize: 16,
@@ -88,6 +91,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginTop: 12,
     alignItems: "center",
+    alignSelf: "end"
   },
   buttonText: {
     color: lightTheme.colors.background,

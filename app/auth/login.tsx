@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { Monicon } from "@monicon/native";
 import { useAuth } from "../../hooks/useAuth";
@@ -10,10 +16,12 @@ export default function Login() {
   const router = useRouter();
   const { signIn } = useAuth();
   const { users, setUser } = useUser();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
   const handleLogin = async () => {
     const found = users.find(
       (u) => u.email === email && u.password === password
@@ -21,7 +29,7 @@ export default function Login() {
     if (found) {
       setUser(found);
       await signIn();
-      router.push("/screens/Home");
+      router.push("/home");
     } else {
       setError("Correo o contraseña incorrectos");
     }
@@ -33,11 +41,12 @@ export default function Login() {
       subtitle="Conéctate con la comunidad académica y comparte tu experiencia"
       showLogo
     >
-      <View className="flex-row items-center border border-blue-400 rounded-2xl px-4 py-3 mb-4 bg-white/90">
+      {/* Campo de email */}
+      <View style={styles.inputContainer}>
         <Monicon name="hugeicons:student" size={20} color="#3b82f6" />
-        <View className="w-2" />
+        <View style={{ width: 8 }} />
         <TextInput
-          className="flex-1 text-blue-600 text-base"
+          style={styles.input}
           placeholder="Correo electrónico"
           value={email}
           onChangeText={setEmail}
@@ -47,11 +56,12 @@ export default function Login() {
         />
       </View>
 
-      <View className="flex-row items-center border border-blue-400 rounded-2xl px-4 py-3 mb-4 bg-white/90">
+      {/* Campo de contraseña */}
+      <View style={styles.inputContainer}>
         <Monicon name="fluent-mdl2:lock" size={20} color="#3b82f6" />
-        <View className="w-2" />
+        <View style={{ width: 8 }} />
         <TextInput
-          className="flex-1 text-blue-600 text-base"
+          style={styles.input}
           placeholder="Contraseña"
           value={password}
           onChangeText={setPassword}
@@ -67,26 +77,69 @@ export default function Login() {
         </TouchableOpacity>
       </View>
 
+      {/* Error */}
       {error ? (
-        <Text className="text-red-500 text-sm mb-4 text-center">{error}</Text>
+        <Text style={styles.errorText}>{error}</Text>
       ) : (
-        <View className="mb-4" />
+        <View style={{ marginBottom: 16 }} />
       )}
 
-      <TouchableOpacity
-        className="bg-blue-500 py-3 rounded-2xl items-center mb-4 w-4/5 self-center"
-        onPress={handleLogin}
-      >
-        <Text className="text-white font-semibold text-base">
-          Iniciar Sesión
-        </Text>
+      {/* Botón login */}
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
       </TouchableOpacity>
 
+      {/* Enlace registro */}
       <TouchableOpacity onPress={() => router.push("/auth/preregister")}>
-        <Text className="text-center text-blue-300 underline text-sm">
+        <Text style={styles.registerLink}>
           ¿No tienes cuenta? Regístrate
         </Text>
       </TouchableOpacity>
     </AuthLayout>
   );
 }
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#3b82f6",
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 16,
+    backgroundColor: "rgba(255,255,255,0.9)",
+  },
+  input: {
+    flex: 1,
+    color: "#3b82f6",
+    fontSize: 16,
+  },
+  errorText: {
+    color: "#ef4444",
+    fontSize: 14,
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  loginButton: {
+    backgroundColor: "#3b82f6",
+    paddingVertical: 12,
+    borderRadius: 6,
+    alignItems: "center",
+    marginBottom: 16,
+    alignSelf: "center",
+    width: "80%",
+  },
+  loginButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  registerLink: {
+    textAlign: "center",
+    color: "#60a5fa",
+    textDecorationLine: "underline",
+    fontSize: 14,
+  },
+});

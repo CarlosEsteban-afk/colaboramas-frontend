@@ -40,7 +40,7 @@ export default function BottomBar() {
           >
             <Monicon
               name={item.icon}
-              size={isActive ? 32 : 28}
+              size={isActive ? 28 : 22}
               color={isActive ? lightTheme.colors["green-light"] : "#fff"}
             />
             <Text
@@ -63,8 +63,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    height: 70,
-    paddingHorizontal: 16,
+    height: 60,
+    paddingHorizontal: 10,
   },
   item: {
     alignItems: "center",

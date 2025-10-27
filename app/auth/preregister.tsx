@@ -16,7 +16,7 @@ export default function PreRegister() {
     >
       <TouchableOpacity
         style={{ width: cardWidth, alignSelf: "center" }}
-        className="rounded-2xl p-5 border-2 border-purple-500 bg-[#A881FD] mb-8 shadow-md"
+        className="rounded-xl p-5 border-2 border-purple-500 bg-[#A881FD] mb-8 shadow-md"
         onPress={() => router.push("/auth/register")}
         activeOpacity={0.9}
       >

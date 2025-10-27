@@ -65,20 +65,6 @@ export default function HomeScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF" }}>
       <TopBar onConfigPress={handleConfigPress} />
-      {/* Icono de configuración */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          paddingHorizontal: 16,
-          paddingTop: 12,
-        }}
-      >
-        <TouchableOpacity onPress={() => router.push("/settings")}>
-          <Monicon name="ic:outline-settings" size={26} color="#6B31E8" />
-        </TouchableOpacity>
-      </View>
 
       <ScrollView
         contentContainerStyle={{
@@ -115,7 +101,6 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
       </ScrollView>
-      <BottomBar />
     </View>
   );
 }
