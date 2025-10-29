@@ -72,7 +72,7 @@ export default function HomeScreen() {
           paddingBottom: 80,
         }}
       >
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>
+        <Text style={{ fontSize: 22, fontWeight: "bold", fontFamily: "Lato_400Regular", marginBottom: 8 }}>
           {t("home.recommendations")}
         </Text>
 

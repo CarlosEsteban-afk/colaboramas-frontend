@@ -68,18 +68,20 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 20,
   },
   title: {
     fontSize: 32,
     fontWeight: "700",
     color: lightTheme.colors["primary-purple"],
     marginBottom: 8,
+    alignSelf:"center"
   },
   subtitle: { 
     color: lightTheme.colors["dark-gray"], 
     fontSize: 16,
     marginBottom: 20,
+    alignSelf:"center"
   },
   scrollContainer: {
     flex: 1,

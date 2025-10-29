@@ -13,4 +13,7 @@ export const lightTheme = {
     "muted-foreground": "#EBEBEB",
     "dark-gray": "#404040",
   },
+  fonts: {
+    text: "Lato_400Regular"
+  }
 };
