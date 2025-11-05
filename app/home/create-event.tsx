@@ -1,88 +1,208 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, ScrollView, Alert } from "react-native";
-import { lightTheme } from "../../theme";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from "react-native";
 import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { lightTheme } from "../../theme";
+import { EventItem } from "../../components/EventCard";
 
 export default function CreateEventScreen() {
   const router = useRouter();
   const [title, setTitle] = useState("");
+  const [type, setType] = useState<"Congreso" | "Concurso" | "Charla" | "Conferencia">("Congreso");
   const [date, setDate] = useState("");
   const [place, setPlace] = useState("");
-  const [type, setType] = useState("");
   const [description, setDescription] = useState("");
 
-  const onSave = () => {
-    // Integrar con backend aquí
-    const newEvent = { title, date, place, type, description };
-    console.log("Nuevo evento:", newEvent);
-    Alert.alert("Evento creado", "El evento fue creado (simulado).");
+  const submit = () => {
+    if (!title.trim()) return Alert.alert("Error", "El título es obligatorio.");
+    // Aquí podrías enviar al backend / guardar en estado global
+    const newEvent: EventItem = {
+      id: String(Date.now()),
+      title,
+      type,
+      date,
+      place,
+      description,
+    };
+    console.log("CREATED EVENT", newEvent);
+    Alert.alert("Hecho", "Evento creado.");
     router.back();
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Crear nuevo evento</Text>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <LinearGradient colors={[lightTheme.colors["primary-purple"], "#9b5aff"]} style={styles.header}>
+          <Text style={styles.headerTitle}>Crear evento</Text>
+          <Text style={styles.headerSubtitle}>Rellena los datos del evento</Text>
+        </LinearGradient>
 
-      <Text style={styles.label}>Título</Text>
-      <TextInput style={styles.input} value={title} onChangeText={setTitle} placeholder="Nombre del evento" />
+        <View style={styles.formCard}>
+          <Text style={styles.label}>Título</Text>
+          <TextInput
+            value={title}
+            onChangeText={setTitle}
+            placeholder="Ej. Charla: Nuevas tendencias en IA"
+            style={styles.input}
+            placeholderTextColor="#999"
+          />
 
-      <Text style={styles.label}>Fecha / Hora</Text>
-      <TextInput style={styles.input} value={date} onChangeText={setDate} placeholder="e.g. 24 Oct 2025, 09:00" />
+          <Text style={styles.label}>Tipo</Text>
+          <View style={styles.pillsRow}>
+            {(["Congreso", "Concurso", "Charla", "Conferencia"] as const).map((p) => (
+              <TouchableOpacity
+                key={p}
+                style={[
+                  styles.pill,
+                  type === p && { backgroundColor: lightTheme.colors["primary-purple"], elevation: 2 },
+                ]}
+                onPress={() => setType(p)}
+              >
+                <Text style={[styles.pillText, type === p && { color: "#fff", fontWeight: "700" }]}>{p}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
-      <Text style={styles.label}>Lugar</Text>
-      <TextInput style={styles.input} value={place} onChangeText={setPlace} placeholder="Lugar del evento" />
+          <Text style={styles.label}>Fecha</Text>
+          <TextInput value={date} onChangeText={setDate} placeholder="Ej. October 10th, 2025" style={styles.input} placeholderTextColor="#999" />
 
-      <Text style={styles.label}>Tipo</Text>
-      <TextInput style={styles.input} value={type} onChangeText={setType} placeholder="Concurso / Congreso / Conferencia" />
+          <Text style={styles.label}>Lugar</Text>
+          <TextInput value={place} onChangeText={setPlace} placeholder="Ej. Auditorio B" style={styles.input} placeholderTextColor="#999" />
 
-      <Text style={styles.label}>Descripción</Text>
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        value={description}
-        onChangeText={setDescription}
-        placeholder="Descripción breve del evento"
-        multiline
-        numberOfLines={4}
-      />
+          <Text style={styles.label}>Descripción</Text>
+          <TextInput
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Descripción corta del evento"
+            style={[styles.input, styles.textArea]}
+            multiline
+            placeholderTextColor="#999"
+          />
 
-      <View style={styles.button}>
-        <Button title="Guardar evento" onPress={onSave} color={lightTheme.colors["primary-purple"]} />
-      </View>
-    </ScrollView>
+          <View style={styles.actionsRow}>
+            <TouchableOpacity style={styles.ghostButton} onPress={() => router.back()}>
+              <Text style={styles.ghostText}>Cancelar</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.submitButton} onPress={submit}>
+              <LinearGradient colors={[lightTheme.colors["primary-purple"], "#8e4bff"]} style={styles.submitGradient}>
+                <Text style={styles.submitText}>Crear evento</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    paddingTop: 40,
-    backgroundColor: "#fff",
-    flexGrow: 1,
+    paddingBottom: 40,
+    backgroundColor: "#F6F6F6",
   },
-  title: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: lightTheme.colors["primary-purple"],
-    marginBottom: 16,
+  header: {
+    paddingTop: 56,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
+  },
+  headerTitle: {
+    color: "#fff",
+    fontSize: 28,
+    fontWeight: "800",
+  },
+  headerSubtitle: {
+    color: "#fff",
+    marginTop: 6,
+  },
+  formCard: {
+    margin: 16,
+    padding: 16,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    // light shadow similar to existing aesthetic
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
   label: {
+    fontSize: 13,
+    color: "#333",
+    fontWeight: "700",
     marginTop: 12,
     marginBottom: 6,
-    color: lightTheme.colors["dark-gray"],
   },
   input: {
     borderWidth: 1,
-    borderColor: "#E5E5E5",
+    borderColor: "#eee",
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#fafafa",
+    color: "#222",
   },
   textArea: {
     minHeight: 100,
     textAlignVertical: "top",
   },
-  button: {
-    marginTop: 20,
+  pillsRow: {
+    flexDirection: "row",
+    gap: 8,
+    marginBottom: 6,
+    flexWrap: "wrap",
+  },
+  pill: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "#f0f0f0",
+  },
+  pillText: {
+    color: "#444",
+    fontWeight: "600",
+  },
+  actionsRow: {
+    marginTop: 18,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 12,
+  },
+  ghostButton: {
+    flex: 1,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: lightTheme.colors["primary-purple"],
+  },
+  ghostText: {
+    color: lightTheme.colors["primary-purple"],
+    fontWeight: "700",
+  },
+  submitButton: {
+    flex: 1,
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  submitGradient: {
+    paddingVertical: 12,
+    alignItems: "center",
+    borderRadius: 8,
+  },
+  submitText: {
+    color: "#fff",
+    fontWeight: "800",
   },
 });
