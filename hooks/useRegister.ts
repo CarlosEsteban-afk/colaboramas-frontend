@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { useUser } from "./useUser";
 import { useAuth } from "./useAuth";
+
 export default function useRegister() {
-  const { registerUser } = useUser();     
-  const { signIn } = useAuth();           
+  const { signUp } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -25,14 +24,13 @@ export default function useRegister() {
     }));
   }, [email, password, confirmPassword]);
 
-  const handleRegister = async (): Promise<boolean> => {
-    if (!errors.email && !errors.password && email && password && confirmPassword) {
-      const success = await registerUser({ name, email, password });
-      if (success) await signIn(); 
-      return success;
-    }
-    return false;
-  };
+const handleRegister = async (roles: string[]): Promise<boolean> => {
+  if (!errors.email && !errors.password && email && password && confirmPassword) {
+    return await signUp(name, email, password, roles); 
+  }
+  return false;
+};
+
 
   return {
     name,

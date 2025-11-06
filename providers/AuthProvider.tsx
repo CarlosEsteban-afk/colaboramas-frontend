@@ -1,20 +1,19 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React,{
-  createContext,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import React, { createContext, ReactNode, useEffect, useState } from "react";
+import api from "../client";
 
-const AUTHTOKEN = " auth_token";
+const AUTHTOKEN = "auth_token";
+
+interface AuthContextType {
+  isAuthenticated: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (name: string, email: string, password: string, role: string[]) => Promise<boolean>;
+  signOut: () => Promise<void>;
+}
+
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
-interface AuthContextType {
-  isAuthenticated: boolean;
-  signIn: () => Promise<void>;
-  signOut: () => Promise<void>;
-}
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,18 +33,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadAuthState();
   }, []);
 
-  const signIn = async () => {
-    await AsyncStorage.setItem(AUTHTOKEN, "dummy-auth-token");
-    setIsAuthenticated(true);
+  const signIn = async (email: string, password: string) => {
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      const token = response.data.token;
+
+      await AsyncStorage.setItem(AUTHTOKEN, token);
+      setIsAuthenticated(true);
+    } catch (error: any) {
+      console.error("Error de login:", error.response?.data || error);
+      throw new Error("Login failed");
+    }
   };
 
+  const signUp = async (
+    name: string,
+    email: string,
+    password: string,
+    roles: string[]
+  ): Promise<boolean> => {
+    try {
+      await api.post("/auth/register", { username: name, email, password, roleRequest:{
+        roleListName:roles
+      } }); 
+      await signIn(email, password); 
+      return true;
+    } catch (error: any) {
+      console.error("Error de registro:", error.response?.data || error);
+      return false;
+    }
+  };
   const signOut = async () => {
     await AsyncStorage.removeItem(AUTHTOKEN);
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut }}>
+    <AuthContext.Provider value={{ isAuthenticated, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

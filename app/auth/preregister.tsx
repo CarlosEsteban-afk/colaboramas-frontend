@@ -7,6 +7,13 @@ export default function PreRegister() {
   const { width } = useWindowDimensions();
   const cardWidth = Math.min(Math.max(width * 0.85, 300), 500);
 
+  const handleSelectRole = (role: "ACADEMICO" | "COMUNICADOR") => {
+    router.push({
+      pathname: "/auth/register",
+      params: { role },
+    });
+  };
+
   return (
     <AuthLayout
       showLogo
@@ -17,7 +24,7 @@ export default function PreRegister() {
       <TouchableOpacity
         style={{ width: cardWidth, alignSelf: "center" }}
         className="rounded-xl p-5 border-2 border-purple-500 bg-[#A881FD] mb-8 shadow-md"
-        onPress={() => router.push("/auth/register")}
+        onPress={() => handleSelectRole("ACADEMICO")}
         activeOpacity={0.9}
       >
         <Text className="text-black text-lg font-semibold text-center mb-1">
@@ -46,7 +53,7 @@ export default function PreRegister() {
       <TouchableOpacity
         style={{ width: cardWidth, alignSelf: "center" }}
         className="rounded-2xl p-5 bg-[#EC6895] border border-pink-400 shadow-md mb-12"
-        onPress={() => router.push("/auth/register")}
+        onPress={() => handleSelectRole("COMUNICADOR")}
         activeOpacity={0.9}
       >
         <Text className="text-black text-lg font-semibold text-center mb-1">

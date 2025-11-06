@@ -1,38 +1,39 @@
-import React, { createContext, useState, ReactNode } from "react";
+import React, { createContext, ReactNode } from "react";
+import api from "../client";
+interface User {
+  id?: number;
+  name: string;
+  email: string;
+}
 
-export interface User {
+interface RegisterData {
   name: string;
   email: string;
   password: string;
 }
 
 interface UserContextType {
-  user: User | null;
-  users: User[];                        
-  setUser: (user: User | null) => void;
-  registerUser: (user: User) => Promise<boolean>;
+  user?: User;
+  registerUser: (data: RegisterData) => Promise<boolean>;
 }
-
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
-
-  const registerUser = async (newUser: User): Promise<boolean> => {
-    const exists = users.some(u => u.email === newUser.email);
-    if (exists) return false;
-
-    setUsers(prev => [...prev, newUser]);
-    setUser(newUser);
-    return true;
+  const registerUser = async (data: RegisterData): Promise<boolean> => {
+    try {
+      const response = await api.post("/auth/register", data);
+      console.log("Usuario registrado:", response.data);
+      return true;
+    } catch (error: any) {
+      console.error("Error al registrar usuario:", error.response?.data || error);
+      return false;
+    }
   };
 
   return (
-    <UserContext.Provider value={{ user, users, setUser, registerUser }}>
+    <UserContext.Provider value={{ registerUser }}>
       {children}
     </UserContext.Provider>
   );
 };
-

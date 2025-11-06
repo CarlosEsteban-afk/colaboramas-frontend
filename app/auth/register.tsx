@@ -6,11 +6,13 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import useRegister from "../../hooks/useRegister";
 import AuthLayout from "../authLayout";
 
 export default function RegisterScreen() {
+  const { role } = useLocalSearchParams<{ role?: string }>();
+
   const router = useRouter();
   const {
     name,
@@ -25,18 +27,19 @@ export default function RegisterScreen() {
     handleRegister,
   } = useRegister();
 
-  const onRegister = () => {
-    const success = handleRegister();
-    if (!success) {
-      Alert.alert("Error", "Revisa tus datos o el correo ya está registrado");
-      return;
-    }
-    router.push("/home");
-  };
+const onRegister = async () => {
+  const roles = role ? [role as "ACADEMICO" | "COMUNICADOR"] : [];
+  const success = await handleRegister(roles);
+  if (!success) {
+    Alert.alert("Error", "Revisa tus datos o el correo ya está registrado");
+    return;
+  }
+  router.push("/home"); 
+};
+
 
   return (
     <AuthLayout title="Crear Cuenta" card cardGradient showLogo={false}>
-      {/* Nombre completo */}
       <TextInput
         style={styles.input}
         placeholder="Nombre completo"
@@ -45,12 +48,8 @@ export default function RegisterScreen() {
         onChangeText={setName}
       />
 
-      {/* Correo electrónico */}
       <TextInput
-        style={[
-          styles.input,
-          errors.email && styles.inputError, // si hay error, cambia el borde
-        ]}
+        style={[styles.input, errors.email && styles.inputError]}
         placeholder="Correo electrónico"
         placeholderTextColor="#6B7280"
         value={email}
@@ -59,12 +58,8 @@ export default function RegisterScreen() {
         autoCapitalize="none"
       />
 
-      {/* Contraseña */}
       <TextInput
-        style={[
-          styles.input,
-          errors.password && styles.inputError,
-        ]}
+        style={[styles.input, errors.password && styles.inputError]}
         placeholder="Contraseña"
         placeholderTextColor="#6B7280"
         value={password}
@@ -74,11 +69,7 @@ export default function RegisterScreen() {
 
       {/* Confirmar contraseña */}
       <TextInput
-        style={[
-          styles.input,
-          errors.password && styles.inputError,
-          { marginBottom: 16 },
-        ]}
+        style={[styles.input, errors.password && styles.inputError, { marginBottom: 16 }]}
         placeholder="Repetir contraseña"
         placeholderTextColor="#6B7280"
         value={confirmPassword}
@@ -93,9 +84,7 @@ export default function RegisterScreen() {
 
       {/* Enlace a login */}
       <TouchableOpacity onPress={() => router.push("/auth/login")}>
-        <Text style={styles.loginLink}>
-          ¿Ya tienes cuenta? Inicia sesión
-        </Text>
+        <Text style={styles.loginLink}>¿Ya tienes cuenta? Inicia sesión</Text>
       </TouchableOpacity>
     </AuthLayout>
   );
@@ -111,13 +100,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     marginBottom: 8,
     fontSize: 16,
-    color: "#2563eb", // azul 600
+    color: "#2563eb",
   },
   inputError: {
-    borderColor: "#ef4444", // rojo-500
+    borderColor: "#ef4444",
   },
   registerButton: {
-    backgroundColor: "#3b82f6", // azul-500
+    backgroundColor: "#3b82f6",
     paddingVertical: 12,
     borderRadius: 6,
     alignItems: "center",
@@ -132,7 +121,7 @@ const styles = StyleSheet.create({
   },
   loginLink: {
     textAlign: "center",
-    color: "#93c5fd", // azul-300
+    color: "#93c5fd",
     textDecorationLine: "underline",
     fontSize: 14,
   },
