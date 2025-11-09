@@ -4,8 +4,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import UserCard from "../../components/UserCard";
 import BottomBar from "../../components/BottomBar";
+import { useUser } from "../../hooks/useUser";
 
 export default function ProfileScreen() {
+  const { user}= useUser();
+
+  console.log("Usuario en ProfileScreen:", user);
+
   return (
     <View style={styles.container}>
         <Text style={styles.title}>Perfil</Text>

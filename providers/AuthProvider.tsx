@@ -3,6 +3,7 @@ import React, { createContext, ReactNode, useEffect, useState } from "react";
 import api from "../client";
 
 const AUTHTOKEN = "auth_token";
+const AUTHUSER = "auth_user";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -11,9 +12,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
-);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -32,19 +31,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     loadAuthState();
   }, []);
+const signIn = async (email: string, password: string) => {
+  try {
+    const response = await api.post("/auth/login", { email, password });
+    const token = response.data.token;
 
-  const signIn = async (email: string, password: string) => {
-    try {
-      const response = await api.post("/auth/login", { email, password });
-      const token = response.data.token;
-
-      await AsyncStorage.setItem(AUTHTOKEN, token);
-      setIsAuthenticated(true);
-    } catch (error: any) {
-      console.error("Error de login:", error.response?.data || error);
-      throw new Error("Login failed");
+    if (!token) {
+      throw new Error("Token no recibido");
     }
-  };
+    await AsyncStorage.setItem(AUTHTOKEN, token);
+
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    const userResponse = await api.get("/auth/me");
+    const user = userResponse.data;
+    console.log("Usuario obtenido en signIn:", user);
+    await AsyncStorage.setItem(AUTHUSER, JSON.stringify(user));
+    setIsAuthenticated(true);
+  } catch (error: any) {
+    console.error("Error de login:", error.response?.data || error);
+    throw new Error("Login failed");
+  }
+};
 
   const signUp = async (
     name: string,
@@ -53,18 +60,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     roles: string[]
   ): Promise<boolean> => {
     try {
-      await api.post("/auth/register", { username: name, email, password, roleRequest:{
-        roleListName:roles
-      } }); 
-      await signIn(email, password); 
+      await api.post("/auth/register", {
+        username: name,
+        email,
+        password,
+        roleRequest: { roleListName: roles },
+      });
+      await signIn(email, password);
       return true;
     } catch (error: any) {
       console.error("Error de registro:", error.response?.data || error);
       return false;
     }
   };
+
   const signOut = async () => {
-    await AsyncStorage.removeItem(AUTHTOKEN);
+    await AsyncStorage.multiRemove([AUTHTOKEN, AUTHUSER]);
     setIsAuthenticated(false);
   };
 
