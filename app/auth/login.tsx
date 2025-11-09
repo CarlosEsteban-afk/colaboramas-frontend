@@ -44,7 +44,6 @@ export default function Login() {
       subtitle="Conéctate con la comunidad académica y comparte tu experiencia"
       showLogo
     >
-      {/* Campo de email */}
       <View style={styles.inputContainer}>
         <Monicon name="hugeicons:student" size={20} color="#3b82f6" />
         <View style={{ width: 8 }} />
@@ -59,7 +58,6 @@ export default function Login() {
         />
       </View>
 
-      {/* Campo de contraseña */}
       <View style={styles.inputContainer}>
         <Monicon name="fluent-mdl2:lock" size={20} color="#3b82f6" />
         <View style={{ width: 8 }} />
@@ -80,7 +78,6 @@ export default function Login() {
         </TouchableOpacity>
       </View>
 
-      {/* Botón login */}
       <TouchableOpacity
         style={[styles.loginButton, loading && { opacity: 0.7 }]}
         onPress={handleLogin}

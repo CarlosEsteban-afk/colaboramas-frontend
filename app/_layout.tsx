@@ -16,19 +16,17 @@ export default function RootLayout() {
     initI18n();
   }, []);
 
-  if (!fontsLoaded) {
-    return null; // Espera a que carguen las fuentes
-  }
+  if (!fontsLoaded) return null;
 
   return (
-    <AuthProvider>
-      <UserProvider>
+    <UserProvider>
+      <AuthProvider>
         <Stack
           screenOptions={{
             headerShown: false,
           }}
         />
-      </UserProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </UserProvider>
   );
 }

@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import api from "../client";
+import { useUser } from "../hooks/useUser";
 
 const AUTHTOKEN = "auth_token";
 const AUTHUSER = "auth_user";
@@ -8,21 +9,33 @@ const AUTHUSER = "auth_user";
 interface AuthContextType {
   isAuthenticated: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (name: string, email: string, password: string, role: string[]) => Promise<boolean>;
+  signUp: (
+    name: string,
+    email: string,
+    password: string,
+    role: string[]
+  ) => Promise<boolean>;
   signOut: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const { setUser, loadUser } = useUser();
 
   useEffect(() => {
     const loadAuthState = async () => {
       try {
         const token = await AsyncStorage.getItem(AUTHTOKEN);
-        setIsAuthenticated(!!token);
+        if (token) {
+          api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          await loadUser();
+          setIsAuthenticated(true);
+        }
       } catch (e) {
         console.error("Failed to load auth state", e);
       } finally {
@@ -31,27 +44,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
     loadAuthState();
   }, []);
-const signIn = async (email: string, password: string) => {
-  try {
+
+  const signIn = async (email: string, password: string) => {
     const response = await api.post("/auth/login", { email, password });
     const token = response.data.token;
 
-    if (!token) {
-      throw new Error("Token no recibido");
-    }
     await AsyncStorage.setItem(AUTHTOKEN, token);
-
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
     const userResponse = await api.get("/auth/me");
     const user = userResponse.data;
-    console.log("Usuario obtenido en signIn:", user);
+
     await AsyncStorage.setItem(AUTHUSER, JSON.stringify(user));
+    setUser(user);
     setIsAuthenticated(true);
-  } catch (error: any) {
-    console.error("Error de login:", error.response?.data || error);
-    throw new Error("Login failed");
-  }
-};
+  };
 
   const signUp = async (
     name: string,
@@ -76,8 +83,11 @@ const signIn = async (email: string, password: string) => {
 
   const signOut = async () => {
     await AsyncStorage.multiRemove([AUTHTOKEN, AUTHUSER]);
+    setUser(undefined);
     setIsAuthenticated(false);
   };
+
+  if (loading) return null; // opcional, para evitar parpadeo
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, signIn, signUp, signOut }}>
