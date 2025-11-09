@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const userResponse = await api.get("/auth/me");
     const user = userResponse.data;
-
+    console.log("User data on signIn:", user);
     await AsyncStorage.setItem(AUTHUSER, JSON.stringify(user));
     setUser(user);
     setIsAuthenticated(true);

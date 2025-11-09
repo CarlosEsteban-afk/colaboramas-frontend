@@ -7,7 +7,7 @@ import { useUser } from "../../hooks/useUser";
 
 export default function ProfileScreen() {
   const { user } = useUser();
-
+  console.log("User data:", user);
   if (!user) {
     return (
       <View style={styles.container}>
@@ -31,6 +31,7 @@ export default function ProfileScreen() {
             title={user.role || "Usuario"}
             location="Temuco, Chile"
             tags={[]}
+            imageUrl={user.imageUrl}
           />
         </View>
 
