@@ -5,7 +5,7 @@ import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
 import { useRouter } from "expo-router";
 import i18n from "../../i18n";
-import { useTranslation } from "react-i18next"; //importa el useTranslation para usar el i18n
+import { useTranslation } from "react-i18next"; 
 
 export default function Settings() {
   const insets = useSafeAreaInsets();

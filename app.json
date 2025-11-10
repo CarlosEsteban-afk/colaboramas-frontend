@@ -1,4 +1,4 @@
-  {
+{
   "expo": {
     "name": "colaboramas-frontend",
     "slug": "colaboramas-frontend",
@@ -40,7 +40,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

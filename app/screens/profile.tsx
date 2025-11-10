@@ -2,87 +2,93 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
-import UserCard from "../../components/UserCard";
-import BottomBar from "../../components/BottomBar";
+import UserCard from "../components/UserCard";
+import { useUser } from "../../src/hooks/useUser";
 
 export default function ProfileScreen() {
+  const { user } = useUser();
+
+  const normalizeRole = (role: string) => {
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+  };
+  const formattedRoles =
+    user.roles?.map(normalizeRole).join(", ") || "Sin rol definido";
+
+  console.log("User data:", user);
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Cargando usuario...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-        <Text style={styles.title}>Perfil</Text>
-        <Text style={styles.text}>Gestiona tu información personal.</Text>
+      <Text style={styles.title}>Perfil</Text>
+      <Text style={styles.text}>Gestiona tu información personal.</Text>
 
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-
-        {/* User Card */}
         <View style={{ marginBottom: 20 }}>
           <UserCard
-            name="Alicia Mora"
-            title="Psicóloga"
+            name={user.username}
+            title={formattedRoles}
             location="Temuco, Chile"
             tags={[]}
+            imageUrl={user.imageUrl}
           />
         </View>
 
-        {/* Sections */}
         <View style={styles.section}>
-          <GradientLabel text="Educación" />
-          <Text style={styles.value}>Universidad de La Frontera</Text>
+          <GradientLabel text="Email" />
+          <Text style={styles.value}>{user.email}</Text>
         </View>
 
         <View style={styles.section}>
-          <GradientLabel text="País" />
-          <Text style={styles.value}>Chile</Text>
+          <GradientLabel text="Rol" />
+          <Text style={styles.value}>{formattedRoles}</Text>
         </View>
-
-        <View style={styles.section}>
-          <GradientLabel text="Ciudad" />
-          <Text style={styles.value}>Temuco</Text>
-        </View>
-
-        <View style={styles.section}>
-          <GradientLabel text="Campos de investigación" />
-          <View style={styles.tagContainer}>
-            <Text style={[styles.tag, styles.orangeTag]}>Área</Text>
-            <Text style={[styles.tag, styles.orangeTag]}>Área</Text>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <GradientLabel text="Intereses" />
-          <View style={styles.tagContainer}>
-            <Text style={[styles.tag, styles.orangeTag]}>Psicología social</Text>
-            <Text style={[styles.tag, styles.orangeTag]}>Género</Text>
-          </View>
-        </View>
-
         <View style={styles.section}>
           <GradientLabel text="Motivaciones" />
-          <Text style={styles.value}>Lorem ipsum...</Text>
+          <Text style={styles.value}>
+            {Array.isArray(user.motivaciones)
+              ? user.motivaciones.join("\n")
+              : user.motivaciones}
+          </Text>
         </View>
 
         <View style={styles.section}>
           <GradientLabel text="Intereses personales" />
-          <Text style={styles.value}>Trekking, Pádel, etc</Text>
+          <Text style={styles.value}>
+            {Array.isArray(user.actividadesPersonales)
+              ? user.actividadesPersonales.join("\n")
+              : user.actividadesPersonales}
+          </Text>
         </View>
 
         <View style={styles.section}>
           <GradientLabel text="Proyectos" />
-          <Text style={styles.value}>Proyecto 1</Text>
-          <Text style={styles.value}>Proyecto 2</Text>
+          <Text style={styles.value}>
+            {Array.isArray(user.proyectosRecientes)
+              ? user.proyectosRecientes.join("\n")
+              : user.proyectosRecientes}
+          </Text>
         </View>
       </ScrollView>
     </View>
   );
 }
 
-/* 🔹 Subcomponente para etiquetas con gradiente */
 function GradientLabel({ text }: { text: string }) {
   return (
     <LinearGradient
-      colors={[lightTheme.colors["purple-light"], lightTheme.colors["pink-light"]]}
+      colors={[
+        lightTheme.colors["purple-light"],
+        lightTheme.colors["pink-light"],
+      ]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.gradientLabel}
@@ -104,18 +110,18 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "600",
     color: lightTheme.colors["primary-purple"],
-    alignSelf:"center",
-    paddingTop: 20
+    alignSelf: "center",
+    paddingTop: 20,
   },
   text: {
     color: lightTheme.colors["dark-gray"],
-    alignSelf:"center",
-    marginBottom: 20
+    alignSelf: "center",
+    marginBottom: 20,
   },
   section: {
     width: "90%",
     marginBottom: 16,
-    alignSelf: "stretch"
+    alignSelf: "stretch",
   },
   gradientLabel: {
     alignSelf: "flex-start",
@@ -140,7 +146,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 8,
     marginTop: 4,
-    marginLeft: 20
+    marginLeft: 20,
   },
   tag: {
     paddingHorizontal: 10,

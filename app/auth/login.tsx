@@ -5,33 +5,36 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Monicon } from "@monicon/native";
-import { useAuth } from "../../hooks/useAuth";
-import { useUser } from "../../hooks/useUser";
-import AuthLayout from "../authLayout";
+import { useAuth } from "../../src/hooks/useAuth";
+import AuthLayout from "../layouts/authLayout";
 
 export default function Login() {
   const router = useRouter();
   const { signIn } = useAuth();
-  const { users, setUser } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    const found = users.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (found) {
-      setUser(found);
-      await signIn();
-      router.push("/home");
-    } else {
-      setError("Correo o contraseña incorrectos");
+    if (!email || !password) {
+      Alert.alert("Error", "Debes ingresar tu correo y contraseña");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await signIn(email, password);
+      router.push("/screens");
+    } catch (error) {
+      Alert.alert("Error", "Correo o contraseña incorrectos");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,7 +44,6 @@ export default function Login() {
       subtitle="Conéctate con la comunidad académica y comparte tu experiencia"
       showLogo
     >
-      {/* Campo de email */}
       <View style={styles.inputContainer}>
         <Monicon name="hugeicons:student" size={20} color="#3b82f6" />
         <View style={{ width: 8 }} />
@@ -56,7 +58,6 @@ export default function Login() {
         />
       </View>
 
-      {/* Campo de contraseña */}
       <View style={styles.inputContainer}>
         <Monicon name="fluent-mdl2:lock" size={20} color="#3b82f6" />
         <View style={{ width: 8 }} />
@@ -77,16 +78,14 @@ export default function Login() {
         </TouchableOpacity>
       </View>
 
-      {/* Error */}
-      {error ? (
-        <Text style={styles.errorText}>{error}</Text>
-      ) : (
-        <View style={{ marginBottom: 16 }} />
-      )}
-
-      {/* Botón login */}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-        <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
+      <TouchableOpacity
+        style={[styles.loginButton, loading && { opacity: 0.7 }]}
+        onPress={handleLogin}
+        disabled={loading}
+      >
+        <Text style={styles.loginButtonText}>
+          {loading ? "Ingresando..." : "Iniciar Sesión"}
+        </Text>
       </TouchableOpacity>
 
       {/* Enlace registro */}

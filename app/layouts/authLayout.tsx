@@ -8,7 +8,7 @@ import {
   Text,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../theme";
+import { lightTheme } from "../../theme";
 
 type Props = {
   children: React.ReactNode;

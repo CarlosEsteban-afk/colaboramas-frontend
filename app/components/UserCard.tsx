@@ -1,7 +1,7 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../theme"; // ajusta la ruta según tu proyecto
+import { lightTheme } from "../../theme";
 import { useTranslation } from "react-i18next";
 
 type Props = {
@@ -9,10 +9,12 @@ type Props = {
   title: string;
   location: string;
   tags: string[];
+  imageUrl?: string; 
 };
 
-export default function UserCard({ name, title, location, tags = [] }: Props) {
+export default function UserCard({ name, title, location, tags = [], imageUrl }: Props) {
   const { t } = useTranslation();
+
   return (
     <LinearGradient
       colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
@@ -20,9 +22,18 @@ export default function UserCard({ name, title, location, tags = [] }: Props) {
       end={{ x: 1, y: 1 }}
       style={styles.card}
     >
-      <Text style={styles.name}>{name}</Text>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.location}>{location}</Text>
+      <View style={styles.headerRow}>
+        {imageUrl ? (
+          <Image source={{ uri: imageUrl }} style={styles.profileImage} />
+        ) : (
+          <View style={styles.placeholderImage} />
+        )}
+        <View style={styles.textContainer}>
+          <Text style={styles.name}>{name}</Text>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.location}>{location}</Text>
+        </View>
+      </View>
 
       {Array.isArray(tags) && tags.length > 0 && (
         <View style={styles.tagsContainer}>
@@ -33,7 +44,6 @@ export default function UserCard({ name, title, location, tags = [] }: Props) {
           ))}
         </View>
       )}
-
 
       <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>{t("user.contact")}</Text>
@@ -49,18 +59,41 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 16,
     maxWidth: 300,
-    alignSelf:"center",
+    alignSelf: "center",
     width: "100%",
+  },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 12,
+    borderWidth: 2,
+    borderColor: lightTheme.colors.background,
+  },
+  placeholderImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: lightTheme.colors["muted-foreground"],
+    marginRight: 12,
+  },
+  textContainer: {
+    flex: 1,
   },
   name: {
     fontSize: 16,
     fontWeight: "700",
-    color: lightTheme.colors.background, // blanco sobre gradiente
+    color: lightTheme.colors.background,
   },
   title: {
     fontSize: 14,
     color: lightTheme.colors.background,
-    marginTop: 4,
+    marginTop: 2,
   },
   location: {
     fontSize: 12,
@@ -74,7 +107,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tag: {
-    backgroundColor: lightTheme.colors["orange"], // puedes crear un color desde el tema si quieres
+    backgroundColor: lightTheme.colors["orange"],
     borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 8,
@@ -82,7 +115,6 @@ const styles = StyleSheet.create({
   tagText: {
     color: lightTheme.colors.background,
     fontSize: 12,
-    fontWeight: 16
   },
   button: {
     backgroundColor: lightTheme.colors["accent-blue"],
@@ -91,7 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginTop: 12,
     alignItems: "center",
-    alignSelf: "end"
+    alignSelf: "flex-end",
   },
   buttonText: {
     color: lightTheme.colors.background,

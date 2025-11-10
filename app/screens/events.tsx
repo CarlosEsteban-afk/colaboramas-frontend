@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Pressable, Image } from "react-native";
 import { useRouter } from "expo-router";
-import BottomBar from "../../components/BottomBar";
-import SearchBar from "../../components/SearchBar";
-import EventCard, { EventItem } from "../../components/EventCard";
+import BottomBar from "../components/BottomBar";
+import SearchBar from "../components/SearchBar";
+import EventCard, { EventItem } from "../components/EventCard";
 import { lightTheme } from "../../theme";
 
 export default function EventsScreen() {
@@ -126,18 +126,20 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    paddingTop: 60,
+    paddingTop: 20,
   },
   title: {
     fontSize: 32,
     fontWeight: "700",
     color: lightTheme.colors["primary-purple"],
     marginBottom: 8,
+    alignSelf:"center"
   },
   subtitle: { 
     color: lightTheme.colors["dark-gray"], 
     fontSize: 16,
     marginBottom: 20,
+    alignSelf:"center"
   },
   scrollContainer: {
     flex: 1,

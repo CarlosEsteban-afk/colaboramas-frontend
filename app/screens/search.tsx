@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import SearchBar from "../../components/SearchBar";
-import UserCard from "../../components/UserCard";
+import SearchBar from "../components/SearchBar";
+import UserCard from "../components/UserCard";
 import { lightTheme } from "../../theme";
 
 export default function SearchScreen() {
