@@ -7,11 +7,11 @@ import { View, Text, ScrollView } from "react-native";
 import UserCard from "../components/UserCard";
 import { Monicon } from "@monicon/native";
 import { useTranslation } from "react-i18next";
-
+import { useUserCard } from "../../src/hooks/useUserCard";
 export default function HomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
-
+  const { users, loading, error } = useUserCard();
   const recommendations = [
     {
       name: "Alicia Mora",
@@ -72,13 +72,38 @@ export default function HomeScreen() {
           paddingBottom: 80,
         }}
       >
-        <Text style={{ fontSize: 22, fontWeight: "bold", fontFamily: "Lato_400Regular", marginBottom: 8 }}>
+        <Text
+          style={{
+            fontSize: 22,
+            fontWeight: "bold",
+            fontFamily: "Lato_400Regular",
+            marginBottom: 8,
+          }}
+        >
           {t("home.recommendations")}
         </Text>
 
-        {recommendations.map((rec, index) => (
-          <UserCard title={""} key={index} {...rec} />
-        ))}
+        {loading ? (
+          <Text>Cargando usuarios...</Text>
+        ) : error ? (
+          <Text style={{ color: "red" }}>Error: {error}</Text>
+        ) : (
+          users.map((user, index) => (
+            <UserCard
+              key={user.id || index}
+              title={user.historialEducativo[1] || ""}
+              name={user.username}
+              location={user.city ? `${user.city}, ${user.country}` : ""}
+              tags={
+                Array.isArray(user.proyectosRecientes)
+                  ? user.proyectosRecientes
+                  : user.proyectosRecientes
+                  ? [user.proyectosRecientes]
+                  : []
+              }
+            />
+          ))
+        )}
 
         <Text
           style={{

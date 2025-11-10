@@ -7,6 +7,13 @@ import { useUser } from "../../src/hooks/useUser";
 
 export default function ProfileScreen() {
   const { user } = useUser();
+
+  const normalizeRole = (role: string) => {
+    return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+  };
+  const formattedRoles =
+    user.roles?.map(normalizeRole).join(", ") || "Sin rol definido";
+
   console.log("User data:", user);
   if (!user) {
     return (
@@ -28,7 +35,7 @@ export default function ProfileScreen() {
         <View style={{ marginBottom: 20 }}>
           <UserCard
             name={user.username}
-            title={user.role || "Usuario"}
+            title={formattedRoles}
             location="Temuco, Chile"
             tags={[]}
             imageUrl={user.imageUrl}
@@ -42,23 +49,33 @@ export default function ProfileScreen() {
 
         <View style={styles.section}>
           <GradientLabel text="Rol" />
-          <Text style={styles.value}>{user.role || "Sin rol definido"}</Text>
+          <Text style={styles.value}>{formattedRoles}</Text>
         </View>
-
         <View style={styles.section}>
           <GradientLabel text="Motivaciones" />
-          <Text style={styles.value}>Lorem ipsum...</Text>
+          <Text style={styles.value}>
+            {Array.isArray(user.motivaciones)
+              ? user.motivaciones.join("\n")
+              : user.motivaciones}
+          </Text>
         </View>
 
         <View style={styles.section}>
           <GradientLabel text="Intereses personales" />
-          <Text style={styles.value}>Trekking, Pádel, etc</Text>
+          <Text style={styles.value}>
+            {Array.isArray(user.actividadesPersonales)
+              ? user.actividadesPersonales.join("\n")
+              : user.actividadesPersonales}
+          </Text>
         </View>
 
         <View style={styles.section}>
           <GradientLabel text="Proyectos" />
-          <Text style={styles.value}>Proyecto 1</Text>
-          <Text style={styles.value}>Proyecto 2</Text>
+          <Text style={styles.value}>
+            {Array.isArray(user.proyectosRecientes)
+              ? user.proyectosRecientes.join("\n")
+              : user.proyectosRecientes}
+          </Text>
         </View>
       </ScrollView>
     </View>
@@ -68,7 +85,10 @@ export default function ProfileScreen() {
 function GradientLabel({ text }: { text: string }) {
   return (
     <LinearGradient
-      colors={[lightTheme.colors["purple-light"], lightTheme.colors["pink-light"]]}
+      colors={[
+        lightTheme.colors["purple-light"],
+        lightTheme.colors["pink-light"],
+      ]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.gradientLabel}
