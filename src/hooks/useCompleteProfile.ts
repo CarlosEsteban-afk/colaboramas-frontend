@@ -9,7 +9,7 @@ export const useCompleteProfile = () => {
 
   const completeProfile = async (userId: number, formData: any) => {
     try {
-      await api.put(`/users/${userId}/complete-profile`, formData);
+      await api.put(`/profiles/${userId}`, formData);
 
       const userResponse = await api.get("/auth/me");
       const updatedUser = userResponse.data;
