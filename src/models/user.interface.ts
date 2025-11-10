@@ -4,6 +4,8 @@ interface User {
   email: string;
   roles?: string[];
   imageUrl?: string;
+  ciudad?: string;
+  pais?: string;
   motivaciones?: string[] | string;
   historialEducativo?: string[];
   actividadesPersonales?: string[];

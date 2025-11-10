@@ -34,7 +34,7 @@ const onRegister = async () => {
     Alert.alert("Error", "Revisa tus datos o el correo ya está registrado");
     return;
   }
-  router.push("/home"); 
+  router.push("/auth/completeProfile"); 
 };
 
 

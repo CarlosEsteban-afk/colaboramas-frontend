@@ -9,15 +9,26 @@ type Props = {
   title: string;
   location: string;
   tags: string[];
-  imageUrl?: string; 
+  imageUrl?: string;
+  isOwnProfile?: boolean;
 };
 
-export default function UserCard({ name, title, location, tags = [], imageUrl }: Props) {
+export default function UserCard({
+  name,
+  title,
+  location,
+  tags = [],
+  imageUrl,
+  isOwnProfile = false,
+}: Props) {
   const { t } = useTranslation();
 
   return (
     <LinearGradient
-      colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
+      colors={[
+        lightTheme.colors["primary-pink"],
+        lightTheme.colors["primary-purple"],
+      ]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.card}
@@ -45,7 +56,10 @@ export default function UserCard({ name, title, location, tags = [], imageUrl }:
         </View>
       )}
 
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        style={[styles.button, isOwnProfile && { opacity: 0.0 }]}
+        disabled={isOwnProfile}
+      >
         <Text style={styles.buttonText}>{t("user.contact")}</Text>
       </TouchableOpacity>
     </LinearGradient>

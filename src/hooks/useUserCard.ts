@@ -12,6 +12,7 @@ export const useUserCard = () => {
     try {
       setLoading(true);
       const response = await api.get<UserCardDTO[]>("/search/recommendations");
+      console.log("Fetched users:", response.data);
       const mapped = response.data.map(userAdapter.fromCardDto);
       setUsers(mapped);
     } catch (err: any) {

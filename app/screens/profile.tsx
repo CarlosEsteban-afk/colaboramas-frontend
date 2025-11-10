@@ -36,9 +36,10 @@ export default function ProfileScreen() {
           <UserCard
             name={user.username}
             title={formattedRoles}
-            location="Temuco, Chile"
+            location={`${user.ciudad || "No especificada"}, ${user.pais || ""}`}
             tags={[]}
             imageUrl={user.imageUrl}
+            isOwnProfile={true}
           />
         </View>
 
@@ -77,6 +78,13 @@ export default function ProfileScreen() {
               : user.proyectosRecientes}
           </Text>
         </View>
+        
+        <View style={styles.section}>
+          <GradientLabel text="Ubicacion"/>
+          <Text style={styles.value}>{`${user.ciudad || "No especificada"}, ${user.pais || ""}`}</Text>
+        </View>
+
+
       </ScrollView>
     </View>
   );

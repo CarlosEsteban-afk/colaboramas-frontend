@@ -12,20 +12,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const { users, loading, error } = useUserCard();
-  const recommendations = [
-    {
-      name: "Alicia Mora",
-      title: "Psicóloga",
-      location: "Temuco, Chile",
-      tags: ["Psicología social", "Género"],
-    },
-    {
-      name: "Marcelo Santander",
-      title: "Estudiante de Trabajo Social",
-      location: "Temuco, Chile",
-      tags: ["Psicología social", "Antropología"],
-    },
-  ];
+
 
   const events: EventItem[] = [
     {
@@ -58,13 +45,10 @@ export default function HomeScreen() {
     },
   ];
 
-  const handleConfigPress = () => {
-    router.push("/screens/Settings");
-  };
 
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF" }}>
-      <TopBar onConfigPress={handleConfigPress} />
+      <TopBar/>
 
       <ScrollView
         contentContainerStyle={{
@@ -93,6 +77,7 @@ export default function HomeScreen() {
               key={user.id || index}
               title={user.profesion}
               name={user.nombre}
+              imageUrl={user.imageUrl}
               location={user.ciudad ? `${user.ciudad}, ${user.pais}` : ""}
               tags={
                 Array.isArray(user.camposInvestigacion)
