@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import i18n, { supportedLanguages } from "../i18n";
+import i18n, { supportedLanguages } from "../../i18n";
 
 type LanguageCode = "en" | "es";
 

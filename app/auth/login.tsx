@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Monicon } from "@monicon/native";
-import { useAuth } from "../../hooks/useAuth";
-import AuthLayout from "../authLayout";
+import { useAuth } from "../../src/hooks/useAuth";
+import AuthLayout from "../layouts/authLayout";
 
 export default function Login() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function Login() {
     setLoading(true);
     try {
       await signIn(email, password);
-      router.push("/home");
+      router.push("/screens");
     } catch (error) {
       Alert.alert("Error", "Correo o contraseña incorrectos");
     } finally {

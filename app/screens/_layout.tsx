@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Slot } from "expo-router";
-import BottomBar from "../../components/BottomBar";
+import BottomBar from "../components/BottomBar";
 import { lightTheme } from "../../theme";
 
 export const unstable_settings = {

@@ -1,13 +1,6 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-interface User {
-  id?: number;
-  name: string;
-  email: string;
-  role?: string;
-  imageUrl?: string;
-}
+import { User } from "../models/user.interface";
 
 interface UserContextType {
   user?: User;
@@ -28,7 +21,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error cargando usuario:", e);
     }
   };
-
   useEffect(() => {
     loadUser();
   }, []);

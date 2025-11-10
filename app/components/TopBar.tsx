@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Monicon } from "@monicon/native";
-import { lightTheme } from "../theme";
+import { lightTheme } from "../../theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Defs,

@@ -2,8 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
-import UserCard from "../../components/UserCard";
-import { useUser } from "../../hooks/useUser";
+import UserCard from "../components/UserCard";
+import { useUser } from "../../src/hooks/useUser";
 
 export default function ProfileScreen() {
   const { user } = useUser();
@@ -27,7 +27,7 @@ export default function ProfileScreen() {
       >
         <View style={{ marginBottom: 20 }}>
           <UserCard
-            name={user.name}
+            name={user.username}
             title={user.role || "Usuario"}
             location="Temuco, Chile"
             tags={[]}

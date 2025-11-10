@@ -7,8 +7,8 @@ import {
   StyleSheet,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import useRegister from "../../hooks/useRegister";
-import AuthLayout from "../authLayout";
+import useRegister from "../../src/hooks/useRegister";
+import AuthLayout from "../layouts/authLayout";
 
 export default function RegisterScreen() {
   const { role } = useLocalSearchParams<{ role?: string }>();

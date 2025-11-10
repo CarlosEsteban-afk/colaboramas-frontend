@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity, useWindowDimensions } from "react-native";
-import AuthLayout from "../authLayout"; 
+import AuthLayout from "../layouts/authLayout"; 
 import { router } from "expo-router";
 
 export default function PreRegister() {

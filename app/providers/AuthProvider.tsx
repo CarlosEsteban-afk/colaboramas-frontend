@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, ReactNode, useEffect, useState } from "react";
-import api from "../client";
+import api from "../../client";
 import { useUser } from "../hooks/useUser";
 
 const AUTHTOKEN = "auth_token";

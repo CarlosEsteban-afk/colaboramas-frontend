@@ -2,20 +2,20 @@ import React, { useState } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Monicon } from "@monicon/native";
-import { lightTheme } from "../theme";
+import { lightTheme } from "../../theme";
 import { useRouter, useSegments } from "expo-router";
 
 export default function BottomBar() {
   const router = useRouter();
   const segments = useSegments();
-  const currentRoute = segments[1] || "home"; // ejemplo: home/index
+  const currentRoute = segments[1] || "home"; 
 
   const items = [
-    { label: "Inicio", icon: "mdi:home-outline", route: "/home" },
-    { label: "Buscar", icon: "feather:search", route: "/home/search" },
-    { label: "Eventos", icon: "mdi:calendar", route: "/home/events" },
-    { label: "Contactos", icon: "fluent:alert-20-regular", route: "/home/contacts" },
-    { label: "Perfil", icon: "mdi:account-circle-outline", route: "/home/profile" },
+    { label: "Inicio", icon: "mdi:home-outline", route: "/screens" },
+    { label: "Buscar", icon: "feather:search", route: "/screens/search" },
+    { label: "Eventos", icon: "mdi:calendar", route: "/screens/events" },
+    { label: "Contactos", icon: "fluent:alert-20-regular", route: "/screens/contacts" },
+    { label: "Perfil", icon: "mdi:account-circle-outline", route: "/screens/profile" },
   ];
 
   return (

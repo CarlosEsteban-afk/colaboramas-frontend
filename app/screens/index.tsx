@@ -1,10 +1,10 @@
 import React from "react";
 import { useRouter } from "expo-router";
-import BottomBar from "../../components/BottomBar";
-import TopBar from "../../components/TopBar";
-import EventCard, { EventItem } from "../../components/EventCard";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import UserCard from "../../components/UserCard";
+import BottomBar from "../components/BottomBar";
+import TopBar from "../components/TopBar";
+import EventCard, { EventItem } from "../components/EventCard";
+import { View, Text, ScrollView } from "react-native";
+import UserCard from "../components/UserCard";
 import { Monicon } from "@monicon/native";
 import { useTranslation } from "react-i18next";
 

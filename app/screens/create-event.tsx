@@ -13,7 +13,7 @@ import {
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
-import { EventItem } from "../../components/EventCard";
+import { EventItem } from "../components/EventCard";
 
 export default function CreateEventScreen() {
   const router = useRouter();
@@ -25,7 +25,6 @@ export default function CreateEventScreen() {
 
   const submit = () => {
     if (!title.trim()) return Alert.alert("Error", "El título es obligatorio.");
-    // Aquí podrías enviar al backend / guardar en estado global
     const newEvent: EventItem = {
       id: String(Date.now()),
       title,
