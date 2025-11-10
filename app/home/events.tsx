@@ -97,7 +97,6 @@ export default function EventsScreen() {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Pressable style={styles.closeButton} onPress={closeDetails}>
-              <Text style={styles.closeText}>Cerrar</Text>
             </Pressable>
 
             {selectedEvent && (
