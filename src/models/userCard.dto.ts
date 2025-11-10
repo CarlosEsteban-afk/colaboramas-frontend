@@ -1,7 +1,13 @@
 export interface UserCardDTO {
   id: number;
-  username: string;
-  historialEducativo: string | string[];
-  actividadesPersonales: string | string[];
-  proyectosRecientes: string | string[];
+  nombre: string;
+  imageUrl: string;
+  pais: string;
+  ciudad: string;
+  profesion: string;
+  camposInvestigacion: string[];
+  lineasInteres: string[];
 }
+
+
+

@@ -11,9 +11,8 @@ export const useUserCard = () => {
   const getUsers = async () => {
     try {
       setLoading(true);
-      const response = await api.get<UserCardDTO[]>("/users/cards");
+      const response = await api.get<UserCardDTO[]>("/search/recommendations");
       const mapped = response.data.map(userAdapter.fromCardDto);
-      console.log("Fetched users:", mapped);  
       setUsers(mapped);
     } catch (err: any) {
       setError(err.message || "Error fetching users");

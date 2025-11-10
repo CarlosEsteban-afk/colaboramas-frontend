@@ -7,10 +7,16 @@ export const userAdapter = {
   fromCardDto(dto: UserCardDTO): UserCardDTO {
     return {
       id: dto.id,
-      username: dto.username,
-      historialEducativo: toArray(dto.historialEducativo),
-      actividadesPersonales: toArray(dto.actividadesPersonales),
-      proyectosRecientes: toArray(dto.proyectosRecientes),
+      nombre: dto.nombre,
+      imageUrl: dto.imageUrl,
+      pais: dto.pais,
+      ciudad: dto.ciudad,
+      profesion: dto.profesion,
+      camposInvestigacion: toArray(dto.camposInvestigacion),
+      lineasInteres: toArray(dto.lineasInteres),
     };
   },
 };
+
+
+

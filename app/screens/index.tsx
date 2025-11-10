@@ -88,17 +88,17 @@ export default function HomeScreen() {
         ) : error ? (
           <Text style={{ color: "red" }}>Error: {error}</Text>
         ) : (
-          users.map((user, index) => (
+          users.slice(0,2).map((user, index) => (
             <UserCard
               key={user.id || index}
-              title={user.historialEducativo[1] || ""}
-              name={user.username}
-              location={user.city ? `${user.city}, ${user.country}` : ""}
+              title={user.profesion}
+              name={user.nombre}
+              location={user.ciudad ? `${user.ciudad}, ${user.pais}` : ""}
               tags={
-                Array.isArray(user.proyectosRecientes)
-                  ? user.proyectosRecientes
-                  : user.proyectosRecientes
-                  ? [user.proyectosRecientes]
+                Array.isArray(user.camposInvestigacion)
+                  ? user.camposInvestigacion
+                  : Array.isArray(user.lineasInteres)
+                  ? user.lineasInteres
                   : []
               }
             />
