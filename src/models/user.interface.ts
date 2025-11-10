@@ -10,6 +10,9 @@ interface User {
   historialEducativo?: string[];
   actividadesPersonales?: string[];
   proyectosRecientes?: string[];
+  profesion?: string;
+  camposInvestigacion?: string[];
+  lineasInteres?: string[];
 
 
 

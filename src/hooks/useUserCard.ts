@@ -21,10 +21,28 @@ export const useUserCard = () => {
       setLoading(false);
     }
   };
+   const getUsersByRelevance = async (query: string) => {
+    if (!query) {
+      return getUsers(); // Fetch recommendations if query is empty
+    }
+    try {
+      setLoading(true);
+      // Assuming the endpoint is /search/relevance and takes a query parameter
+      const response = await api.get<UserCardDTO[]>(`/search/relevance?query=${query}`);
+      console.log("Fetched users by relevance:", response.data);
+      const mapped = response.data.map(userAdapter.fromCardDto);
+      setUsers(mapped);
+    } catch (err: any) {
+      setError(err.message || "Error fetching users by relevance");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     getUsers();
   }, []);
 
-  return { users, loading, error, refresh: getUsers };
+  return { users, loading, error, refresh: getUsers, getUsersByRelevance};
 };

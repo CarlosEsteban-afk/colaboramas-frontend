@@ -1,43 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import SearchBar from "../components/SearchBar";
 import UserCard from "../components/UserCard";
 import { lightTheme } from "../../theme";
+import { useUserCard } from "../../src/hooks/useUserCard";
 
 export default function SearchScreen() {
-  const users = [
-    {
-      name: "Alicia Mora",
-      title: "Psicóloga",
-      location: "Temuco, Chile",
-      tags: ["Psicología social", "Género"],
-    },
-    {
-      name: "Marcelo Santander",
-      title: "Estudiante de Trabajo Social",
-      location: "Temuco, Chile",
-      tags: ["Psicología social", "Antropología"],
-    },
-    {
-      name: "Sofía Reyes",
-      title: "Investigadora en Neurociencia",
-      location: "Santiago, Chile",
-      tags: ["Neuroplasticidad", "Cognición"],
-    },
-    {
-      name: "Tomás Rivas",
-      title: "Sociólogo",
-      location: "Valdivia, Chile",
-      tags: ["Cultura", "Educación", "Desigualdad"],
-    },
-  ];
+  // 1. Obtén la función 'getUsersByRelevance' de tu hook
+  const { users, loading, error, getUsersByRelevance } = useUserCard();
 
+  // 2. Crea un estado para el texto de la barra de búsqueda
+  const [searchQuery, setSearchQuery] = useState("");
+
+  console.log("Users in SearchScreen:", users);
+
+  // 3. Crea una función que se ejecute al enviar la búsqueda
+  const handleSearch = () => {
+    // Llama a la función del hook con el texto actual
+    getUsersByRelevance(searchQuery);
+  };
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Buscar</Text>
       <Text style={styles.text}>Explora contenido o usuarios</Text>
 
-      <SearchBar />
+      <SearchBar
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
+
+      {error && <Text style={{ color: 'red' }}>{error}</Text>}
 
       <ScrollView
         style={{ width: "105%" }}
@@ -48,8 +40,20 @@ export default function SearchScreen() {
         showsVerticalScrollIndicator={false}
       >
         {users.map((user, index) => (
-          <UserCard key={index} {...user} />
-        ))}
+          <UserCard
+            key={user.id || index}
+            title={user.profesion}
+            name={user.nombre}
+            imageUrl={user.imageUrl}
+            location={user.ciudad ? `${user.ciudad}, ${user.pais}` : ""}
+            tags={
+              Array.isArray(user.camposInvestigacion)
+                ? user.camposInvestigacion
+                : Array.isArray(user.lineasInteres)
+                  ? user.lineasInteres
+                  : []
+            }
+          />))}
       </ScrollView>
     </View>
   );
