@@ -1,13 +1,14 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import UserCard from "../components/UserCard";
 import { useUser } from "../../src/hooks/useUser";
+import { useLogout } from "../../src/hooks/useLogOut";
 
 export default function ProfileScreen() {
   const { user } = useUser();
-
+  const { handleLogout } = useLogout();
   const normalizeRole = (role: string) => {
     return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
   };
@@ -78,13 +79,22 @@ export default function ProfileScreen() {
               : user.proyectosRecientes}
           </Text>
         </View>
-        
+
         <View style={styles.section}>
-          <GradientLabel text="Ubicacion"/>
-          <Text style={styles.value}>{`${user.ciudad || "No especificada"}, ${user.pais || ""}`}</Text>
+          <GradientLabel text="Ubicacion" />
+          <Text style={styles.value}>{`${user.ciudad || "No especificada"}, ${
+            user.pais || ""
+          }`}</Text>
         </View>
 
-
+        <TouchableOpacity
+          onPress={handleLogout}
+          className="w-[90%] self-center mt-6 bg-red-500 py-3 rounded-xl shadow"
+        >
+          <Text className="text-white text-center text-lg font-semibold">
+            Cerrar Sesión
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );

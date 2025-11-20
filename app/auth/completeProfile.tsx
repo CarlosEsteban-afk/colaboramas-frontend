@@ -5,10 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  StyleSheet,
   Switch,
+  Image,
   Alert,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCompleteProfile } from "../../src/hooks/useCompleteProfile";
 import { useUser } from "../../src/hooks/useUser";
@@ -21,6 +22,7 @@ export default function ProfileEditView() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
+    profileImage: "",
     educacion: "",
     pais: "",
     ciudad: "",
@@ -37,6 +39,26 @@ export default function ProfileEditView() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      Alert.alert("Permiso requerido", "Debes permitir acceso a la galería.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      aspect: [1, 1],
+      allowsEditing: true,
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setFormData({ ...formData, profileImage: result.assets[0].uri });
+    }
+  };
+
   const handleSubmit = async () => {
     if (!formData.aceptaTerminos) {
       Alert.alert("Atención", "Debes aceptar los términos y condiciones.");
@@ -47,43 +69,97 @@ export default function ProfileEditView() {
       const updatedUser = await completeProfile(user.id, formData);
       setUser(updatedUser);
       await AsyncStorage.setItem("auth_user", JSON.stringify(updatedUser));
-
-      router.replace("/screens"); 
+      router.replace("/screens");
       Alert.alert("Éxito", "Perfil guardado correctamente.");
     } catch (err) {
       console.error(err);
-      Alert.alert("Error", "No se pudo guardar el perfil. Intenta nuevamente.");
+      Alert.alert("Error", "No se pudo guardar el perfil.");
     }
   };
 
   const fields = [
-    { label: "Educación", name: "educacion", placeholder: "Ejemplo: Universidad XYZ" },
+    {
+      label: "Educación",
+      name: "educacion",
+      placeholder: "Ej: Universidad XYZ",
+    },
     { label: "País", name: "pais", placeholder: "Selecciona tu país" },
     { label: "Ciudad", name: "ciudad", placeholder: "Selecciona tu ciudad" },
-    { label: "Campos de investigación", name: "investigacion", placeholder: "¿Qué has investigado?" },
-    { label: "Formación", name: "formacion", placeholder: "Selecciona tu nivel de formación" },
-    { label: "Líneas de interés", name: "intereses", placeholder: "¿Qué te gustaría investigar?" },
-    { label: "Motivaciones", name: "motivaciones", placeholder: "¿Qué te motiva a investigar?" },
-    { label: "Actividades personales", name: "actividades", placeholder: "¿Qué te gusta hacer en tu tiempo libre?" },
-    { label: "Proyectos recientes", name: "proyectos", placeholder: "Menciona algunos proyectos" },
+    {
+      label: "Campos de investigación",
+      name: "investigacion",
+      placeholder: "¿Qué has investigado?",
+    },
+    {
+      label: "Formación",
+      name: "formacion",
+      placeholder: "Nivel de formación",
+    },
+    {
+      label: "Líneas de interés",
+      name: "intereses",
+      placeholder: "¿Qué te gustaría investigar?",
+    },
+    {
+      label: "Motivaciones",
+      name: "motivaciones",
+      placeholder: "¿Qué te motiva?",
+    },
+    {
+      label: "Actividades personales",
+      name: "actividades",
+      placeholder: "¿Qué te gusta hacer?",
+    },
+    {
+      label: "Proyectos recientes",
+      name: "proyectos",
+      placeholder: "Menciona algunos proyectos",
+    },
   ];
 
   return (
-    <LinearGradient colors={["#ec4899", "#8b5cf6"]} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Completa tu perfil</Text>
-          <Text style={styles.subtitle}>
-            Esta información será visible en tu perfil. Puedes completarla más tarde.
-          </Text>
-        </View>
+    <LinearGradient colors={["#ec4899", "#8b5cf6"]} className="flex-1">
+      {/* Header */}
+      <View className="px-6 pt-12 pb-3">
+        <Text className="text-white text-2xl font-semibold text-center mb-1">
+          Completa tu perfil
+        </Text>
+        <Text className="text-purple-100 text-center">
+          Esta información será visible en tu perfil. Puedes completarla más
+          tarde.
+        </Text>
+      </View>
 
-        <View style={styles.form}>
+      {/* Card */}
+      <View className="flex-1 mx-5 mb-5 bg-white/20 rounded-2xl p-4 max-h-full">
+        <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+          {/* FOTO DE PERFIL */}
+          <View className="items-center mb-5">
+            <TouchableOpacity
+              className="w-28 h-28 rounded-full bg-white/30 items-center justify-center overflow-hidden"
+              onPress={pickImage}
+            >
+              {formData.profileImage ? (
+                <Image
+                  source={{ uri: formData.profileImage }}
+                  className="w-full h-full"
+                />
+              ) : (
+                <Text className="text-white text-center px-2">
+                  Subir imagen
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            <Text className="text-white mt-2 underline">Cambiar foto</Text>
+          </View>
+
+          {/* CAMPOS */}
           {fields.map((field) => (
-            <View key={field.name} style={styles.fieldContainer}>
-              <Text style={styles.label}>{field.label}</Text>
+            <View key={field.name} className="mb-4">
+              <Text className="text-white mb-1">{field.label}</Text>
               <TextInput
-                style={styles.input}
+                className="bg-white rounded-lg px-3 py-2 text-gray-800"
                 placeholder={field.placeholder}
                 placeholderTextColor="#aaa"
                 value={(formData as any)[field.name]}
@@ -92,131 +168,40 @@ export default function ProfileEditView() {
             </View>
           ))}
 
-          <View style={styles.switchContainer}>
+          {/* Switch */}
+          <View className="flex-row items-center mt-4">
             <Switch
               value={formData.aceptaTerminos}
               onValueChange={(val) => handleChange("aceptaTerminos", val)}
-              thumbColor={formData.aceptaTerminos ? "#fff" : "#f4f3f4"}
-              trackColor={{ false: "#767577", true: "#c084fc" }}
             />
-            <Text style={styles.termsText}>
-              He leído y acepto los <Text style={styles.link}>términos y condiciones</Text>.
+            <Text className="text-white ml-3">
+              He leído y acepto los{" "}
+              <Text className="text-pink-300 underline">
+                términos y condiciones
+              </Text>
+              .
             </Text>
           </View>
+        </ScrollView>
 
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={styles.buttonOutline}>
-              <Text style={styles.buttonOutlineText}>Volver</Text>
-            </TouchableOpacity>
+        {/* BOTONES */}
+        <View className="flex-row gap-3 mt-3">
+          <TouchableOpacity className="flex-1 border border-white py-3 rounded-lg items-center">
+            <Text className="text-white">Volver</Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity style={styles.buttonFilled} onPress={handleSubmit}>
-              <Text style={styles.buttonFilledText}>Registrar</Text>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity>
-            <Text style={styles.skipText}>Omitir</Text>
+          <TouchableOpacity
+            className="flex-1 bg-white py-3 rounded-lg items-center"
+            onPress={handleSubmit}
+          >
+            <Text className="text-purple-700 font-bold">Registrar</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+
+        <TouchableOpacity>
+          <Text className="text-white text-center mt-3 underline">Omitir</Text>
+        </TouchableOpacity>
+      </View>
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scroll: {
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-  },
-  header: {
-    marginBottom: 30,
-  },
-  title: {
-    color: "#fff",
-    fontSize: 26,
-    fontWeight: "600",
-    textAlign: "center",
-    marginBottom: 6,
-  },
-  subtitle: {
-    color: "#f3e8ff",
-    fontSize: 14,
-    textAlign: "center",
-    lineHeight: 20,
-  },
-  form: {
-    backgroundColor: "rgba(255,255,255,0.15)",
-    borderRadius: 16,
-    padding: 20,
-  },
-  fieldContainer: {
-    marginBottom: 16,
-  },
-  label: {
-    color: "#fff",
-    fontSize: 14,
-    marginBottom: 6,
-    fontWeight: "500",
-  },
-  input: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    fontSize: 14,
-    color: "#333",
-  },
-  switchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 20,
-  },
-  termsText: {
-    flex: 1,
-    color: "#fff",
-    fontSize: 13,
-    marginLeft: 8,
-    flexWrap: "wrap",
-  },
-  link: {
-    color: "#f9a8d4",
-    textDecorationLine: "underline",
-  },
-  buttonsContainer: {
-    flexDirection: "row",
-    gap: 10,
-    justifyContent: "space-between",
-  },
-  buttonOutline: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#fff",
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  buttonOutlineText: {
-    color: "#fff",
-    fontWeight: "600",
-  },
-  buttonFilled: {
-    flex: 1,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: "center",
-  },
-  buttonFilledText: {
-    color: "#7e22ce",
-    fontWeight: "700",
-  },
-  skipText: {
-    color: "#fff",
-    textAlign: "right",
-    marginTop: 16,
-    textDecorationLine: "underline",
-  },
-});
