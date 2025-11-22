@@ -1,6 +1,6 @@
 import React from "react";
 import { View, TextInput, StyleSheet } from "react-native";
-import { lightTheme } from "../../theme";
+import { lightTheme } from "../../../theme";
 
 interface Props {
   placeholder?: string;

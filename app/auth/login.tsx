@@ -22,21 +22,23 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Error", "Debes ingresar tu correo y contraseña");
-      return;
-    }
+  if (!email || !password) {
+    Alert.alert("Error", "Debes ingresar tu correo y contraseña");
+    return;
+  }
 
-    setLoading(true);
-    try {
-      await signIn(email, password);
-      router.push("/screens");
-    } catch (error) {
-      Alert.alert("Error", "Correo o contraseña incorrectos");
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    await signIn(email, password);
+
+    router.replace("/router/RoleRouter");
+
+  } catch (error) {
+    Alert.alert("Error", "Correo o contraseña incorrectos");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <AuthLayout
@@ -88,7 +90,6 @@ export default function Login() {
         </Text>
       </TouchableOpacity>
 
-      {/* Enlace registro */}
       <TouchableOpacity onPress={() => router.push("/auth/preregister")}>
         <Text style={styles.registerLink}>
           ¿No tienes cuenta? Regístrate

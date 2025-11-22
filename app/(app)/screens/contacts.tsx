@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme";
+import { lightTheme } from "../../../theme";
 import ContactsTab from "../components/ContactsTab";
 
 export default function ContactsScreen() {
@@ -12,7 +12,6 @@ export default function ContactsScreen() {
       <Text style={styles.title}>Contactos</Text>
       <Text style={styles.text}>Gestiona tus solicitudes de contacto.</Text>
 
-      {/* 🔹 Barra con gradiente e inner shadow simulado */}
       <LinearGradient
         colors={[
           lightTheme.colors["primary-purple"],
@@ -22,7 +21,6 @@ export default function ContactsScreen() {
         end={{ x: 1, y: 1 }}
         style={styles.tabBar}
       >
-        {/* Capa interior para efecto de sombra interna */}
         <View style={styles.innerShadow} pointerEvents="none" />
 
         {["recibidas", "enviadas", "contestadas"].map((t) => {

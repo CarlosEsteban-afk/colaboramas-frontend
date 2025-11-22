@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Pressable, Image } from "react-native";
 import { useRouter } from "expo-router";
-import BottomBar from "../components/BottomBar";
-import SearchBar from "../components/SearchBar";
-import EventCard, { EventItem } from "../components/EventCard";
-import { lightTheme } from "../../theme";
+import SearchBar from "../../components/SearchBar";
+import EventCard, { EventItem } from "../../components/EventCard";
+import { lightTheme } from "../../../../theme";
 
 export default function EventsScreen() {
-  // Datos de ejemplo para los eventos (ahora con description)
   const events: EventItem[] = [
     {
       id: "1",
@@ -77,7 +75,6 @@ export default function EventsScreen() {
         ))}
       </ScrollView>
 
-      {/* Botón flotante */}
       <TouchableOpacity
         style={styles.fab}
         activeOpacity={0.8}
@@ -87,7 +84,6 @@ export default function EventsScreen() {
         <Text style={styles.fabIcon}>+</Text>
       </TouchableOpacity>
 
-      {/* Modal de detalles */}
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -110,7 +106,6 @@ export default function EventsScreen() {
                 ) : (
                   <Text style={styles.modalDescription}>No hay descripción disponible.</Text>
                 )}
-                {/* Si tu evento incluye imagen: <Image source={{ uri: selectedEvent.image }} style={styles.modalImage} /> */}
               </>
             )}
           </View>

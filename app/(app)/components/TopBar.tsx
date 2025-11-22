@@ -1,7 +1,7 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { Monicon } from "@monicon/native";
-import { lightTheme } from "../../theme";
+import { lightTheme } from "../../../theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Defs,
@@ -9,38 +9,44 @@ import Svg, {
   Stop,
   Text as SvgText,
 } from "react-native-svg";
-import { useRouter } from "expo-router"; // 🔹 import router
+import { useRouter } from "expo-router";
+import { useFontsLoaded } from "../../../src/providers/FontsProvider";
 
 export default function TopBar() {
+  const {loaded}= useFontsLoaded();
   const insets = useSafeAreaInsets();
-  const router = useRouter(); // 🔹 inicializamos router
+  const router = useRouter();
+  const { width } = useWindowDimensions();
 
+  const fontSize = Math.min(width * 0.18, 64);
+  if(!loaded){
+    return null;
+  }
   const handleConfigPress = () => {
-    router.push("/screens/Settings"); // 🔹 ruta al pulsar el botón
+    router.push("/screens/Settings");
   };
 
   return (
     <View
       style={{
         backgroundColor: "#FFF",
-        paddingTop: insets.top + 10,
-        paddingBottom: 4,
+        paddingTop: insets.top + 12,
+        paddingBottom: 10,
+        paddingHorizontal: 14,
         shadowColor: "#000",
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
+        shadowOpacity: 0.03,
+        shadowRadius: 3,
         elevation: 2,
       }}
     >
-      {/* Botón de configuración */}
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={handleConfigPress} // 🔹 aquí llamamos a la función
+        onPress={handleConfigPress}
         style={{
           position: "absolute",
-          top: insets.top + 10,
-          right: 16,
-          backgroundColor: "transparent",
-          zIndex:10
+          top: insets.top + 12,
+          right: 20,
+          zIndex: 20,
         }}
       >
         <Monicon
@@ -50,9 +56,13 @@ export default function TopBar() {
         />
       </TouchableOpacity>
 
-      {/* 🔹 Título AGORA */}
       <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Svg viewBox="0 -5 80 30" width="100%" height="60">
+        <Svg
+          width={width * 0.7}        
+          height={fontSize * 1.2}     
+          viewBox="0 0 300 100"       
+          preserveAspectRatio="xMidYMid meet"
+        >
           <Defs>
             <SVGLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
               <Stop offset="0" stopColor={lightTheme.colors["primary-pink"]} />
@@ -62,11 +72,11 @@ export default function TopBar() {
 
           <SvgText
             fill="url(#grad)"
-            fontSize="64"
+            fontSize={fontSize}
             fontFamily="CinzelDecorative_400Regular"
             fontWeight="bold"
             x="50%"
-            y="55%"
+            y="70%"              
             textAnchor="middle"
           >
             AGORA

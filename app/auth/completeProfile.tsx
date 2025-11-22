@@ -34,6 +34,14 @@ export default function ProfileEditView() {
     proyectos: "",
     aceptaTerminos: false,
   });
+  const getHomeRouteByRole = (roles: string[]) => {
+    if (!roles) return "/auth/login";
+
+    if (roles.includes("ACADEMICO")) return "/academico/screens";
+    if (roles.includes("COMUNICADOR")) return "/comunicador/screens";
+
+    return "/auth/login";
+  };
 
   const handleChange = (name: string, value: string | boolean) => {
     setFormData({ ...formData, [name]: value });
@@ -48,7 +56,7 @@ export default function ProfileEditView() {
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
+      mediaTypes: ["images"],
       aspect: [1, 1],
       allowsEditing: true,
       quality: 0.8,
@@ -58,7 +66,6 @@ export default function ProfileEditView() {
       setFormData({ ...formData, profileImage: result.assets[0].uri });
     }
   };
-
   const handleSubmit = async () => {
     if (!formData.aceptaTerminos) {
       Alert.alert("Atención", "Debes aceptar los términos y condiciones.");
@@ -69,7 +76,10 @@ export default function ProfileEditView() {
       const updatedUser = await completeProfile(user.id, formData);
       setUser(updatedUser);
       await AsyncStorage.setItem("auth_user", JSON.stringify(updatedUser));
-      router.replace("/screens");
+
+      const homeRoute = getHomeRouteByRole(updatedUser.roles);
+      router.replace(homeRoute);
+
       Alert.alert("Éxito", "Perfil guardado correctamente.");
     } catch (err) {
       console.error(err);

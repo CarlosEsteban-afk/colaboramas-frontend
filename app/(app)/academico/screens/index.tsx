@@ -1,13 +1,10 @@
 import React from "react";
 import { useRouter } from "expo-router";
-import BottomBar from "../components/BottomBar";
-import TopBar from "../components/TopBar";
-import EventCard, { EventItem } from "../components/EventCard";
+import EventCard, { EventItem } from "../../components/EventCard";
 import { View, Text, ScrollView } from "react-native";
-import UserCard from "../components/UserCard";
-import { Monicon } from "@monicon/native";
+import UserCard from "../../components/UserCard";
 import { useTranslation } from "react-i18next";
-import { useUserCard } from "../../src/hooks/useUserCard";
+import { useUserCard } from "../../../../src/hooks/useUserCard";
 export default function HomeScreen() {
   const router = useRouter();
   const { t } = useTranslation();
@@ -48,7 +45,6 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#FFF" }}>
-      <TopBar/>
 
       <ScrollView
         contentContainerStyle={{
