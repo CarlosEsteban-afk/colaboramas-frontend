@@ -16,7 +16,7 @@ type Props = {
   subtitle?: string;
   showLogo?: boolean;
   card?: boolean;
-  cardGradient?: boolean; 
+  cardGradient?: boolean;
 };
 
 export default function AuthLayout({
@@ -83,11 +83,11 @@ export default function AuthLayout({
                 end={{ x: 1, y: 1 }}
                 className="rounded-2xl p-6 w-full shadow-md"
               >
-                {children}
+                <View className="w-full">{children}</View>
               </LinearGradient>
             ) : (
-              <View className="bg-white/90 rounded-2xl p-6 w-full shadow-md">
-                {children}
+              <View className="bg-white/90 rounded-2xl w-full shadow-md">
+                <View className="w-full">{children}</View>
               </View>
             )
           ) : (

@@ -1,8 +1,18 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
+
+const LOCAL_IP = "192.168.1.85";
+const PORT = 8080;
+const baseURL =
+  Platform.OS === "web"
+    ? `http://localhost:${PORT}/api`
+    : `http://${LOCAL_IP}:${PORT}/api`;
+
+console.log("🌐 API BASE URL:", baseURL);
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL,
   headers: {
     "Content-Type": "application/json",
   },

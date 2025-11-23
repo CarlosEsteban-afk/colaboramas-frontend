@@ -18,7 +18,6 @@ const uploadProfileImage = async (userId: number, imageUri: string) => {
 
     form.append("file", file);
   } else {
-    // iOS y Android (funciona perfecto)
     form.append("file", {
       uri: imageUri,
       type: "image/jpeg",
