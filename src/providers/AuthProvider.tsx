@@ -67,13 +67,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     roles: string[]
   ): Promise<boolean> => {
     try {
-      await api.post("/auth/register", {
+      const response = await api.post("/auth/register", {
         username: name,
         email,
         password,
         roleRequest: { roleListName: roles },
       });
-      await signIn(email, password);
+      const token = response.data.token;
+      if (!token) {
+        console.error("No se recibió token en la respuesta");
+        return false;
+      }
+      await AsyncStorage.setItem(AUTHTOKEN, token);
+
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      const userResponse = await api.get("/auth/me");
+      const user = userResponse.data;
+      await AsyncStorage.setItem(AUTHUSER, JSON.stringify(user));
+      console.log("User data on signUp:", user);
+      console.log("Roles assigned:", token);
+      setUser(user);
+      setIsAuthenticated(true);
+
       return true;
     } catch (error: any) {
       console.error("Error de registro:", error.response?.data || error);
@@ -87,7 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthenticated(false);
   };
 
-  if (loading) return null; // opcional, para evitar parpadeo
+  if (loading) return null;
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, signIn, signUp, signOut }}>

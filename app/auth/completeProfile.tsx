@@ -129,7 +129,6 @@ export default function ProfileEditView() {
 
   return (
     <LinearGradient colors={["#ec4899", "#8b5cf6"]} className="flex-1">
-      {/* Header */}
       <View className="px-6 pt-12 pb-3">
         <Text className="text-white text-2xl font-semibold text-center mb-1">
           Completa tu perfil
@@ -140,10 +139,8 @@ export default function ProfileEditView() {
         </Text>
       </View>
 
-      {/* Card */}
       <View className="flex-1 mx-5 mb-5 bg-white/20 rounded-2xl p-4 max-h-full">
         <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-          {/* FOTO DE PERFIL */}
           <View className="items-center mb-5">
             <TouchableOpacity
               className="w-28 h-28 rounded-full bg-white/30 items-center justify-center overflow-hidden"
@@ -164,7 +161,6 @@ export default function ProfileEditView() {
             <Text className="text-white mt-2 underline">Cambiar foto</Text>
           </View>
 
-          {/* CAMPOS */}
           {fields.map((field) => (
             <View key={field.name} className="mb-4">
               <Text className="text-white mb-1">{field.label}</Text>
@@ -194,7 +190,6 @@ export default function ProfileEditView() {
           </View>
         </ScrollView>
 
-        {/* BOTONES */}
         <View className="flex-row gap-3 mt-3">
           <TouchableOpacity className="flex-1 border border-white py-3 rounded-lg items-center">
             <Text className="text-white">Volver</Text>
