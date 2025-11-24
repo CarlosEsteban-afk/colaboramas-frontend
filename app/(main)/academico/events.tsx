@@ -1,58 +1,70 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Pressable, Image } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import SearchBar from "../../components/SearchBar";
-import EventCard, { EventItem } from "../../components/EventCard";
+import EventCardRight, { EventItem } from "../../components/EventCardRight";
 import { lightTheme } from "../../../theme";
 
+// --- TU CLAVE DE API AQUÍ ---
+const EVENTBRITE_API_KEY = "KVD2ENGAQ7PTMDB3BQVU";
+
 export default function EventsScreen() {
-  const events: EventItem[] = [
-    {
-      id: "1",
-      title: "2do Congreso Internacional de Ciencias de la Rehabilitación",
-      date: "October 24th-25th, 2025",
-      place: "Centro de Convenciones",
-      type: "Congreso",
-      description: "Congreso sobre avances en rehabilitación, talleres y ponencias internacionales.",
-    },
-    {
-      id: "2",
-      title: "Concurso ANID-FAPESP 2025",
-      date: "September 1st, 2025",
-      place: "Sede institucional",
-      type: "Concurso",
-      description: "Concurso de investigación para proyectos conjuntos entre ANID y FAPESP.",
-    },
-    {
-      id: "3",
-      title: "Charla: Nuevas tendencias en inteligencia artificial",
-      date: "October 10th, 2025",
-      place: "Auditorio B",
-      type: "Charla",
-      description: "Charla corta sobre aplicaciones prácticas y éticas de la IA.",
-    },
-    {
-      id: "4",
-      title: '1er Congreso Interuniversitario "Agricultura Sostenible"',
-      date: "September 25th, 09:00 horas",
-      place: "Aula Magna de la Universidad",
-      type: "Conferencia",
-      description: "Mesa redonda y presentaciones sobre prácticas agrícolas sostenibles.",
-    },
-  ];
-
   const router = useRouter();
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const openDetails = (event: EventItem) => {
-    setSelectedEvent(event);
-    setModalVisible(true);
-  };
+  useEffect(() => {
+    const fetchEvents = async () => {
+      const apiUrl = "https://www.eventbriteapi.com/v3/events/search/?q=Technology&expand=venue,logo";
 
-  const closeDetails = () => {
-    setModalVisible(false);
-    setSelectedEvent(null);
+      try {
+        const response = await fetch(apiUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${EVENTBRITE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          const errorBody = await response.json().catch(() => response.text());
+          throw new Error(`Error de red: ${response.status} - ${JSON.stringify(errorBody)}`);
+        }
+
+        const data = await response.json();
+        setEvents(data.events);
+        console.log('Eventos encontrados:', data.events.length);
+
+      } catch (e: any) {
+        setError(`No se pudieron cargar los eventos: ${e.message}`);
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []); 
+
+  const renderContent = () => {
+    if (loading) {
+      return <ActivityIndicator size="large" color={lightTheme.colors["primary-purple"]} style={{ marginTop: 50 }} />;
+    }
+
+    if (error) {
+      return <Text style={styles.errorText}>{error}</Text>;
+    }
+
+    if (events.length === 0) {
+        return <Text style={styles.errorText}>No se encontraron eventos.</Text>;
+    }
+
+    return events.map((event) => (
+      <View key={event.id} style={styles.eventWrapper}>
+        <EventCardRight event={event} />
+      </View>
+    ));
   };
 
   return (
@@ -68,11 +80,7 @@ export default function EventsScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {events.map((event) => (
-          <View key={event.id} style={styles.eventWrapper}>
-            <EventCard event={event} onPressDetails={() => openDetails(event)} />
-          </View>
-        ))}
+        {renderContent()}
       </ScrollView>
 
       <TouchableOpacity
@@ -83,34 +91,6 @@ export default function EventsScreen() {
       >
         <Text style={styles.fabIcon}>+</Text>
       </TouchableOpacity>
-
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={closeDetails}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Pressable style={styles.closeButton} onPress={closeDetails}>
-              <Text style={styles.closeText}>Cerrar</Text>
-            </Pressable>
-
-            {selectedEvent && (
-              <>
-                <Text style={styles.modalTitle}>{selectedEvent.title}</Text>
-                <Text style={styles.modalMeta}>{selectedEvent.type} · {selectedEvent.date}</Text>
-                {selectedEvent.place ? <Text style={styles.modalMeta}>Lugar: {selectedEvent.place}</Text> : null}
-                {selectedEvent.description ? (
-                  <Text style={styles.modalDescription}>{selectedEvent.description}</Text>
-                ) : (
-                  <Text style={styles.modalDescription}>No hay descripción disponible.</Text>
-                )}
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
@@ -136,6 +116,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 20,
     alignSelf:"center"
+  },
+  errorText: {
+    textAlign: 'center',
+    marginTop: 40,
+    fontSize: 16,
+    color: '#E91E63',
   },
   scrollContainer: {
     flex: 1,
@@ -169,49 +155,5 @@ const styles = StyleSheet.create({
     fontSize: 28,
     lineHeight: 32,
     fontWeight: "700",
-  },
-
-  /* Modal styles */
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    justifyContent: "center",
-    padding: 20,
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 18,
-    maxHeight: "85%",
-  },
-  closeButton: {
-    alignSelf: "flex-end",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-  },
-  closeText: {
-    color: lightTheme.colors["primary-purple"],
-    fontWeight: "700",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: lightTheme.colors["primary-purple"],
-    marginBottom: 8,
-  },
-  modalMeta: {
-    color: lightTheme.colors["dark-gray"],
-    marginBottom: 6,
-  },
-  modalDescription: {
-    marginTop: 10,
-    lineHeight: 20,
-    color: "#333",
-  },
-  modalImage: {
-    width: "100%",
-    height: 180,
-    borderRadius: 8,
-    marginTop: 12,
   },
 });
