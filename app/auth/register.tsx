@@ -71,9 +71,9 @@ export default function RegisterScreen() {
         >
           <Text
             className="
-              text-center text-white font-semibold text-base py-3 
-              bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500
-            "
+      text-center text-white font-semibold text-base py-3
+      bg-blue-500
+    "
           >
             Registrarse
           </Text>

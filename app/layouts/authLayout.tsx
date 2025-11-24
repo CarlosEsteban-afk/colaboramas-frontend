@@ -4,8 +4,8 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
   Text,
+  useWindowDimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
@@ -27,7 +27,10 @@ export default function AuthLayout({
   card = false,
   cardGradient = false,
 }: Props) {
-  const { height } = Dimensions.get("window");
+  const { height, width } = useWindowDimensions();
+
+  const isSmallScreen = height < 700;
+  const isWeb = Platform.OS === "web";
 
   return (
     <LinearGradient
@@ -40,59 +43,67 @@ export default function AuthLayout({
       className="flex-1"
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
         className="flex-1"
       >
         <ScrollView
+          showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             flexGrow: 1,
-            justifyContent: "center",
-            paddingHorizontal: 28,
-            paddingVertical: height < 700 ? 40 : 70,
+            justifyContent: isWeb ? "flex-start" : "center", 
             alignItems: "center",
+            paddingHorizontal: 28,
+            paddingVertical: isSmallScreen ? 40 : 70,
           }}
-          showsVerticalScrollIndicator={false}
         >
-          {showLogo && (
-            <View className="items-center mb-6">
-              <View className="w-24 h-24 rounded-full bg-white/20 border border-white/50 justify-center items-center">
-                <Text className="text-white text-sm">Logo App</Text>
+          <View
+            style={{
+              width: "100%",
+              maxWidth: 480, 
+            }}
+          >
+            {showLogo && (
+              <View className="items-center mb-6">
+                <View className="w-24 h-24 rounded-full bg-white/20 border border-white/50 justify-center items-center">
+                  <Text className="text-white text-sm">Logo App</Text>
+                </View>
               </View>
-            </View>
-          )}
+            )}
 
-          {title && (
-            <Text className="text-3xl font-bold text-center text-white mb-2">
-              {title}
-            </Text>
-          )}
-          {subtitle && (
-            <Text className="text-sm text-center text-white mb-6 leading-tight">
-              {subtitle}
-            </Text>
-          )}
+            {title && (
+              <Text className="text-3xl font-bold text-center text-white mb-2">
+                {title}
+              </Text>
+            )}
 
-          {card ? (
-            cardGradient ? (
-              <LinearGradient
-                colors={[
-                  lightTheme.colors["primary-pink"],
-                  lightTheme.colors["primary-purple"],
-                ]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                className="rounded-2xl p-6 w-full shadow-md"
-              >
-                <View className="w-full">{children}</View>
-              </LinearGradient>
+            {subtitle && (
+              <Text className="text-sm text-center text-white mb-6 leading-tight">
+                {subtitle}
+              </Text>
+            )}
+
+            {card ? (
+              cardGradient ? (
+                <LinearGradient
+                  colors={[
+                    lightTheme.colors["primary-pink"],
+                    lightTheme.colors["primary-purple"],
+                  ]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="rounded-2xl p-6 shadow-md"
+                >
+                  {children}
+                </LinearGradient>
+              ) : (
+                <View className="bg-white/90 rounded-2xl p-6 shadow-md">
+                  {children}
+                </View>
+              )
             ) : (
-              <View className="bg-white/90 rounded-2xl w-full shadow-md">
-                <View className="w-full">{children}</View>
-              </View>
-            )
-          ) : (
-            <View className="w-full">{children}</View>
-          )}
+              <View className="w-full">{children}</View>
+            )}
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </LinearGradient>
