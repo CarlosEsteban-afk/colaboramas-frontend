@@ -10,18 +10,14 @@ import Svg, {
   Text as SvgText,
 } from "react-native-svg";
 import { useRouter } from "expo-router";
-import { useFontsLoaded } from "../../src/providers/FontsProvider";
 
 export default function TopBar() {
-  const {loaded}= useFontsLoaded();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width } = useWindowDimensions();
 
   const fontSize = Math.min(width * 0.18, 64);
-  if(!loaded){
-    return null;
-  }
+  
   const handleConfigPress = () => {
     router.push("/screens/Settings");
   };

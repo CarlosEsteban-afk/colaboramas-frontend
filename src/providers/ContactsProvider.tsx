@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import api from "../../client";
 import { useUser } from "../hooks/useUser";
-import { useAuth } from "../hooks/useAuth"; // Asegúrate de tener este hook
+import { useAuth } from "../hooks/useAuth"; 
 
 export const ContactsContext = createContext(undefined);
 

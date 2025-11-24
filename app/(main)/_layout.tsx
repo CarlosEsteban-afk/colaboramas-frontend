@@ -20,15 +20,12 @@ export default function HomeLayout() {
 
   return (
     <View style={styles.container}>
-      {/* TopBar */}
       {!hideTopBar && <TopBar />}
 
-      {/* Contenido */}
       <View style={styles.content}>
         <Slot />
       </View>
 
-      {/* BottomBar fijo al fondo */}
       <View style={styles.bottomBar}>
         <BottomBar />
       </View>
@@ -50,7 +47,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    // Asegura que en Web y móviles se vea siempre
     zIndex: 10,
     ...Platform.select({
       web: { pointerEvents: "auto" },
