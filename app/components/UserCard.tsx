@@ -1,27 +1,38 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+// UserCard.tsx
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import { useTranslation } from "react-i18next";
+import SendMessageModal from "./SendMessageModal";
 
 type Props = {
+  id: number;
   name: string;
   title: string;
   location: string;
-  tags: string[];
+  tags?: string[];
   imageUrl?: string;
-  isOwnProfile?: boolean;
+  onContactPress: (id: number, name: string) => void; // 👈 NUEVO
 };
 
 export default function UserCard({
+  id,
   name,
   title,
   location,
   tags = [],
   imageUrl,
-  isOwnProfile = false,
+  onContactPress,
 }: Props) {
   const { t } = useTranslation();
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <LinearGradient
@@ -33,75 +44,82 @@ export default function UserCard({
       end={{ x: 1, y: 1 }}
       style={styles.card}
     >
-      <View style={styles.headerRow}>
+      <View style={styles.header}>
         {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={styles.profileImage} />
+          <Image source={{ uri: imageUrl }} style={styles.image} />
         ) : (
-          <View style={styles.placeholderImage} />
+          <View style={[styles.image, styles.imagePlaceholder]} />
         )}
-        <View style={styles.textContainer}>
+
+        <View style={styles.infoContainer}>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.location}>{location}</Text>
         </View>
       </View>
 
-      {Array.isArray(tags) && tags.length > 0 && (
+      {tags.length > 0 && (
         <View style={styles.tagsContainer}>
-          {tags.map((tag, index) => (
-            <View key={index} style={styles.tag}>
+          {tags.map((tag, i) => (
+            <View key={i} style={styles.tag}>
               <Text style={styles.tagText}>{tag}</Text>
             </View>
           ))}
         </View>
       )}
 
+      {/* 👉 SOLO abre el modal, no envia, no valida auth */}
       <TouchableOpacity
-        style={[styles.button, isOwnProfile && { opacity: 0.0 }]}
-        disabled={isOwnProfile}
+        style={styles.button}
+        onPress={() => setModalVisible(true)}
       >
         <Text style={styles.buttonText}>{t("user.contact")}</Text>
       </TouchableOpacity>
+
+
+      <SendMessageModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        recipientId={id}
+        recipientName={name}
+      />
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: 6,
-    padding: 20,
-    marginHorizontal: 20,
-    marginTop: 16,
-    maxWidth: 300,
-    alignSelf: "center",
+    padding: 16,
+    borderRadius: 10,
     width: "100%",
+    maxWidth: 375,
+    marginVertical: 6,
+    marginHorizontal: 4,
+    alignSelf: "center",
   },
-  headerRow: {
+  header: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 8,
   },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
+  image: {
+    width: 65,
+    height: 65,
+    borderRadius: 32.5,
     borderWidth: 2,
-    borderColor: lightTheme.colors.background,
-  },
-  placeholderImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: lightTheme.colors["muted-foreground"],
+    borderColor: "#fff",
+    backgroundColor: "#ddd",
     marginRight: 12,
   },
-  textContainer: {
+  imagePlaceholder: {
+    backgroundColor: "rgba(255,255,255,0.2)",
+  },
+  infoContainer: {
     flex: 1,
   },
   name: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 18,
+    fontWeight: "600",
     color: lightTheme.colors.background,
   },
   title: {
@@ -121,26 +139,19 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tag: {
-    backgroundColor: lightTheme.colors["orange"],
-    borderRadius: 12,
+    backgroundColor: lightTheme.colors.orange,
+    borderRadius: 20,
     paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingHorizontal: 10,
   },
-  tagText: {
-    color: lightTheme.colors.background,
-    fontSize: 12,
-  },
+  tagText: { color: lightTheme.colors.background, fontSize: 12 },
   button: {
     backgroundColor: lightTheme.colors["accent-blue"],
-    width: 80,
     paddingVertical: 6,
+    paddingHorizontal: 14,
     borderRadius: 6,
-    marginTop: 12,
-    alignItems: "center",
+    marginTop: 10,
     alignSelf: "flex-end",
   },
-  buttonText: {
-    color: lightTheme.colors.background,
-    fontWeight: "600",
-  },
+  buttonText: { color: lightTheme.colors.background, fontWeight: "600" },
 });

@@ -24,7 +24,41 @@
     "deleteAccount": "Eliminar cuenta",
     "termsOfService": "Términos de servicio",
     "appInfo": "Información de la app"
+  },
+  "sendMessageModal": {
+    "title": "Enviar mensaje a {{name}}",
+    "subtitle": "Completa el asunto y tu mensaje.",
+    "subjectPlaceholder": "Asunto",
+    "messagePlaceholder": "Escribe tu mensaje...",
+    "cancel": "Cancelar",
+    "send": "Enviar",
+    "errorEmptyFields": "Debes completar todos los campos."
+  },
+  "multiSelect": {
+    "placeholder": "Seleccionar...",
+    "searchPlaceholder": "Buscar...",
+    "noResults": "Sin resultados"
+  },
+  "contacts": {
+    "title": "Contactos",
+    "description": "Gestiona tus solicitudes de contacto.",
+    "tabs": {
+      "recibidas": "Recibidas",
+      "enviadas": "Enviadas",
+      "contestadas": "Contestadas"
+    },
+    "empty": "No hay solicitudes {{type}}.",
+    "actions": {
+      "accept": "Aceptar",
+      "reject": "Rechazar"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "accepted": "Aceptada",
+      "rejected": "Rechazada"
+    }
   }
 }
+
 
 

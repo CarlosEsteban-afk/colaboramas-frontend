@@ -19,7 +19,10 @@ declare module "@monicon/icon-loader" {
 	| "mdi:arrow-left"
 	| "mdi:translate-variant"
 	| "mdi:shield-check"
-	| "mdi:help-circle";
+	| "mdi:help-circle"
+	| "material-symbols:filter-alt-outline"
+	| "material-symbols:filter-alt"
+	| "mdi:chevron-down";
 
   export type MoniconProps = {
     /**
