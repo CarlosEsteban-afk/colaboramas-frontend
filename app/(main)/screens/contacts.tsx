@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme";
-import ContactsTab from "../components/ContactsTab";
+import { lightTheme } from "../../../theme";
+import ContactsTab from "../../components/ContactsTab";
 
 export default function ContactsScreen() {
   const [tab, setTab] = useState<"recibidas" | "enviadas" | "contestadas">("recibidas");

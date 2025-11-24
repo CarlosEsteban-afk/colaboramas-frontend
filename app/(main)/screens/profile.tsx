@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme";
-import UserCard from "../components/UserCard";
-import { useUser } from "../../src/hooks/useUser";
-import { useLogout } from "../../src/hooks/useLogOut";
+import { lightTheme } from "../../../theme";
+import UserCard from "../../components/UserCard";
+import { useUser } from "../../../src/hooks/useUser";
+import { useLogout } from "../../../src/hooks/useLogOut";
 
 export const unstable_settings = {
   topBar: "hidden",

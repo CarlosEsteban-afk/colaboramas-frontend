@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Pressable, Image } from "react-native";
 import { useRouter } from "expo-router";
-import SearchBar from "../components/SearchBar";
-import EventCard, { EventItem } from "../components/EventCard";
-import { lightTheme } from "../../theme";
+import SearchBar from "../../components/SearchBar";
+import EventCard, { EventItem } from "../../components/EventCard";
+import { lightTheme } from "../../../theme";
 
 export default function EventsScreen() {
   const events: EventItem[] = [

@@ -9,8 +9,13 @@ export default function HomeLayout() {
   const segments = useSegments();
   const current = segments[segments.length - 1] || "index";
 
-  // Pantallas donde ocultamos el TopBar
-  const hiddenTopBarScreens = ["login", "editProfile", "events"];
+  const hiddenTopBarScreens = [
+    "login",
+    "editProfile",
+    "events",
+    "search",
+    "profile",
+  ];
   const hideTopBar = hiddenTopBarScreens.includes(current);
 
   return (
@@ -38,7 +43,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    // Padding para que el contenido no quede debajo del BottomBar
     paddingBottom: 80,
   },
   bottomBar: {

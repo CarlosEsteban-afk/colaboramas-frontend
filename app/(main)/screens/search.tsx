@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
-import SearchBar from "../components/SearchBar";
-import UserCard from "../components/UserCard";
-import { lightTheme } from "../../theme";
-import { useUserCard } from "../../src/hooks/useUserCard";
+import SearchBar from "../../components/SearchBar";
+import UserCard from "../../components/UserCard";
+import { lightTheme } from "../../../theme";
+import { useUserCard } from "../../../src/hooks/useUserCard";
 
 export default function SearchScreen() {
   // 1. Obtén la función 'getUsersByRelevance' de tu hook
