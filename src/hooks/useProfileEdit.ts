@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
-import { Alert } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import { Alert, Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 
@@ -54,21 +53,39 @@ export const useProfileEdit = () => {
   };
 
   const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert("Permiso requerido", "Debes permitir acceso a la galería.");
+    // expo-image-picker is not available on web builds by default. Dynamically
+    // import it only on native platforms so web bundling doesn't fail during
+    // development. On web we show a friendly message.
+    if (Platform.OS === "web") {
+      Alert.alert("No disponible en web", "La selección de imagen solo está disponible en la app móvil durante desarrollo.");
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      aspect: [1, 1],
-      allowsEditing: true,
-      quality: 0.8,
-    });
+    try {
+      const ImagePicker = await import("expo-image-picker");
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permiso requerido", "Debes permitir acceso a la galería.");
+        return;
+      }
 
-    if (!result.canceled) {
-      handleChange("profileImage", result.assets[0].uri);
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images || ["images"],
+        aspect: [1, 1],
+        allowsEditing: true,
+        quality: 0.8,
+      });
+
+      // result.canceled (new) or result.cancelled (older) handling
+      const canceled = (result as any).canceled ?? (result as any).cancelled ?? false;
+      const assets = (result as any).assets ?? (result as any).selected ?? null;
+
+      if (!canceled && assets && assets.length > 0) {
+        handleChange("profileImage", assets[0].uri);
+      }
+    } catch (err) {
+      console.warn("expo-image-picker not available:", err);
+      Alert.alert("Error", "No se pudo abrir el selector de imágenes.");
     }
   };
 
