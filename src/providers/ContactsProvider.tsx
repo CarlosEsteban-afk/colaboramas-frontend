@@ -1,55 +1,90 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import api from "../../client";
 import { useUser } from "../hooks/useUser";
-import { useToken } from "../hooks/useToken";
+import { useAuth } from "../hooks/useAuth"; // Asegúrate de tener este hook
+
 export const ContactsContext = createContext(undefined);
 
 export const ContactsProvider = ({ children }) => {
   const { user } = useUser();
+  const { isAuthenticated } = useAuth(); // Agrega esta línea
   const userId = user?.id;
+
   const [sentMessages, setSentMessages] = useState([]);
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [repliedMessages, setRepliedMessages] = useState([]);
-
-  const token= useToken();
-  console.log("Token in ContactsProvider:", token);
-
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const loadMessages = async () => {
-    if (!userId) return;
+    if (!isAuthenticated || !userId) {
+      console.log("No autenticado o sin userId, omitiendo carga de mensajes");
+      return;
+    }
 
-    const [sentRes, recRes] = await Promise.all([
-      api.get(`/messages/sent/${userId}`),
-      api.get(`/messages/received/${userId}`),
-    ]);
+    setLoading(true);
+    setError(null);
 
-    const sent = sentRes.data;
-    const received = recRes.data;
+    try {
+      const [sentRes, recRes] = await Promise.all([
+        api.get(`/messages/sent/${userId}`),
+        api.get(`/messages/received/${userId}`),
+      ]);
 
-    setSentMessages(sent.filter((m) => m.status === "pending"));
-    setReceivedMessages(received.filter((m) => m.status === "pending"));
-    setRepliedMessages([
-      ...received.filter((m) => m.status !== "pending"),
-      ...sent.filter((m) => m.status !== "pending"),
-    ]);
+      const sent = sentRes.data;
+      const received = recRes.data;
+
+      setSentMessages(sent.filter((m) => m.status === "pending"));
+      setReceivedMessages(received.filter((m) => m.status === "pending"));
+      setRepliedMessages([
+        ...received.filter((m) => m.status !== "pending"),
+        ...sent.filter((m) => m.status !== "pending"),
+      ]);
+    } catch (err: any) {
+      console.error("Error cargando mensajes:", err);
+      setError(
+        err.response?.data?.message || err.message || "Error desconocido"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
-useEffect(() => {
-  if (token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  }
-  loadMessages();
-}, [token]);
+  useEffect(() => {
+    if (isAuthenticated && userId) {
+      loadMessages();
+    } else {
+      setSentMessages([]);
+      setReceivedMessages([]);
+      setRepliedMessages([]);
+    }
+  }, [isAuthenticated, userId]); 
 
-  const sendMessage = async (payload) => {
-    await api.post(`/messages/send`, payload);
-    await loadMessages();
+  const sendMessage = async (payload: any) => {
+    if (!isAuthenticated || !userId) {
+      console.error("Usuario no autenticado");
+      return;
+    }
+    try {
+      await api.post(`/messages/send`, payload);
+      await loadMessages();
+    } catch (err) {
+      console.error("Error enviando mensaje:", err);
+    }
   };
 
-  const respondToMessage = async (id, accepted) => {
+  const respondToMessage = async (id: string, accepted: boolean) => {
+    if (!isAuthenticated || !userId) {
+      console.error("Usuario no autenticado");
+      return;
+    }
     const status = accepted ? "accepted" : "rejected";
-    await api.put(`/messages/${id}/respond?status=${status}`);
-    await loadMessages();
+    try {
+      await api.put(`/messages/${id}/respond?status=${status}`);
+      await loadMessages();
+    } catch (err) {
+      console.error("Error respondiendo mensaje:", err);
+    }
   };
 
   return (
@@ -61,6 +96,8 @@ useEffect(() => {
         sendMessage,
         respondToMessage,
         reloadMessages: loadMessages,
+        loading,
+        error,
       }}
     >
       {children}

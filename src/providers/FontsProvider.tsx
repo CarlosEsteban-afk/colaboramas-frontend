@@ -18,7 +18,6 @@ export const FontsProvider = ({ children }) => {
     CinzelDecorative_400Regular,
     Lato_400Regular,
   });
-  console.log("Fuentes cargadas?");
   if (!loaded) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

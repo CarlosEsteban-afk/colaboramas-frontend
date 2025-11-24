@@ -21,11 +21,9 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem("auth_token");
-    console.log("🔍 TOKEN ENVIADO EN REQUEST:", token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-  console.log("🔍 HEADERS FINALES:", config.headers);
     return config;
   },
   (error) => Promise.reject(error)
