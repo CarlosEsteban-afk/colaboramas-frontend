@@ -1,17 +1,19 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import api from "../../client";
-import { useAuth } from "../providers/AuthProvider";
-
+import { useUser } from "../hooks/useUser";
+import { useToken } from "../hooks/useToken";
 export const ContactsContext = createContext(undefined);
 
 export const ContactsProvider = ({ children }) => {
-  console.log("ContactsProvider cargado");
-  const { user } = useAuth();
+  const { user } = useUser();
   const userId = user?.id;
-
   const [sentMessages, setSentMessages] = useState([]);
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [repliedMessages, setRepliedMessages] = useState([]);
+
+  const token= useToken();
+  console.log("Token in ContactsProvider:", token);
+
 
   const loadMessages = async () => {
     if (!userId) return;
@@ -33,11 +35,11 @@ export const ContactsProvider = ({ children }) => {
   };
 
 useEffect(() => {
-  if (user?.token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${user.token}`;
+  if (token) {
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   }
   loadMessages();
-}, [user?.token]);
+}, [token]);
 
   const sendMessage = async (payload) => {
     await api.post(`/messages/send`, payload);
