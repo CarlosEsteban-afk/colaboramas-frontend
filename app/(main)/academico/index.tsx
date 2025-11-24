@@ -68,6 +68,7 @@ export default function HomeScreen() {
         ) : (
           users.slice(0,2).map((user, index) => (
             <UserCard
+              id={user.id}
               key={user.id || index}
               title={user.profesion}
               name={user.nombre}

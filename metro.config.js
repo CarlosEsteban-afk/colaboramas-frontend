@@ -25,6 +25,10 @@ finalConfig = withMonicon(finalConfig, {
     "mdi:translate-variant",
     "mdi:shield-check",
     "mdi:help-circle",
+    "material-symbols:filter-alt-outline",
+    "material-symbols:filter-alt",
+    "mdi:chevron-down",
+
   ],
   collections: [], 
 });

@@ -2,59 +2,79 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
+import { useContacts } from "../../src/hooks/useContact";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   type: "recibidas" | "enviadas" | "contestadas";
 }
 
 export default function ContactsTab({ type }: Props) {
-  const example = [
-    {
-      name: "Alicia Mora",
-      university: "Universidad XYZ",
-      message:
-        "Hola, he visto tu perfil y creo que podríamos colaborar en investigación sobre neuroplasticidad.",
-      status: "pendiente",
-    },
-    {
-      name: "María Silva",
-      university: "Universidad XYZ",
-      message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-      status: type === "contestadas" ? "aceptada" : "pendiente",
-    },
-  ];
+  const { t } = useTranslation();
+  const { receivedMessages, sentMessages, repliedMessages, respondToMessage } =
+    useContacts();
+
+  const data =
+    type === "recibidas"
+      ? receivedMessages
+      : type === "enviadas"
+      ? sentMessages
+      : repliedMessages;
+
+  if (data.length === 0) {
+    return (
+      <Text style={{ color: "#666", textAlign: "center", marginTop: 20 }}>
+        {t("contacts.empty", { type: t(`contacts.tabs.${type}`) })}
+      </Text>
+    );
+  }
 
   return (
     <View style={{ gap: 10 }}>
-      {example.map((c, index) => (
+      {data.map((c, index) => (
         <LinearGradient
           key={index}
-          colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
+          colors={[
+            lightTheme.colors["primary-pink"],
+            lightTheme.colors["primary-purple"],
+          ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.card}
         >
           <View style={styles.innerCard}>
-            <Text style={styles.name}>{c.name}</Text>
-            <Text style={styles.university}>{c.university}</Text>
+            <Text style={styles.name}>
+              {type === "recibidas" ? c.fromUserId : `${c.toUserId}`}
+            </Text>
             <Text style={styles.message}>{c.message}</Text>
 
-            {/* Botones dinámicos */}
             {type === "recibidas" && (
               <View style={styles.row}>
-                <TouchableOpacity style={[styles.btn, { backgroundColor: lightTheme.colors["pink-light"] }]}>
-                  <Text style={styles.btnText}>Rechazar</Text>
+                <TouchableOpacity
+                  style={[styles.btn, { backgroundColor: "#E91E63" }]}
+                  onPress={() => respondToMessage(c.id, false)}  // rechazar solicitud
+                >
+                  <Text style={styles.btnText}>{t("contacts.actions.reject")}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.btn, { backgroundColor: lightTheme.colors["primary-pink"] }]}>
-                  <Text style={styles.btnText}>Aceptar</Text>
+
+                <TouchableOpacity
+                  style={[styles.btn, { backgroundColor: "#82A50B" }]}
+                  onPress={() => respondToMessage(c.id, true)}   // aceptar solicitud
+                >
+                  <Text style={styles.btnText}>{t("contacts.actions.accept")}</Text>
                 </TouchableOpacity>
               </View>
             )}
 
             {type === "enviadas" && (
               <View style={{ alignItems: "flex-end" }}>
-                <TouchableOpacity style={[styles.btn, { backgroundColor: lightTheme.colors["orange"] }]}>
-                  <Text style={styles.btnText}>Pendiente</Text>
+                <TouchableOpacity
+                  style={[
+                    styles.btn,
+                    { backgroundColor: lightTheme.colors["orange"] },
+                  ]}
+                >
+                  <Text style={styles.btnText}>{t("contacts.status.pending")}</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -71,7 +91,9 @@ export default function ContactsTab({ type }: Props) {
                   ]}
                 >
                   <Text style={styles.btnText}>
-                    {c.status === "aceptada" ? "Aceptada" : "Rechazada"}
+                    {c.status === "aceptada"
+                      ? t("contacts.status.accepted")
+                      : t("contacts.status.rejected")}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -101,11 +123,7 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: "bold",
     fontSize: 16,
-    color: "#ffff",
-  },
-  university: {
     color: "#fff",
-    marginBottom: 8,
   },
   message: {
     marginBottom: 12,
