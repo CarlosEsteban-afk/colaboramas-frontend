@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../../theme";
+import { lightTheme } from "../../theme";
 import { useTranslation } from "react-i18next";
 
 type Props = {

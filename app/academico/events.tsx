@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Pressable, Image } from "react-native";
 import { useRouter } from "expo-router";
-import SearchBar from "../../components/SearchBar";
-import EventCard, { EventItem } from "../../components/EventCard";
-import { lightTheme } from "../../../../theme";
+import SearchBar from "../components/SearchBar";
+import EventCard, { EventItem } from "../components/EventCard";
+import { lightTheme } from "../../theme";
 
 export default function EventsScreen() {
   const events: EventItem[] = [
@@ -78,7 +78,7 @@ export default function EventsScreen() {
       <TouchableOpacity
         style={styles.fab}
         activeOpacity={0.8}
-        onPress={() => router.push("/home/create-event")}
+        onPress={() => router.push("/academico/create-event")}
         accessibilityLabel="Crear evento"
       >
         <Text style={styles.fabIcon}>+</Text>

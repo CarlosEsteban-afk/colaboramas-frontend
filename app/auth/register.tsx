@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import useRegister from "../../src/hooks/useRegister";
 import AuthLayout from "../layouts/authLayout";
-import FormField from "../(app)/components/FormField";
+import FormField from "../components/FormField";
 export default function RegisterScreen() {
   const { role } = useLocalSearchParams<{ role?: string }>();
   const router = useRouter();

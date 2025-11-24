@@ -1,23 +1,30 @@
 import React from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  Platform,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Monicon } from "@monicon/native";
-import { lightTheme } from "../../../theme";
+import { lightTheme } from "../../theme";
 import { useRouter, useSegments } from "expo-router";
-import { useUser } from "../../../src/hooks/useUser";
+import { useUser } from "../../src/hooks/useUser";
 
 export default function BottomBar() {
   const router = useRouter();
   const segments = useSegments();
   const { user } = useUser();
 
-  // último segmento de la ruta actual
-  const currentRoute = segments[segments.length - 1] || "home";
+  const mainSegment = segments[0] || "";
+  if (!user || !["academico", "comunicador"].includes(mainSegment)) return null;
+
+  const currentRoute = segments[segments.length - 1] || "index";
 
   const getHomeRoute = () => {
     if (!user) return "/auth/login";
-    if (user.roles?.includes("ACADEMICO")) return "/academico/screens";
-    if (user.roles?.includes("COMUNICADOR")) return "/comunicador/screens";
+    if (user.roles?.includes("ACADEMICO")) return "/academico";
+    if (user.roles?.includes("COMUNICADOR")) return "/comunicador";
     return "/screens";
   };
 
@@ -27,7 +34,7 @@ export default function BottomBar() {
     {
       label: "Eventos",
       icon: "mdi:calendar",
-      route: "/academico/screens/events",
+      route: "/academico/events",
       role: "ACADEMICO",
     },
     {
@@ -47,6 +54,8 @@ export default function BottomBar() {
     return user?.roles?.includes(item.role);
   });
 
+  const BAR_HEIGHT = Platform.OS === "web" ? 70 : 64;
+
   return (
     <LinearGradient
       colors={[
@@ -55,20 +64,27 @@ export default function BottomBar() {
       ]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      className="flex-row justify-around items-center h-16 px-2"
+      style={[styles.bar, { height: BAR_HEIGHT }]}
     >
       {items.map((item, index) => {
-        const itemRouteSegment = item.route.split("/").pop();
-        const isActive = currentRoute === itemRouteSegment;
+        const itemRouteSegment = item.route.split("/").pop() || "";
+        const isActive =
+          itemRouteSegment === currentRoute || item.route === getHomeRoute();
 
         return (
           <TouchableOpacity
             key={index}
             activeOpacity={0.8}
             onPress={() => router.push(item.route as any)}
-            className={`flex-1 mx-1 items-center justify-center rounded-xl ${
-              isActive ? "shadow-md py-1" : "py-1"
-            }`}
+            style={[
+              styles.button,
+              isActive && {
+                shadowColor: "#000",
+                shadowOpacity: 0.3,
+                shadowOffset: { width: 0, height: 2 },
+                shadowRadius: 4,
+              },
+            ]}
           >
             <Monicon
               name={item.icon}
@@ -76,9 +92,10 @@ export default function BottomBar() {
               color={isActive ? lightTheme.colors["green-light"] : "#fff"}
             />
             <Text
-              className={`text-xs mt-1 font-semibold ${
-                isActive ? "text-green-400" : "text-white"
-              }`}
+              style={[
+                styles.label,
+                isActive && { color: lightTheme.colors["green-light"] },
+              ]}
             >
               {item.label}
             </Text>
@@ -88,3 +105,32 @@ export default function BottomBar() {
     </LinearGradient>
   );
 }
+
+const styles = StyleSheet.create({
+  bar: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    position: Platform.OS === "web" ? "sticky" : "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+  },
+  button: {
+    flex: 1,
+    marginHorizontal: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 10,
+    paddingVertical: 4,
+  },
+  label: {
+    fontSize: 12,
+    marginTop: 4,
+    fontWeight: "600",
+    color: "#fff",
+  },
+});

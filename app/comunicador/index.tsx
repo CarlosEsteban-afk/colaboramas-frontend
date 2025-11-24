@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text, ScrollView } from "react-native";
-import UserCard from "../../components/UserCard";
+import UserCard from "../components/UserCard";
 import { useTranslation } from "react-i18next";
-import { useUserCard } from "../../../../src/hooks/useUserCard";
+import { useUserCard } from "../../src/hooks/useUserCard";
 export default function HomeScreen() {
   const { t } = useTranslation();
   const { users, loading, error } = useUserCard();

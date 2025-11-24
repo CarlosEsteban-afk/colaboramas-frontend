@@ -1,7 +1,7 @@
 import React from "react";
 import { TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { Monicon } from "@monicon/native";
-import { lightTheme } from "../../../theme";
+import { lightTheme } from "../../theme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Defs,
@@ -10,7 +10,7 @@ import Svg, {
   Text as SvgText,
 } from "react-native-svg";
 import { useRouter } from "expo-router";
-import { useFontsLoaded } from "../../../src/providers/FontsProvider";
+import { useFontsLoaded } from "../../src/providers/FontsProvider";
 
 export default function TopBar() {
   const {loaded}= useFontsLoaded();

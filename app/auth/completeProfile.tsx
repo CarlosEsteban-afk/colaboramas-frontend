@@ -10,7 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import Select from "../(app)/components/AuthSelect";
+import Select from "../components/AuthSelect";
 import { useProfileEdit } from "../../src/hooks/useProfileEdit";
 
 export default function ProfileEditView() {
@@ -35,8 +35,7 @@ export default function ProfileEditView() {
           Esta información será visible en tu perfil.
         </Text>
       </View>
-
-      {/* CONTENEDOR PRINCIPAL - MEJORADO */}
+      {/* FORMULARIO */}
       <View className="mx-5 mb-5 bg-white/20 rounded-2xl p-4 flex-1">
         <ScrollView
           style={{ flex: 1 }}
@@ -72,18 +71,15 @@ export default function ProfileEditView() {
               </TouchableOpacity>
               <Text className="text-white mt-2 underline">Cambir foto</Text>
             </View>
-
-            {/* PAÍS */}
+            {/* PAIS */}
             <Select
               label="País"
               options={countries.map((country) => country.value)}
               value={formData.pais}
               onSelect={(val) => {
                 handleChange("pais", val.trim());
-                // La ciudad se resetea automáticamente en el hook
               }}
             />
-
             {/* CIUDAD */}
             <Select
               label="Ciudad"
@@ -105,8 +101,6 @@ export default function ProfileEditView() {
                 />
               </View>
             ))}
-
-            {/* TÉRMINOS */}
             <View className="flex-row items-center mt-4 mb-4">
               <Switch
                 value={formData.aceptaTerminos}
@@ -119,14 +113,11 @@ export default function ProfileEditView() {
             </View>
           </View>
         </ScrollView>
-
-        {/* BOTONES FIJOS (FUERA DEL SCROLL) */}
         <View className="mt-3">
           <View className="flex-row gap-3">
             <TouchableOpacity className="flex-1 border border-white py-3 rounded-lg items-center">
               <Text className="text-white">Volver</Text>
             </TouchableOpacity>
-
             <TouchableOpacity
               className="flex-1 bg-white py-3 rounded-lg items-center"
               onPress={handleSubmit}
@@ -134,8 +125,6 @@ export default function ProfileEditView() {
               <Text className="text-purple-700 font-bold">Registrar</Text>
             </TouchableOpacity>
           </View>
-
-          {/* OMITIR */}
           <TouchableOpacity>
             <Text className="text-white text-center mt-3 underline">
               Omitir

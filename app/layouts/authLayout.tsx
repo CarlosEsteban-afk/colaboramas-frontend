@@ -27,7 +27,7 @@ export default function AuthLayout({
   card = false,
   cardGradient = false,
 }: Props) {
-  const { height, width } = useWindowDimensions();
+  const { height } = useWindowDimensions();
 
   const isSmallScreen = height < 700;
   const isWeb = Platform.OS === "web";
@@ -50,7 +50,7 @@ export default function AuthLayout({
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             flexGrow: 1,
-            justifyContent: isWeb ? "flex-start" : "center", 
+            justifyContent: isWeb ? "flex-start" : "center",
             alignItems: "center",
             paddingHorizontal: 28,
             paddingVertical: isSmallScreen ? 40 : 70,
@@ -59,7 +59,7 @@ export default function AuthLayout({
           <View
             style={{
               width: "100%",
-              maxWidth: 480, 
+              maxWidth: 480,
             }}
           >
             {showLogo && (
