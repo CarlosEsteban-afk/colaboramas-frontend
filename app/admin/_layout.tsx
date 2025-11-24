@@ -33,7 +33,7 @@ export default function AdminLayout() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F6F6F6" },
-  inner: { paddingBottom: 100 },
+  inner: { paddingBottom: 120 },
   header: { padding: 14, borderBottomWidth: 1, borderColor: "#eee", backgroundColor: "#fff", alignItems: 'flex-start' },
   title: {
     color: lightTheme.colors["primary-purple"],

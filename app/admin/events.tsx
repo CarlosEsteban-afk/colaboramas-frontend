@@ -47,12 +47,12 @@ export default function AdminEvents(){
             <EventCard event={item} />
 
             <View style={styles.actions}>
-              <Pressable style={styles.actionBtn} onPress={() => patchEvent(item.id)}>
-                <Text style={styles.actionText}>Editar</Text>
+              <Pressable style={[styles.actionBtn, styles.primary]} onPress={() => patchEvent(item.id)}>
+                <Text style={[styles.actionText, styles.primaryText]}>Editar</Text>
               </Pressable>
 
-              <Pressable style={[styles.actionBtn, styles.warn]} onPress={() => toggleBan(item.id, !!item.banned)}>
-                <Text style={styles.actionText}>{item.status === "pending" ? "Aprobar" : "Banear"}</Text>
+              <Pressable style={[styles.actionBtn, item.status === "pending" ? styles.approve : styles.warn]} onPress={() => toggleBan(item.id, !!item.banned)}>
+                <Text style={[styles.actionText, item.status === "pending" ? styles.approveText : null]}>{item.status === "pending" ? "Aprobar" : "Banear"}</Text>
               </Pressable>
             </View>
           </View>
@@ -69,6 +69,11 @@ const styles = StyleSheet.create({
   name:{ fontWeight:'700' },
   small:{ color:'#666', marginTop:4 },
   actions:{ flexDirection:'row' },
-  btn:{ paddingVertical:8, paddingHorizontal:12, borderRadius:8, marginLeft:8, backgroundColor: lightTheme.colors['primary-pink'] },
-  btnText:{ color:'#fff', fontWeight:'700' }
+  actionBtn: { paddingVertical:8, paddingHorizontal:12, borderRadius:8, marginLeft:8, minWidth:90, alignItems:'center' },
+  actionText: { color:'#222', fontWeight:'700' },
+  primary: { backgroundColor: lightTheme.colors['primary-purple'] },
+  primaryText: { color: '#fff' },
+  approve: { backgroundColor: '#4CAF50' },
+  approveText: { color: '#fff' },
+  warn: { backgroundColor: '#E33' }
 });

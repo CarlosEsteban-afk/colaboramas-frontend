@@ -56,12 +56,12 @@ export default function AdminUsers() {
             <UserCard name={item.name} title={item.role} location={`${item.country}`} tags={[]} imageUrl={undefined} />
 
             <View style={styles.actionsRow}>
-              <TouchableOpacity style={styles.viewBtn} onPress={() => router.push(`/admin/user/${item.id}`)}>
-                <Text style={styles.viewText}>Ver</Text>
+              <TouchableOpacity style={[styles.actionBtn, styles.primary]} onPress={() => router.push(`/admin/user/${item.id}`)}>
+                <Text style={[styles.actionText, styles.primaryText]}>Ver</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.banBtn, item.banned ? styles.unban : null]} onPress={() => onBanToggle(item)}>
-                <Text style={styles.banText}>{item.banned ? "Desbanear" : "Banear"}</Text>
+              <TouchableOpacity style={[styles.actionBtn, item.banned ? styles.unban : styles.warn]} onPress={() => onBanToggle(item)}>
+                <Text style={[styles.actionText, item.banned ? styles.unbanText : styles.warnText]}>{item.banned ? "Desbanear" : "Banear"}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -75,10 +75,13 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: "#F6F6F6" },
   title: { fontSize: 20, fontWeight: "700", color: lightTheme.colors["primary-purple"], marginBottom: 8 },
   card: { backgroundColor: "transparent", marginBottom: 12 },
-  actionsRow: { flexDirection: "row", justifyContent: "center", gap: 8, marginTop: 8 },
-  viewBtn: { paddingVertical: 6, paddingHorizontal: 10, backgroundColor: "#fff", borderWidth: 1, borderColor: "#eee", borderRadius: 8, marginRight: 8 },
-  viewText: { color: lightTheme.colors["primary-purple"], fontWeight: "700" },
-  banBtn: { paddingVertical: 8, paddingHorizontal: 12, backgroundColor: "#E33", borderRadius: 8 },
-  banText: { color: "#fff", fontWeight: "700" },
-  unban: { backgroundColor: "#4CAF50" },
+  actionsRow: { flexDirection: "row", justifyContent: "center", gap: 8, marginTop: 8, marginBottom: 8 },
+  actionBtn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, marginHorizontal: 8, minWidth: 100, alignItems: 'center' },
+  actionText: { color: '#222', fontWeight: '700' },
+  primary: { backgroundColor: lightTheme.colors["primary-purple"] },
+  primaryText: { color: '#fff' },
+  warn: { backgroundColor: '#E33' },
+  warnText: { color: '#fff' },
+  unban: { backgroundColor: '#4CAF50' },
+  unbanText: { color: '#fff' },
 });
