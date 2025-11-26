@@ -68,10 +68,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     paddingHorizontal: 8,
-    position: Platform.OS === "web" ? "sticky" : "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
+  // Keep the nav positioned over the content so it stays visible at the
+  // bottom of the screen. Pages add bottom padding so content is not
+  // covered by this absolute bar.
+  position: Platform.OS === "web" ? "sticky" : "absolute",
+  bottom: 0,
+  left: 0,
+  right: 0,
     zIndex: 9999,
     elevation: 20,
     shadowColor: "#000",

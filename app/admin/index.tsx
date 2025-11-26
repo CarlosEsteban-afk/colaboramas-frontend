@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { lightTheme } from "../../theme";
 import { PieChart } from "react-native-chart-kit";
@@ -34,7 +34,7 @@ export default function AdminDashboard() {
   });
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+  <ScrollView style={Platform.OS === 'web' ? undefined : { flex: 1 }} contentContainerStyle={styles.container} nestedScrollEnabled={true} showsVerticalScrollIndicator={true} keyboardShouldPersistTaps="handled">
       <Text style={styles.title}>Dashboard</Text>
 
       <View style={styles.card}>
@@ -110,7 +110,7 @@ function getFlagEmoji(countryName: string) {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, paddingBottom: 40, backgroundColor: "#F6F6F6" },
+  container: { padding: 16, paddingBottom: 140, flexGrow: 1, backgroundColor: "#F6F6F6" },
   title: { fontSize: 22, fontWeight: "700", marginBottom: 12, color: lightTheme.colors["primary-purple"] },
   card: { backgroundColor: "#fff", padding: 12, borderRadius: 10, marginBottom: 12 },
   cardTitle: { fontSize: 14, fontWeight: "700", color: "#333" },

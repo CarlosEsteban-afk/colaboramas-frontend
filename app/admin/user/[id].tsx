@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, TextInput, Alert, StyleSheet, ScrollView } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import api from "../../../client";
 import { lightTheme } from "../../../theme";
 
 export default function AdminUserDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [roleEdit, setRoleEdit] = useState("");
 
@@ -50,7 +51,10 @@ export default function AdminUserDetail() {
   if (!user) return <Text style={{ padding: 16 }}>Cargando...</Text>;
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 16 }}>
+  <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 140 }} nestedScrollEnabled={true} showsVerticalScrollIndicator={true} keyboardShouldPersistTaps="handled">
+      <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+        <Text style={styles.backText}>Volver</Text>
+      </TouchableOpacity>
       <Text style={styles.title}>{user.username ?? user.nombre ?? "Usuario"}</Text>
       <Text style={styles.small}>{user.email}</Text>
 
@@ -82,6 +86,8 @@ export default function AdminUserDetail() {
 const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: "700", color: lightTheme.colors["primary-purple"] },
   small: { color: "#666", marginTop: 6 },
+  backBtn: { alignSelf: 'flex-start', marginBottom: 10, paddingVertical: 8, paddingHorizontal: 12, backgroundColor: lightTheme.colors['primary-purple'], borderRadius: 8 },
+  backText: { color: '#fff', fontWeight: '700' },
   input: { backgroundColor: "#fff", padding: 10, borderRadius: 8, marginTop: 8 },
   primaryBtn: { backgroundColor: lightTheme.colors["primary-purple"], padding: 10, borderRadius: 8, alignItems: "center" },
   primaryText: { color: "#fff", fontWeight: "700" },

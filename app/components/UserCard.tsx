@@ -11,6 +11,7 @@ type Props = {
   tags: string[];
   imageUrl?: string;
   isOwnProfile?: boolean;
+  hideContact?: boolean;
 };
 
 export default function UserCard({
@@ -20,6 +21,7 @@ export default function UserCard({
   tags = [],
   imageUrl,
   isOwnProfile = false,
+  hideContact = false,
 }: Props) {
   const { t } = useTranslation();
 
@@ -56,12 +58,14 @@ export default function UserCard({
         </View>
       )}
 
-      <TouchableOpacity
-        style={[styles.button, isOwnProfile && { opacity: 0.0 }]}
-        disabled={isOwnProfile}
-      >
-        <Text style={styles.buttonText}>{t("user.contact")}</Text>
-      </TouchableOpacity>
+      {!hideContact && (
+        <TouchableOpacity
+          style={[styles.button, isOwnProfile && { opacity: 0.0 }]}
+          disabled={isOwnProfile}
+        >
+          <Text style={styles.buttonText}>{t("user.contact")}</Text>
+        </TouchableOpacity>
+      )}
     </LinearGradient>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, Pressable, StyleSheet, Alert } from "react-native";
+import { View, Text, FlatList, Pressable, StyleSheet, Alert, Platform } from "react-native";
 import { lightTheme } from "../../theme";
 import EventCard from "../components/EventCard";
 
@@ -39,9 +39,13 @@ export default function AdminEvents(){
       <Text style={styles.title}>Eventos</Text>
 
       <FlatList
+        style={Platform.OS === 'web' ? undefined : { flex: 1 }}
         data={events}
         keyExtractor={(i) => String(i.id)}
-        contentContainerStyle={{ paddingVertical: 12 }}
+  contentContainerStyle={{ paddingVertical: 12, paddingBottom: 140 }}
+        nestedScrollEnabled={true}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={true}
         renderItem={({ item }) => (
           <View style={styles.item}>
             <EventCard event={item} />
@@ -66,6 +70,7 @@ const styles = StyleSheet.create({
   container:{ flex:1, padding:16, backgroundColor: '#F6F6F6' },
   title:{ fontSize:20, fontWeight:'700', marginBottom:8, color: lightTheme.colors['primary-purple'] },
   row:{ flexDirection:'row', alignItems:'center', padding:12, backgroundColor:'#fff', borderRadius:8, marginBottom:8 },
+  item: { marginBottom: 12 },
   name:{ fontWeight:'700' },
   small:{ color:'#666', marginTop:4 },
   actions:{ flexDirection:'row' },

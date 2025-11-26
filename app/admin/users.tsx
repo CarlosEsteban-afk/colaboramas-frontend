@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet, Platform, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { lightTheme } from "../../theme";
 import SearchBar from "../components/SearchBar";
@@ -42,31 +42,60 @@ export default function AdminUsers() {
     (u) => u.name.toLowerCase().includes(q.toLowerCase()) || u.email.toLowerCase().includes(q.toLowerCase()) || u.country.toLowerCase().includes(q.toLowerCase()),
   );
 
+  const containerStyle = Platform.OS === 'web' ? { padding: 16, backgroundColor: '#F6F6F6' } : styles.container;
+
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
       <Text style={styles.title}>Usuarios</Text>
       <SearchBar value={q} onChangeText={setQ} placeholder="Buscar por nombre, email o país" />
 
-      <FlatList
-        data={filtered}
-        keyExtractor={(i) => i.id}
-        contentContainerStyle={{ paddingVertical: 12 }}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <UserCard name={item.name} title={item.role} location={`${item.country}`} tags={[]} imageUrl={undefined} />
+      {Platform.OS === 'web' ? (
+  <ScrollView contentContainerStyle={{ paddingVertical: 12, paddingBottom: 140 }} showsVerticalScrollIndicator={true}>
+          {filtered.map((item) => (
+            <View key={item.id} style={styles.card}>
+              <UserCard hideContact name={item.name} title={item.role} location={`${item.country}`} tags={[]} imageUrl={undefined} />
 
-            <View style={styles.actionsRow}>
-              <TouchableOpacity style={[styles.actionBtn, styles.primary]} onPress={() => router.push(`/admin/user/${item.id}`)}>
-                <Text style={[styles.actionText, styles.primaryText]}>Ver</Text>
-              </TouchableOpacity>
+              <View style={styles.actionsRow}>
+                <TouchableOpacity style={[styles.actionBtn, styles.primary]} onPress={() => router.push(`/admin/user/${item.id}`)}>
+                  <Text style={[styles.actionText, styles.primaryText]}>Ver</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.actionBtn, item.banned ? styles.unban : styles.warn]} onPress={() => onBanToggle(item)}>
-                <Text style={[styles.actionText, item.banned ? styles.unbanText : styles.warnText]}>{item.banned ? "Desbanear" : "Banear"}</Text>
-              </TouchableOpacity>
+                <TouchableOpacity style={[styles.actionBtn, item.banned ? styles.unban : styles.warn]} onPress={() => onBanToggle(item)}>
+                  <Text style={[styles.actionText, item.banned ? styles.unbanText : styles.warnText]}>{item.banned ? "Desbanear" : "Banear"}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-      />
+          ))}
+        </ScrollView>
+      ) : (
+        <FlatList
+          style={{ flex: 1 }}
+          data={filtered}
+          keyExtractor={(i) => i.id}
+          contentContainerStyle={{ paddingVertical: 12, paddingBottom: 100 }}
+          nestedScrollEnabled={true}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={true}
+          // Diagnostic: log layout (visible area) and content size in web
+          onLayout={(e) => console.log('[DIAG] FlatList layout:', e.nativeEvent.layout)}
+          onContentSizeChange={(w, h) => console.log('[DIAG] FlatList contentSize:', { width: w, height: h })}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+            <UserCard hideContact name={item.name} title={item.role} location={`${item.country}`} tags={[]} imageUrl={undefined} />
+
+              <View style={styles.actionsRow}>
+                <TouchableOpacity style={[styles.actionBtn, styles.primary]} onPress={() => router.push(`/admin/user/${item.id}`)}>
+                  <Text style={[styles.actionText, styles.primaryText]}>Ver</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.actionBtn, item.banned ? styles.unban : styles.warn]} onPress={() => onBanToggle(item)}>
+                  <Text style={[styles.actionText, item.banned ? styles.unbanText : styles.warnText]}>{item.banned ? "Desbanear" : "Banear"}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 }
