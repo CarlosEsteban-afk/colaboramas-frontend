@@ -10,12 +10,31 @@ export default function AdminDashboard() {
   const [totalUsers, setTotalUsers] = useState<number | null>(null);
   const [byRole, setByRole] = useState<{ [k: string]: number }>({});
   const [byCountry, setByCountry] = useState<{ [k: string]: number }>({});
+  const [totalEvents, setTotalEvents] = useState<number | null>(null);
+  const [byEventType, setByEventType] = useState<{ [k: string]: number }>({});
 
   useEffect(() => {
     // For dev show mock data so charts render without backend
     setTotalUsers(1240);
     setByRole({ ACADEMICO: 870, COMUNICADOR: 370 });
-    setByCountry({ Chile: 410, Argentina: 300, Perú: 180, México: 150, Colombia: 110 });
+    setByCountry({
+      Perú: 1,
+      Brasil: 2,
+      España: 2,
+      Panamá: 1,
+      México: 1,
+      Argentina: 4,
+      Bolivia: 1,
+      Canadá: 1,
+      Paraguay: 1,
+      Uruguay: 1,
+      Chile: 3,
+      Colombia: 1,
+      Ecuador: 1,
+    });
+    // mock events
+    setTotalEvents(27);
+    setByEventType({ Conferencia: 6, Congreso: 8, Charla: 7, Concurso: 6 });
   }, []);
 
   const roles = ["ACADEMICO", "COMUNICADOR"];
@@ -33,6 +52,19 @@ export default function AdminDashboard() {
     };
   });
 
+  const eventTypes = ["Conferencia", "Congreso", "Charla", "Concurso"];
+  const eventColors = [lightTheme.colors["primary-purple"], lightTheme.colors["primary-pink"], "#4CAF50", "#FFC107"];
+  const pieDataEvents = eventTypes.map((t, i) => {
+    const value = byEventType[t] ?? 0;
+    return {
+      name: t,
+      population: value,
+      color: eventColors[i] || "#ccc",
+      legendFontColor: "#333",
+      legendFontSize: 12,
+    };
+  });
+
   return (
   <ScrollView style={Platform.OS === 'web' ? undefined : { flex: 1 }} contentContainerStyle={styles.container} nestedScrollEnabled={true} showsVerticalScrollIndicator={true} keyboardShouldPersistTaps="handled">
       <Text style={styles.title}>Dashboard</Text>
@@ -43,9 +75,32 @@ export default function AdminDashboard() {
       </View>
 
       <View style={styles.card}>
+        <Text style={styles.cardTitle}>Eventos registrados</Text>
+        <Text style={styles.bigNumber}>{totalEvents ?? "—"}</Text>
+      </View>
+
+      <View style={styles.card}>
         <Text style={styles.cardTitle}>Usuarios por rol</Text>
         <PieChart
           data={pieData}
+          width={screenWidth}
+          height={200}
+          chartConfig={{
+            backgroundGradientFrom: "#fff",
+            backgroundGradientTo: "#fff",
+            color: (opacity = 1) => `rgba(0,0,0, ${opacity})`,
+          }}
+          accessor="population"
+          backgroundColor="transparent"
+          paddingLeft="15"
+          absolute
+        />
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Eventos por tipo</Text>
+        <PieChart
+          data={pieDataEvents}
           width={screenWidth}
           height={200}
           chartConfig={{
@@ -73,36 +128,38 @@ export default function AdminDashboard() {
           ))}
       </View>
 
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Métrica adicional</Text>
-        <Text>Usuarios activos últimos 30 días: (placeholder)</Text>
-      </View>
-
-      <View style={styles.actionsRow}>
-        <TouchableOpacity style={styles.btn} onPress={() => router.push("/admin/users")}> 
-          <Text style={styles.btnText}>Gestionar Usuarios</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn} onPress={() => router.push("/admin/events")}> 
-          <Text style={styles.btnText}>Gestionar Eventos</Text>
-        </TouchableOpacity>
-      </View>
+      {/* Metric block removed per request */}
     </ScrollView>
   );
 }
 
 // Small helper to convert country name to flag emoji.
 function getFlagEmoji(countryName: string) {
-  // Map a few common Spanish country names to ISO country codes
+  // Normalize input (remove accents, lowercase) and map common country names
+  if (!countryName) return "";
+  const key = countryName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
   const map: Record<string, string> = {
-    Chile: "CL",
-    Argentina: "AR",
-    Perú: "PE",
-    Mexico: "MX",
-    México: "MX",
-    Colombia: "CO",
-    Brasil: "BR",
+    peru: "PE",
+    brasil: "BR",
+    espana: "ES",
+    panama: "PA",
+    mexico: "MX",
+    argentina: "AR",
+    bolivia: "BO",
+    canada: "CA",
+    paraguay: "PY",
+    uruguay: "UY",
+    chile: "CL",
+    colombia: "CO",
+    ecuador: "EC",
   };
-  const code = map[countryName] ?? null;
+
+  const code = map[key] ?? null;
   if (!code) return "";
   return code
     .toUpperCase()
@@ -121,7 +178,4 @@ const styles = StyleSheet.create({
   barLabel: { marginTop: 8, fontSize: 12 },
   barValue: { fontWeight: "700" },
   row: { flexDirection: "row", paddingVertical: 8, alignItems: "center" },
-  actionsRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 8 },
-  btn: { flex: 1, padding: 12, backgroundColor: lightTheme.colors["primary-purple"], borderRadius: 8, marginRight: 8, alignItems: "center" },
-  btnText: { color: "#fff", fontWeight: "700" },
 });

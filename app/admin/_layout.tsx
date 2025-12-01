@@ -6,9 +6,7 @@ import AdminNav from "./AdminNav";
 import TopBar from "../components/TopBar";
 
 export default function AdminLayout() {
-  // Show a clear development banner when not in production so the admin
-  // pages are accessible during development without authentication.
-  const isDev = process.env.NODE_ENV !== "production";
+  // Admin layout for authenticated tools. (dev banner removed)
 
   useEffect(() => {
     // On web some wrappers (expo/router or dev overlays) set body { overflow: hidden }
@@ -29,11 +27,7 @@ export default function AdminLayout() {
       <View style={styles.header}>
         <Text style={styles.title}>Panel de administración</Text>
         <Text style={styles.subtitle}>Herramientas de moderación y métricas</Text>
-        {isDev ? (
-          <View style={styles.devBanner}>
-            <Text style={styles.devText}>Modo desarrollo — admin accesible sin token</Text>
-          </View>
-        ) : null}
+        {/* development banner removed */}
       </View>
 
       {/* Slot occupies the remaining space; pages should manage their own scrolling
@@ -63,13 +57,5 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   subtitle: { color: lightTheme.colors["dark-gray"], fontSize: 12, marginTop: 4 },
-  devBanner: {
-    marginTop: 10,
-    backgroundColor: "#ffe9ee",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    alignSelf: "flex-start",
-  },
-  devText: { color: lightTheme.colors["primary-purple"], fontWeight: "700" },
+  // dev banner styles removed
 });
