@@ -23,19 +23,8 @@ export default function AdminUsers() {
   }, []);
 
   const onBanToggle = (u: User) => {
-    Alert.alert(
-      u.banned ? "Desbanear usuario" : "Banear usuario",
-      `¿Confirma que desea ${u.banned ? "desbanear" : "banear"} a ${u.name}?`,
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Aceptar",
-          onPress: () => {
-            setUsers((prev) => prev.map((p) => (p.id === u.id ? { ...p, banned: !p.banned } : p)));
-          },
-        },
-      ],
-    );
+    // Toggle immediately without confirmation so the card updates instantly.
+    setUsers((prev) => prev.map((p) => (p.id === u.id ? { ...p, banned: !p.banned } : p)));
   };
 
   const filtered = users.filter(

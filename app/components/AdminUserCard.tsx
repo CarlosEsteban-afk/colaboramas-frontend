@@ -25,36 +25,38 @@ export default function AdminUserCard({ name, title, location, tags = [], imageU
       end={{ x: 1, y: 1 }}
       style={styles.card}
     >
-      <View style={styles.innerRow}>
-        {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={styles.avatar} />
-        ) : (
-          <View style={styles.avatarPlaceholder} />
-        )}
-
-        <View style={styles.centerCol}>
-          <View style={styles.headerCol}>
-            <Text style={styles.name}>{name}</Text>
-            {title ? <Text style={styles.title}>{title}</Text> : null}
-            {location ? <Text style={styles.location}>{location}</Text> : null}
-          </View>
-
-          {tags.length > 0 && (
-            <View style={styles.tagsRow}>
-              {tags.map((t, i) => (
-                <View key={i} style={styles.tag}>
-                  <Text style={styles.tagText}>{t}</Text>
-                </View>
-              ))}
-            </View>
+      <View style={styles.topCol}>
+        <View style={styles.topRow}>
+          {imageUrl ? (
+            <Image source={{ uri: imageUrl }} style={styles.avatarLarge} />
+          ) : (
+            <View style={styles.avatarPlaceholderLarge} />
           )}
+
+          <Text style={styles.name}>{name}</Text>
         </View>
+
+        <View style={styles.subInfo}>
+          {title ? <Text style={styles.title}>{title}</Text> : null}
+          {location ? <Text style={styles.location}>{location}</Text> : null}
+        </View>
+
+        {tags.length > 0 && (
+          <View style={styles.tagsRow}>
+            {tags.map((t, i) => (
+              <View key={i} style={styles.tag}>
+                <Text style={styles.tagText}>{t}</Text>
+              </View>
+            ))}
+          </View>
+        )}
       </View>
       <View style={styles.adminButtons}>
         <View style={styles.leftGroup}>
           <TouchableOpacity
             style={[
               styles.adminBtn,
+              styles.roleWide,
               role === "comunicador" ? styles.roleBtnCommunicator : styles.roleBtnInvestigator,
             ]}
             onPress={onToggleRole}
@@ -64,16 +66,16 @@ export default function AdminUserCard({ name, title, location, tags = [], imageU
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.adminBtn, styles.detailsBtn]} onPress={onViewDetails} accessibilityLabel={`View details for ${name}`}>
-            <Text style={styles.adminBtnText}>Ver</Text>
+            <Text style={styles.adminBtnText}>Detalles</Text>
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity
           style={[styles.banBtn, banned ? styles.bannedBtnOn : styles.bannedBtnOff]}
           onPress={onToggleBan}
-          accessibilityLabel={`${banned ? "Unban" : "Ban"} ${name}`}
+          accessibilityLabel={`${banned ? "Set active" : "Set inactive"} ${name}`}
         >
-          <Text style={styles.adminBtnText}>{banned ? "Baneado" : "No baneado"}</Text>
+          <Text style={styles.adminBtnText}>{banned ? "Inactivo" : "Activo"}</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -81,14 +83,7 @@ export default function AdminUserCard({ name, title, location, tags = [], imageU
 }
 
 const styles = StyleSheet.create({
-  card: {
-    borderRadius: 12,
-    padding: 16,
-    marginHorizontal: 16,
-    marginTop: 12,
-    width: "100%",
-    overflow: "hidden",
-  },
+  
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -107,6 +102,35 @@ const styles = StyleSheet.create({
     borderRadius: 32,
     backgroundColor: lightTheme.colors["muted-foreground"],
   },
+
+  avatarLarge: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 2,
+    borderColor: lightTheme.colors.background,
+    marginBottom: 10,
+  },
+  avatarPlaceholderLarge: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: lightTheme.colors["muted-foreground"],
+    marginBottom: 10,
+  },
+
+  topCol: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+  },
+  subInfo: {
+    marginTop: 6,
+  },
   info: {
     flex: 1,
   },
@@ -114,6 +138,7 @@ const styles = StyleSheet.create({
     color: lightTheme.colors.background,
     fontWeight: "800",
     fontSize: 18,
+    marginLeft: 8,
   },
   title: {
     color: lightTheme.colors.background,
@@ -152,9 +177,9 @@ const styles = StyleSheet.create({
   card: {
     borderRadius: 12,
     padding: 18,
-    marginHorizontal: 16,
     marginTop: 12,
     width: "100%",
+    alignSelf: "stretch",
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 6 },
@@ -168,7 +193,7 @@ const styles = StyleSheet.create({
   },
   centerCol: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 10,
   },
   headerCol: {
     marginBottom: 6,
@@ -183,14 +208,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    gap: 8,
+    paddingHorizontal: 12,
   },
   adminBtn: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 14,
-    marginHorizontal: 4,
+    flexBasis: "30%",
+    flexGrow: 0,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    marginHorizontal: 6,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
@@ -198,10 +224,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  roleWide: {
+    flexBasis: "45%",
+  },
   adminBtnText: {
     color: lightTheme.colors.background,
     fontWeight: "700",
-    fontSize: 13,
+    fontSize: 12,
   },
   roleBtnInvestigator: {
     backgroundColor: lightTheme.colors["orange"],
@@ -211,10 +240,10 @@ const styles = StyleSheet.create({
   },
   // ban button moved to the right; color toggles depending on banned state
   banBtn: {
-    minWidth: 96,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 14,
+    width: 72,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
     shadowColor: "#000",
@@ -236,5 +265,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start",
   },
 });
