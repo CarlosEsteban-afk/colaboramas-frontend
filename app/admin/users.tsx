@@ -3,7 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet, Platform, Sc
 import { useRouter } from "expo-router";
 import { lightTheme } from "../../theme";
 import SearchBar from "../components/SearchBar";
-import UserCard from "../components/UserCard";
+import AdminUserCard from "../components/AdminUserCard";
 
 type User = { id: string; name: string; email: string; country: string; role: string; banned?: boolean };
 
@@ -53,17 +53,20 @@ export default function AdminUsers() {
   <ScrollView contentContainerStyle={{ paddingVertical: 12, paddingBottom: 140 }} showsVerticalScrollIndicator={true}>
           {filtered.map((item) => (
             <View key={item.id} style={styles.card}>
-              <UserCard hideContact name={item.name} title={item.role} location={`${item.country}`} tags={[]} imageUrl={undefined} />
-
-              <View style={styles.actionsRow}>
-                <TouchableOpacity style={[styles.actionBtn, styles.primary]} onPress={() => router.push(`/admin/user/${item.id}`)}>
-                  <Text style={[styles.actionText, styles.primaryText]}>Ver</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={[styles.actionBtn, item.banned ? styles.unban : styles.warn]} onPress={() => onBanToggle(item)}>
-                  <Text style={[styles.actionText, item.banned ? styles.unbanText : styles.warnText]}>{item.banned ? "Desbanear" : "Banear"}</Text>
-                </TouchableOpacity>
-              </View>
+              <AdminUserCard
+                name={item.name}
+                title={item.role}
+                role={String(item.role).toLowerCase() === "comunicador" ? "comunicador" : "investigador"}
+                banned={!!item.banned}
+                location={`${item.country}`}
+                tags={[]}
+                imageUrl={undefined}
+                onToggleRole={() => {
+                  setUsers((prev) => prev.map((p) => (p.id === item.id ? { ...p, role: p.role === "Comunicador" || p.role === "comunicador" ? "Investigador" : "Comunicador" } : p)));
+                }}
+                onToggleBan={() => onBanToggle(item)}
+                onViewDetails={() => router.push(`/admin/user/${item.id}`)}
+              />
             </View>
           ))}
         </ScrollView>
@@ -81,17 +84,20 @@ export default function AdminUsers() {
           onContentSizeChange={(w, h) => console.log('[DIAG] FlatList contentSize:', { width: w, height: h })}
           renderItem={({ item }) => (
             <View style={styles.card}>
-            <UserCard hideContact name={item.name} title={item.role} location={`${item.country}`} tags={[]} imageUrl={undefined} />
-
-              <View style={styles.actionsRow}>
-                <TouchableOpacity style={[styles.actionBtn, styles.primary]} onPress={() => router.push(`/admin/user/${item.id}`)}>
-                  <Text style={[styles.actionText, styles.primaryText]}>Ver</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={[styles.actionBtn, item.banned ? styles.unban : styles.warn]} onPress={() => onBanToggle(item)}>
-                  <Text style={[styles.actionText, item.banned ? styles.unbanText : styles.warnText]}>{item.banned ? "Desbanear" : "Banear"}</Text>
-                </TouchableOpacity>
-              </View>
+              <AdminUserCard
+                name={item.name}
+                title={item.role}
+                role={String(item.role).toLowerCase() === "comunicador" ? "comunicador" : "investigador"}
+                banned={!!item.banned}
+                location={`${item.country}`}
+                tags={[]}
+                imageUrl={undefined}
+                onToggleRole={() => {
+                  setUsers((prev) => prev.map((p) => (p.id === item.id ? { ...p, role: p.role === "Comunicador" || p.role === "comunicador" ? "Investigador" : "Comunicador" } : p)));
+                }}
+                onToggleBan={() => onBanToggle(item)}
+                onViewDetails={() => router.push(`/admin/user/${item.id}`)}
+              />
             </View>
           )}
         />
