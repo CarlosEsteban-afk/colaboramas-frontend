@@ -27,28 +27,36 @@ export default function Settings() {
 
   return (
     <View className="flex-1 bg-color-light-base-muted-foreground p-4">
+      <View className="flex-row items-center justify-between mb-4">
+        <TouchableOpacity
+          className="flex-row items-center"
+          onPress={() => router.back()}
+        >
+          <Monicon
+            name="mdi:arrow-left"
+            size={24}
+            color={lightTheme.colors["primary-purple"]}
+          />
+          <Text
+            className="ml-2  font-semibold"
+            style={{ color: lightTheme.colors["primary-purple"] }}
+          >
+            {t("settings.back")}
+          </Text>
+        </TouchableOpacity>
 
-      {/* Back button */}
-      <TouchableOpacity
-        className="mb-4 flex-row items-center"
-        onPress={() => router.back()}
-      >
-        <Monicon
-          name="mdi:arrow-left"
-          size={24}
-          color={lightTheme.colors["primary-purple"]}
-        />
-        <Text className="ml-2 text-base font-semibold text-primary-purple">
-          {t("settings.back")}
+        <Text
+          className="text-2xl font-bold text-center"
+          style={{ color: lightTheme.colors["primary-purple"] }}
+        >
+          {t("settings.title")}
         </Text>
-      </TouchableOpacity>
 
-      <Text className="text-xl font-bold text-center mb-4">
-        {t("settings.title")}
-      </Text>
+        <View style={{ width: 50 }} />
+      </View>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
-        <View className="bg-white rounded-lg overflow-hidden shadow-sm flex-1">
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+        <View className="bg-white rounded-lg overflow-hidden shadow-sm">
           {configs.map((conf, index) => (
             <React.Fragment key={index}>
               <TouchableOpacity
@@ -74,28 +82,27 @@ export default function Settings() {
             </React.Fragment>
           ))}
         </View>
-
-        <View className="bg-white rounded-lg shadow-sm mt-4">
-          <TouchableOpacity
-            className="p-6 items-center"
-            onPress={() =>
-              openModal({
-                title: "Eliminar cuenta",
-                message:
-                  "Esta acción es permanente y no se puede deshacer. ¿Deseas continuar?",
-                confirmText: "Eliminar",
-                onConfirm: () => console.log("Eliminar cuenta confirmada"),
-              })
-            }
-          >
-            <Text className="text-red-600 font-semibold text-base">
-              {t("settings.deleteAccount")}
-            </Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
 
-      {/* Modal */}
+      <View className="absolute bottom-4 left-4 right-4">
+        <TouchableOpacity
+          className="p-6 bg-white rounded-lg items-center shadow-sm"
+          onPress={() =>
+            openModal({
+              title: "Eliminar cuenta",
+              message:
+                "Esta acción es permanente y no se puede deshacer. ¿Deseas continuar?",
+              confirmText: "Eliminar",
+              onConfirm: () => console.log("Eliminar cuenta confirmada"),
+            })
+          }
+        >
+          <Text className="text-red-600 font-semibold text-base">
+            {t("settings.deleteAccount")}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <Modal transparent visible={modalVisible} animationType="none">
         <Animated.View
           style={{

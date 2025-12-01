@@ -51,7 +51,6 @@ export default function UserCard({
     <Animated.View
       style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}
     >
-      {/* Contenedor con borde redondeado */}
       <View className="rounded-xl border border-white w-full max-w-[375px] mx-auto my-2 overflow-hidden">
         <LinearGradient
           colors={[
@@ -62,7 +61,6 @@ export default function UserCard({
           end={{ x: 1, y: 1 }}
           className="p-4"
         >
-          {/* Header */}
           <View className="flex-row items-center mb-2">
             {imageUrl ? (
               <Image

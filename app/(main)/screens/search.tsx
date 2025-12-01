@@ -11,22 +11,21 @@ export default function SearchScreen() {
   const [visibleUsers, setVisibleUsers] = useState([]);
   const [loadCount, setLoadCount] = useState(4);
 
-useEffect(() => {
-  // filtrado dinámico mientras escribís
-  const filtered = users.filter((u) => {
-    const matchText =
-      u.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (u.profesion &&
-        u.profesion.toLowerCase().includes(searchQuery.toLowerCase()));
+  useEffect(() => {
+    // filtrado dinámico mientras escribís
+    const filtered = users.filter((u) => {
+      const matchText =
+        u.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (u.profesion &&
+          u.profesion.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    // Si querés, podés combinar con filtros activos también
-    return matchText;
-  });
+      // Si querés, podés combinar con filtros activos también
+      return matchText;
+    });
 
-  setVisibleUsers(filtered.slice(0, 4));
-  setLoadCount(4);
-}, [searchQuery, users]);
-
+    setVisibleUsers(filtered.slice(0, 4));
+    setLoadCount(4);
+  }, [searchQuery, users]);
 
   const handleSearch = () => {
     getUsersByRelevance(searchQuery);
@@ -40,15 +39,18 @@ useEffect(() => {
   }, [loadCount, users]);
 
   const handleContactSent = (id: number) => {
-    // animación de removal: filtramos el usuario contactado
     setVisibleUsers((prev) => prev.filter((u: any) => u.id !== id));
   };
 
   return (
     <View className="flex-1 bg-white pt-5 items-center">
-      <Text className="text-2xl font-semibold text-[color:var(--primary-purple)]">
+      <Text
+        className="text-2xl font-semibold"
+        style={{ color: lightTheme.colors["primary-purple"] }}
+      >
         Buscar
       </Text>
+
       <Text className="text-gray-500 mb-5">Explora contenido o usuarios</Text>
 
       <SearchBar

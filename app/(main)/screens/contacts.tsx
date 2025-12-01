@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     justifyContent: "space-between",
     marginBottom: 20,
-    overflow: "hidden", // 🔸 necesario para que la sombra quede dentro
+    overflow: "hidden", 
   },
   innerShadow: {
     ...StyleSheet.absoluteFillObject,

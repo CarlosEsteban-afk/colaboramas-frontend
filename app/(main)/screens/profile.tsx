@@ -1,11 +1,10 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../../theme";
-import UserCard from "../../components/UserCard";
 import { useUser } from "../../../src/hooks/useUser";
 import { useLogout } from "../../../src/hooks/useLogOut";
-
+import ProfileCard from "../../components/ProfileCard";
 export const unstable_settings = {
   topBar: "hidden",
 };
@@ -59,7 +58,10 @@ export default function ProfileScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <Text className="text-2xl md:text-3xl text-primary-purple font-semibold text-center pt-5">
+      <Text
+        className="text-2xl md:text-3xl text-primary-purple font-semibold text-center pt-5"
+        style={{ color: lightTheme.colors["primary-purple"] }}
+      >
         Perfil
       </Text>
       <Text className="text-dark-gray text-center mb-5">
@@ -71,28 +73,40 @@ export default function ProfileScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View className="mb-5 px-4">
-          <UserCard
+          <ProfileCard
             name={user.username}
             title={formattedRoles}
             location={`${user.ciudad || "No especificada"}, ${user.pais || ""}`}
             tags={[]}
             imageUrl={user.imageUrl}
-            isOwnProfile={true}
           />
         </View>
 
         {infoItems.map((item) => (
-          <View
-            key={item.label}
-            className="mb-4 w-full max-w-3xl self-center"
-          >
+          <View key={item.label} className="mb-4 w-full max-w-3xl self-center">
             <GradientLabel text={item.label} />
             <Text className="text-dark-gray text-base ml-2">{item.value}</Text>
           </View>
         ))}
 
         <TouchableOpacity
-          onPress={handleLogout}
+          onPress={() => {
+            Alert.alert(
+              "Cerrar sesión",
+              "¿Estás seguro que deseas cerrar sesión?",
+              [
+                {
+                  text: "Cancelar",
+                  style: "cancel",
+                },
+                {
+                  text: "Sí, cerrar sesión",
+                  style: "destructive",
+                  onPress: handleLogout,
+                },
+              ]
+            );
+          }}
           className="w-[80%] max-w-3xl self-center mt-6 bg-red-500 py-3 rounded-xl shadow"
         >
           <Text className="text-white text-center text-lg font-semibold">
