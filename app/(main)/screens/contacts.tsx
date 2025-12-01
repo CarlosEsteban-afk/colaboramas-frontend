@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../../theme";
 import ContactsTab from "../../components/ContactsTab";
@@ -8,20 +8,29 @@ export default function ContactsScreen() {
   const [tab, setTab] = useState<"recibidas" | "enviadas" | "contestadas">("recibidas");
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Contactos</Text>
-      <Text style={styles.text}>Gestiona tus solicitudes de contacto.</Text>
+    <View className="flex-1 bg-white items-center pt-5">
+      <Text
+        className="text-2xl font-semibold mb-1"
+        style={{ color: lightTheme.colors["primary-purple"] }}
+      >
+        Contactos
+      </Text>
+      <Text
+        className="mb-5"
+        style={{ color: lightTheme.colors["dark-gray"] }}
+      >
+        Gestiona tus solicitudes de contacto.
+      </Text>
 
       <LinearGradient
-        colors={[
-          lightTheme.colors["primary-purple"],
-          lightTheme.colors["primary-pink"],
-        ]}
+        colors={[lightTheme.colors["primary-purple"], lightTheme.colors["primary-pink"]]}
         start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.tabBar}
+        end={{ x: 1, y: 0 }}
+        className="flex-row w-[90%] rounded-md justify-between mb-5 overflow-hidden"
       >
-        <View style={styles.innerShadow} pointerEvents="none" />
+        <View className="absolute inset-0 opacity-[0.01]" 
+          style={{ backgroundColor: lightTheme.colors["primary-purple"] }}
+        />
 
         {["recibidas", "enviadas", "contestadas"].map((t) => {
           const active = tab === t;
@@ -30,13 +39,15 @@ export default function ContactsScreen() {
               key={t}
               onPress={() => setTab(t as any)}
               activeOpacity={1}
-              style={[styles.tabButton, active && styles.tabButtonActive]}
+              className={`flex-1 items-center py-2 ${active ? "" : ""}`}
+              style={active ? {
+                backgroundColor: lightTheme.colors["dark-gray"],
+                opacity: 0.6,
+              } : {}}
             >
               <Text
-                style={[
-                  styles.tabText,
-                  active ? styles.tabTextActive : styles.tabTextInactive,
-                ]}
+                className={`text-base font-medium ${active ? "font-bold" : ""}`}
+                style={{ color: active ? "#FFF" : "#FFF" }}
               >
                 {t.charAt(0).toUpperCase() + t.slice(1)}
               </Text>
@@ -46,7 +57,7 @@ export default function ContactsScreen() {
       </LinearGradient>
 
       <ScrollView
-        style={{ width: "90%" }}
+        className="w-[90%]"
         contentContainerStyle={{ paddingVertical: 16, gap: 12, paddingBottom: 100 }}
       >
         <ContactsTab type={tab} />
@@ -54,57 +65,3 @@ export default function ContactsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFF",
-    alignItems: "center",
-    paddingTop: 20,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: "600",
-    color: lightTheme.colors["primary-purple"],
-  },
-  text: {
-    color: lightTheme.colors["dark-gray"],
-    marginBottom: 20,
-  },
-  tabBar: {
-    flexDirection: "row",
-    width: "90%",
-    borderRadius: 6,
-    justifyContent: "space-between",
-    marginBottom: 20,
-    overflow: "hidden", 
-  },
-  innerShadow: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: lightTheme.colors["primary-purple"],
-    opacity: 0.01
-  },
-  tabButton: {
-    flex: 1,
-    alignItems: "center",
-    paddingVertical: 8,
-    backgroundColor: "transparent",
-  },
-  tabButtonActive: {
-    backgroundColor: lightTheme.colors["dark-gray"],
-    opacity: 0.6,
-    borderRadius: 0,
-
-  },
-  tabText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-  tabTextActive: {
-    color: "#FFF",
-    fontWeight: "700"
-  },
-  tabTextInactive: {
-    color: "#fff",
-  },
-});

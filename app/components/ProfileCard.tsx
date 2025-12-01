@@ -29,7 +29,6 @@ export default function ProfileCard({
         end={{ x: 1, y: 1 }}
         className="p-5"
       >
-        {/* Cabecera: Imagen y datos */}
         <View className="flex-row items-center mb-4">
           {imageUrl ? (
             <Image

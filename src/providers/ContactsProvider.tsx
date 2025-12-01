@@ -7,7 +7,7 @@ export const ContactsContext = createContext(undefined);
 
 export const ContactsProvider = ({ children }) => {
   const { user } = useUser();
-  const { isAuthenticated } = useAuth(); // Agrega esta línea
+  const { isAuthenticated } = useAuth(); 
   const userId = user?.id;
 
   const [sentMessages, setSentMessages] = useState([]);
@@ -33,6 +33,8 @@ export const ContactsProvider = ({ children }) => {
 
       const sent = sentRes.data;
       const received = recRes.data;
+      console.log("Mensajes enviados:", sent);
+      console.log("Mensajes recibidos:", received);
 
       setSentMessages(sent.filter((m) => m.status === "pending"));
       setReceivedMessages(received.filter((m) => m.status === "pending"));

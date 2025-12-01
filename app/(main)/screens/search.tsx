@@ -12,14 +12,12 @@ export default function SearchScreen() {
   const [loadCount, setLoadCount] = useState(4);
 
   useEffect(() => {
-    // filtrado dinámico mientras escribís
     const filtered = users.filter((u) => {
       const matchText =
         u.nombre.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (u.profesion &&
           u.profesion.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      // Si querés, podés combinar con filtros activos también
       return matchText;
     });
 
