@@ -1,16 +1,8 @@
-// UserCard.tsx
 import React, { useRef, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Animated,
-} from "react-native";
+import { View, Text, TouchableOpacity, Image, Animated } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme";
 import { useTranslation } from "react-i18next";
+import { lightTheme } from "../../theme";
 import SendMessageModal from "./SendMessageModal";
 
 type Props = {
@@ -20,7 +12,7 @@ type Props = {
   location: string;
   tags?: string[];
   imageUrl?: string;
-  onContactSent: (id: number) => void; // 👈 required
+  onContactSent: (id: number) => void;
 };
 
 export default function UserCard({
@@ -35,7 +27,6 @@ export default function UserCard({
   const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
 
-  // 🔥 Animaciones
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const slideAnim = useRef(new Animated.Value(0)).current;
 
@@ -52,7 +43,7 @@ export default function UserCard({
         useNativeDriver: true,
       }),
     ]).start(() => {
-      onContactSent(id); // 👈 avisa al padre que debe eliminarlo
+      onContactSent(id);
     });
   };
 
@@ -60,121 +51,64 @@ export default function UserCard({
     <Animated.View
       style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}
     >
-      <LinearGradient
-        colors={[
-          lightTheme.colors["primary-pink"],
-          lightTheme.colors["primary-purple"],
-        ]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.card}
-      >
-        <View style={styles.header}>
-          {imageUrl ? (
-            <Image source={{ uri: imageUrl }} style={styles.image} />
-          ) : (
-            <View style={[styles.image, styles.imagePlaceholder]} />
+      {/* Contenedor con borde redondeado */}
+      <View className="rounded-xl border border-white w-full max-w-[375px] mx-auto my-2 overflow-hidden">
+        <LinearGradient
+          colors={[
+            lightTheme.colors["primary-pink"],
+            lightTheme.colors["primary-purple"],
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className="p-4"
+        >
+          {/* Header */}
+          <View className="flex-row items-center mb-2">
+            {imageUrl ? (
+              <Image
+                source={{ uri: imageUrl }}
+                className="w-16 h-16 rounded-full border-2 border-white mr-3"
+              />
+            ) : (
+              <View className="w-16 h-16 rounded-full border-2 border-white mr-3 bg-white/20" />
+            )}
+            <View className="flex-1">
+              <Text className="text-lg font-semibold text-white">{name}</Text>
+              <Text className="text-sm text-white mt-0.5">{title}</Text>
+              <Text className="text-xs text-gray-300 mt-0.5">{location}</Text>
+            </View>
+          </View>
+
+          {/* Tags */}
+          {tags.length > 0 && (
+            <View className="flex-row flex-wrap mt-2 gap-2">
+              {tags.map((tag, i) => (
+                <View key={i} className="bg-orange-500 rounded-full py-1 px-3">
+                  <Text className="text-xs text-white">{tag}</Text>
+                </View>
+              ))}
+            </View>
           )}
 
-          <View style={styles.infoContainer}>
-            <Text style={styles.name}>{name}</Text>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.location}>{location}</Text>
-          </View>
-        </View>
+          {/* Botón */}
+          <TouchableOpacity
+            className="bg-blue-500 py-2 px-4 rounded mt-3 self-end"
+            onPress={() => setModalVisible(true)}
+          >
+            <Text className="text-white font-semibold">
+              {t("user.contact")}
+            </Text>
+          </TouchableOpacity>
 
-        {tags.length > 0 && (
-          <View style={styles.tagsContainer}>
-            {tags.map((tag, i) => (
-              <View key={i} style={styles.tag}>
-                <Text style={styles.tagText}>{tag}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.buttonText}>{t("user.contact")}</Text>
-        </TouchableOpacity>
-
-        <SendMessageModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          recipientId={id}
-          recipientName={name}
-          onContactSent={animateCardRemoval} // 👈 DISPARA ANIMACIÓN
-        />
-      </LinearGradient>
+          <SendMessageModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            recipientId={id}
+            recipientName={name}
+            onContactSent={animateCardRemoval}
+          />
+        </LinearGradient>
+      </View>
     </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    padding: 16,
-    borderRadius: 10,
-    width: "100%",
-    maxWidth: 375,
-    marginVertical: 6,
-    marginHorizontal: 4,
-    alignSelf: "center",
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 8,
-  },
-  image: {
-    width: 65,
-    height: 65,
-    borderRadius: 32.5,
-    borderWidth: 2,
-    borderColor: "#fff",
-    backgroundColor: "#ddd",
-    marginRight: 12,
-  },
-  imagePlaceholder: {
-    backgroundColor: "rgba(255,255,255,0.2)",
-  },
-  infoContainer: { flex: 1 },
-  name: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: lightTheme.colors.background,
-  },
-  title: {
-    fontSize: 14,
-    color: lightTheme.colors.background,
-    marginTop: 2,
-  },
-  location: {
-    fontSize: 12,
-    color: lightTheme.colors["muted-foreground"],
-    marginTop: 2,
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 8,
-    gap: 6,
-  },
-  tag: {
-    backgroundColor: lightTheme.colors.orange,
-    borderRadius: 20,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-  },
-  tagText: { color: lightTheme.colors.background, fontSize: 12 },
-  button: {
-    backgroundColor: lightTheme.colors["accent-blue"],
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 6,
-    marginTop: 10,
-    alignSelf: "flex-end",
-  },
-  buttonText: { color: lightTheme.colors.background, fontWeight: "600" },
-});

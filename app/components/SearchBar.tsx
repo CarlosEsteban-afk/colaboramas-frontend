@@ -3,7 +3,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  StyleSheet,
   Modal,
   Text,
   ScrollView,
@@ -15,7 +14,12 @@ import MultiSelectDropdown from "./MultiSelectDropdown";
 import { researchFields } from "../../src/constants/researchFields";
 import { cities } from "../../src/constants/cities";
 
-export default function SearchBar({ placeholder = "Buscar...", onChangeText, value }) {
+export default function SearchBar({
+  placeholder = "Buscar...",
+  onChangeText,
+  value,
+  onApplyFilters,
+}) {
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -33,25 +37,50 @@ export default function SearchBar({ placeholder = "Buscar...", onChangeText, val
 
     setIsFilterActive(hasFilters);
     setModalVisible(false);
+
+    if (onApplyFilters) {
+      onApplyFilters({
+        query: value,
+        interests: selectedInterests,
+        fields: selectedFields,
+        cities: selectedCities,
+      });
+    }
+  };
+
+  const clearFilters = () => {
+    setSelectedInterests([]);
+    setSelectedFields([]);
+    setSelectedCities([]);
+    setIsFilterActive(false);
+    setModalVisible(false);
+
+    if (onApplyFilters) {
+      onApplyFilters({
+        query: value,
+        interests: [],
+        fields: [],
+        cities: [],
+      });
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <View className="w-11/12 mx-auto mb-4">
       {/* Input */}
-      <View style={styles.inputContainer}>
+      <View className="flex-row items-center border-2 border-[color:var(--primary-purple)] rounded-lg bg-white pr-2">
         <TextInput
-          style={styles.input}
+          className="flex-1 px-3 py-2 text-base font-normal"
           placeholder={placeholder}
           placeholderTextColor="#999"
           onChangeText={onChangeText}
           value={value}
         />
 
-        {/* Botón de filtro */}
         <TouchableOpacity
-          style={styles.filterButton}
           onPress={handleFilterPress}
           activeOpacity={0.7}
+          className="p-1"
         >
           <Monicon
             name={
@@ -65,20 +94,20 @@ export default function SearchBar({ placeholder = "Buscar...", onChangeText, val
         </TouchableOpacity>
       </View>
 
-      {/* Modal de filtros */}
+      {/* Modal */}
       <Modal
         visible={modalVisible}
         transparent
         animationType="fade"
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Filtrar búsqueda</Text>
+        <View className="flex-1 bg-black/40 justify-center items-center">
+          <View className="w-11/12 max-h-4/5 bg-white rounded-xl p-5">
+            <Text className="text-center text-lg font-bold text-[color:var(--primary-purple)] mb-3">
+              Filtrar búsqueda
+            </Text>
 
-            <View
-             style={{ maxHeight: "70%" }}
-            >
+            <ScrollView className="max-h-[70%]">
               <MultiSelectDropdown
                 label="Intereses"
                 options={researchFields}
@@ -99,84 +128,42 @@ export default function SearchBar({ placeholder = "Buscar...", onChangeText, val
                 selected={selectedCities}
                 setSelected={setSelectedCities}
               />
-            </View>
+            </ScrollView>
 
-            <TouchableOpacity style={styles.closeButton} onPress={applyFilters}>
-              <LinearGradient
-                colors={[
-                  lightTheme.colors["primary-pink"],
-                  lightTheme.colors["primary-purple"],
-                ]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.gradientButton}
-              >
-                <Text style={styles.closeText}>Aplicar filtros</Text>
-              </LinearGradient>
-            </TouchableOpacity>
+            {/* Botones */}
+            <View className="flex-row justify-between mt-5">
+              <TouchableOpacity className="flex-1 mr-2" onPress={clearFilters}>
+                <LinearGradient
+                  colors={["#ccc", "#aaa"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="rounded-lg py-3 items-center"
+                >
+                  <Text className="text-black font-bold text-base">
+                    Borrar filtros
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity className="flex-1 ml-2" onPress={applyFilters}>
+                <LinearGradient
+                  colors={[
+                    lightTheme.colors["primary-pink"],
+                    lightTheme.colors["primary-purple"],
+                  ]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  className="rounded-lg py-3 items-center"
+                >
+                  <Text className="text-white font-bold text-base">
+                    Aplicar filtros
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: "90%",
-    alignSelf: "center",
-    marginBottom: 16,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 2,
-    borderColor: lightTheme.colors["primary-purple"],
-    borderRadius: 6,
-    backgroundColor: "#FFF",
-    paddingRight: 8,
-  },
-  input: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    fontSize: 16,
-    fontFamily: "Lato_400Regular",
-  },
-  filterButton: {
-    padding: 4,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContainer: {
-    width: "85%",
-    backgroundColor: "#FFF",
-    borderRadius: 12,
-    padding: 20,
-    maxHeight: "80%",
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontFamily: "Lato_700Bold",
-    color: lightTheme.colors["primary-purple"],
-    marginBottom: 12,
-    textAlign: "center",
-  },
-  closeButton: {
-    marginTop: 20,
-  },
-  gradientButton: {
-    borderRadius: 8,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  closeText: {
-    color: "#FFF",
-    fontFamily: "Lato_700Bold",
-    fontSize: 16,
-  },
-});
