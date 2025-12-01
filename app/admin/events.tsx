@@ -48,7 +48,7 @@ export default function AdminEvents(){
         showsVerticalScrollIndicator={true}
         renderItem={({ item }) => (
           <View style={styles.item}>
-            <EventCard event={item} />
+            <EventCard event={item} admin />
 
             <View style={styles.actions}>
               <Pressable style={[styles.actionBtn, styles.primary]} onPress={() => patchEvent(item.id)}>
