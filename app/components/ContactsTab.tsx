@@ -29,7 +29,7 @@ export default function ContactsTab({ type }: Props) {
   }
 
   return (
-    <View className="flex-col w-full space-y-2 max-w-[375px] mx-auto">
+    <View className="rounded-xl flex-col w-full space-y-2 max-w-[375px] mx-auto">
       {data.map((c, index) => {
         const user = type === "recibidas" ? c.fromUser : c.toUser;
 
