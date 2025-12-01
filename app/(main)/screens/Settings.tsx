@@ -1,65 +1,36 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Modal,
+  Animated,
+} from "react-native";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../../theme";
 import { useRouter } from "expo-router";
-import i18n from "../../../i18n";
-import { useTranslation } from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import useSettings from "../../../src/hooks/useSettings";
 
 export default function Settings() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { t } = useTranslation();
 
-  const [currentLanguage, setCurrentLanguage] = useState(
-    i18n.isInitialized ? i18n.language : "en"
-  );
-
-  useEffect(() => {
-    const handleLanguageChange = (lng: string) => setCurrentLanguage(lng);
-    i18n.on("languageChanged", handleLanguageChange);
-    return () => i18n.off("languageChanged", handleLanguageChange);
-  }, []);
-
-  const toggleLanguage = () => {
-    const newLang = currentLanguage === "en" ? "es" : "en";
-    i18n.changeLanguage(newLang);
-  };
-
-  const logout = async () => {
-    await AsyncStorage.removeItem("auth_token"); // BORRA TOKEN
-    router.replace("/auth/login"); // REDIRECCIONA
-  };
-
-  const configs = [
-    {
-      label: t("settings.language"),
-      value: currentLanguage === "en" ? "English" : "Español",
-      icon: "mdi:translate-variant",
-      onPress: toggleLanguage,
-    },
-    {
-      label: t("settings.privacy"),
-      value: t("settings.termsOfService"),
-      icon: "mdi:shield-check",
-    },
-    {
-      label: t("settings.about"),
-      value: t("settings.appInfo"),
-      icon: "mdi:help-circle",
-    },
-  ];
+  const {
+    t,
+    configs,
+    modalVisible,
+    modalConfig,
+    fadeAnim,
+    openModal,
+    closeModal,
+  } = useSettings();
 
   return (
-    <SafeAreaView
-      className="flex-1 bg-color-light-base-muted-foreground p-4"
-      style={{ paddingTop: insets.top + 16 }}
-    >
+    <View className="flex-1 bg-color-light-base-muted-foreground p-4">
+
+      {/* Back button */}
       <TouchableOpacity
         className="mb-4 flex-row items-center"
-        activeOpacity={0.7}
         onPress={() => router.back()}
       >
         <Monicon
@@ -89,7 +60,6 @@ export default function Settings() {
                   size={24}
                   color={lightTheme.colors["primary-purple"]}
                 />
-
                 <View className="flex-1 ml-3">
                   <Text className="text-base font-semibold">{conf.label}</Text>
                   {conf.value && (
@@ -105,25 +75,18 @@ export default function Settings() {
           ))}
         </View>
 
-        {/* 🔴 LOGOUT BUTTON */}
         <View className="bg-white rounded-lg shadow-sm mt-4">
           <TouchableOpacity
             className="p-6 items-center"
-            activeOpacity={0.7}
-            onPress={logout}
-          >
-            <Text className="text-red-600 font-semibold text-base">
-              {t("settings.logout")}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* 🔥 DELETE ACCOUNT */}
-        <View className="bg-white rounded-lg shadow-sm mt-4">
-          <TouchableOpacity
-            className="p-6 items-center"
-            activeOpacity={0.7}
-            onPress={() => console.log("Eliminar cuenta pressed")}
+            onPress={() =>
+              openModal({
+                title: "Eliminar cuenta",
+                message:
+                  "Esta acción es permanente y no se puede deshacer. ¿Deseas continuar?",
+                confirmText: "Eliminar",
+                onConfirm: () => console.log("Eliminar cuenta confirmada"),
+              })
+            }
           >
             <Text className="text-red-600 font-semibold text-base">
               {t("settings.deleteAccount")}
@@ -131,6 +94,52 @@ export default function Settings() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </SafeAreaView>
+
+      {/* Modal */}
+      <Modal transparent visible={modalVisible} animationType="none">
+        <Animated.View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.45)",
+            justifyContent: "center",
+            alignItems: "center",
+            opacity: fadeAnim,
+          }}
+        >
+          <View className="w-80 bg-white rounded-2xl p-6 shadow-xl">
+            <Text className="text-lg font-bold text-center mb-2">
+              {modalConfig.title}
+            </Text>
+
+            <Text className="text-gray-600 text-center mb-6">
+              {modalConfig.message}
+            </Text>
+
+            <View className="flex-row justify-between mt-2">
+              <TouchableOpacity
+                className="flex-1 py-3 mr-2 rounded-lg bg-gray-200"
+                onPress={closeModal}
+              >
+                <Text className="text-center font-semibold text-gray-700">
+                  Cancelar
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                className="flex-1 py-3 ml-2 rounded-lg bg-red-600"
+                onPress={() => {
+                  closeModal();
+                  modalConfig.onConfirm();
+                }}
+              >
+                <Text className="text-center font-semibold text-white">
+                  {modalConfig.confirmText}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Animated.View>
+      </Modal>
+    </View>
   );
 }

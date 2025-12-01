@@ -23,14 +23,15 @@ export default function RootLayout() {
   if (!fontsLoaded) return null;
 
   return (
-    <FontsProvider>
-      <UserProvider>
-        <AuthProvider>
-          <ContactsProvider>
-            <Slot />
-          </ContactsProvider>
-        </AuthProvider>
-      </UserProvider>
-    </FontsProvider>
+      <FontsProvider>
+        <UserProvider>
+          <AuthProvider>
+            <ContactsProvider>
+              <Slot />
+            </ContactsProvider>
+          </AuthProvider>
+        </UserProvider>
+      </FontsProvider>
   );
 }
+

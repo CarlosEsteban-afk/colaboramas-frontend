@@ -1,6 +1,11 @@
 import React from "react";
-import { View, Text, TouchableOpacity, useWindowDimensions } from "react-native";
-import AuthLayout from "../layouts/authLayout"; 
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
+import AuthLayout from "../layouts/authLayout";
 import { router } from "expo-router";
 
 export default function PreRegister() {
@@ -75,6 +80,19 @@ export default function PreRegister() {
             </View>
           )
         )}
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => router.back()}
+        className="mt-4"
+        activeOpacity={0.8}
+        style={{ width: cardWidth, alignSelf: "center" }}
+      >
+        <View className="p-3 rounded-xl bg-blue-500 shadow">
+          <Text className="text-center text-white font-semibold text-base">
+            Volver
+          </Text>
+        </View>
       </TouchableOpacity>
     </AuthLayout>
   );

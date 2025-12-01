@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import SearchBar from "../../components/SearchBar";
 import UserCard from "../../components/UserCard";
@@ -6,19 +6,33 @@ import { lightTheme } from "../../../theme";
 import { useUserCard } from "../../../src/hooks/useUserCard";
 
 export default function SearchScreen() {
-  // 1. Obtén la función 'getUsersByRelevance' de tu hook
   const { users, loading, error, getUsersByRelevance } = useUserCard();
 
-  // 2. Crea un estado para el texto de la barra de búsqueda
   const [searchQuery, setSearchQuery] = useState("");
 
-  console.log("Users in SearchScreen:", users);
+  // 👇 estados para paginar manualmente
+  const [visibleUsers, setVisibleUsers] = useState([]); 
+  const [loadCount, setLoadCount] = useState(4); // cuántos mostrar
 
-  // 3. Crea una función que se ejecute al enviar la búsqueda
+  // 👉 cuando cambian los usuarios (nueva búsqueda), reiniciar el paginado
+  useEffect(() => {
+    setVisibleUsers(users.slice(0, 4));
+    setLoadCount(4);
+  }, [users]);
+
   const handleSearch = () => {
-    // Llama a la función del hook con el texto actual
     getUsersByRelevance(searchQuery);
   };
+
+  // 👉 cargar más cuando se llega abajo
+  const handleLoadMore = useCallback(() => {
+    if (loadCount >= users.length) return; // no cargar si no quedan más
+
+    const nextCount = loadCount + 4;
+    setVisibleUsers(users.slice(0, nextCount));
+    setLoadCount(nextCount);
+  }, [loadCount, users]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Buscar</Text>
@@ -27,9 +41,10 @@ export default function SearchScreen() {
       <SearchBar
         value={searchQuery}
         onChangeText={setSearchQuery}
+        onSubmitEditing={handleSearch}
       />
 
-      {error && <Text style={{ color: 'red' }}>{error}</Text>}
+      {error && <Text style={{ color: "red" }}>{error}</Text>}
 
       <ScrollView
         style={{ width: "105%" }}
@@ -38,8 +53,20 @@ export default function SearchScreen() {
           paddingBottom: 100,
         }}
         showsVerticalScrollIndicator={false}
+        onScroll={(e) => {
+          const { layoutMeasurement, contentOffset, contentSize } =
+            e.nativeEvent;
+
+          // scroll al fondo → cargar más
+          const isBottom =
+            layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - 50;
+
+          if (isBottom) handleLoadMore();
+        }}
+        scrollEventThrottle={16}
       >
-        {users.map((user, index) => (
+        {visibleUsers.map((user, index) => (
           <UserCard
             key={user.id || index}
             title={user.profesion}
@@ -50,11 +77,14 @@ export default function SearchScreen() {
               Array.isArray(user.camposInvestigacion)
                 ? user.camposInvestigacion
                 : Array.isArray(user.lineasInteres)
-                  ? user.lineasInteres
-                  : []
+                ? user.lineasInteres
+                : []
             }
-          />))}
+          />
+        ))}
       </ScrollView>
+
+      {loading && <Text>Cargando...</Text>}
     </View>
   );
 }

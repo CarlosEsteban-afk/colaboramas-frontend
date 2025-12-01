@@ -1,5 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Platform } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Slot, useSegments } from "expo-router";
 import BottomBar from "../components/BottomBar";
 import TopBar from "../components/TopBar";
@@ -15,11 +16,14 @@ export default function HomeLayout() {
     "events",
     "search",
     "profile",
+    "Settings",
+    "contacts"
   ];
+
   const hideTopBar = hiddenTopBarScreens.includes(current);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeContainer}>
       {!hideTopBar && <TopBar />}
 
       <View style={styles.content}>
@@ -29,18 +33,18 @@ export default function HomeLayout() {
       <View style={styles.bottomBar}>
         <BottomBar />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeContainer: {
     flex: 1,
     backgroundColor: lightTheme.colors.background,
   },
   content: {
     flex: 1,
-    paddingBottom: 80,
+    paddingBottom: 25, // espacio para la BottomBar
   },
   bottomBar: {
     position: "absolute",

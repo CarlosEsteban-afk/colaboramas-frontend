@@ -85,6 +85,8 @@ export default function RegisterScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      
     </AuthLayout>
   );
 }

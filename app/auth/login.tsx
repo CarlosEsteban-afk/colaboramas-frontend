@@ -21,24 +21,55 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
   const handleLogin = async () => {
-  if (!email || !password) {
-    Alert.alert("Error", "Debes ingresar tu correo y contraseña");
-    return;
-  }
+    if (!email || !password) {
+      Alert.alert("Error", "Debes ingresar tu correo y contraseña");
+      return;
+    }
 
-  setLoading(true);
-  try {
-    await signIn(email, password);
+    if (!validateEmail(email)) {
+      Alert.alert("Correo inválido", "Ingresa un correo electrónico válido.");
+      return;
+    }
 
-    router.replace("/router/RoleRouter");
+    if (password.length < 6) {
+      Alert.alert(
+        "Contraseña demasiado corta",
+        "La contraseña debe tener al menos 6 caracteres."
+      );
+      return;
+    }
 
-  } catch (error) {
-    Alert.alert("Error", "Correo o contraseña incorrectos");
-  } finally {
-    setLoading(false);
-  }
-};
+    setLoading(true);
+
+    const TIMEOUT = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("timeout")), 5000)
+    );
+
+    try {
+      await Promise.race([signIn(email, password), TIMEOUT]);
+
+      router.replace("/router/RoleRouter");
+    } catch (error) {
+      if (error.message === "timeout") {
+        Alert.alert(
+          "Error",
+          "El servidor no respondió. Verifica tu correo o intenta más tarde."
+        );
+      } else {
+        Alert.alert(
+          "Error",
+          "Correo o contraseña incorrectos. Verifica tus datos e inténtalo nuevamente."
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <AuthLayout
@@ -91,9 +122,7 @@ export default function Login() {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={() => router.push("/auth/preregister")}>
-        <Text style={styles.registerLink}>
-          ¿No tienes cuenta? Regístrate
-        </Text>
+        <Text style={styles.registerLink}>¿No tienes cuenta? Regístrate</Text>
       </TouchableOpacity>
     </AuthLayout>
   );

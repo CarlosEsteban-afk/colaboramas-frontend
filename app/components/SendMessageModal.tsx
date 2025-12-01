@@ -20,6 +20,7 @@ type Props = {
   onClose: () => void;
   recipientId: number;
   recipientName: string;
+  onContactSent: (id: number) => void;
 };
 
 export default function SendMessageModal({
@@ -27,6 +28,7 @@ export default function SendMessageModal({
   onClose,
   recipientId,
   recipientName,
+  onContactSent,
 }: Props) {
   const { user: currentUser } = useUser();
   const [subject, setSubject] = useState("");
@@ -89,6 +91,7 @@ export default function SendMessageModal({
         setMessage("");
         setError("");
         onClose();
+        onContactSent(recipientId);
       } catch (err) {
         console.log(err);
         setError(t("sendMessageModal.errorSending"));

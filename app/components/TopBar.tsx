@@ -2,7 +2,6 @@ import React from "react";
 import { TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Defs,
   LinearGradient as SVGLinearGradient,
@@ -10,14 +9,19 @@ import Svg, {
   Text as SvgText,
 } from "react-native-svg";
 import { useRouter } from "expo-router";
+import { useFontsLoaded } from "../../src/providers/FontsProvider";
 
 export default function TopBar() {
-  const insets = useSafeAreaInsets();
+  const fontsLoaded = useFontsLoaded();
   const router = useRouter();
   const { width } = useWindowDimensions();
 
+  if (!fontsLoaded) return null;
+
   const fontSize = Math.min(width * 0.18, 64);
-  
+  const svgHeight = fontSize * 1.3;
+  const svgWidth = width * 0.7;
+
   const handleConfigPress = () => {
     router.push("/screens/Settings");
   };
@@ -26,7 +30,7 @@ export default function TopBar() {
     <View
       style={{
         backgroundColor: "#FFF",
-        paddingTop: insets.top + 12,
+        paddingTop: 16,       // ← ya NO depende del safe area
         paddingBottom: 10,
         paddingHorizontal: 14,
         shadowColor: "#000",
@@ -35,12 +39,13 @@ export default function TopBar() {
         elevation: 2,
       }}
     >
+      {/* Botón de configuración */}
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={handleConfigPress}
         style={{
           position: "absolute",
-          top: insets.top + 12,
+          top: 16,   // ← antes usaba insets, ahora NO
           right: 20,
           zIndex: 20,
         }}
@@ -52,11 +57,12 @@ export default function TopBar() {
         />
       </TouchableOpacity>
 
+      {/* Logo con SVG */}
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         <Svg
-          width={width * 0.7}        
-          height={fontSize * 1.2}     
-          viewBox="0 0 300 100"       
+          width={svgWidth}
+          height={svgHeight}
+          viewBox={`0 0 ${svgWidth} ${svgHeight}`}
           preserveAspectRatio="xMidYMid meet"
         >
           <Defs>
@@ -70,10 +76,12 @@ export default function TopBar() {
             fill="url(#grad)"
             fontSize={fontSize}
             fontFamily="CinzelDecorative_400Regular"
-            fontWeight="bold"
+            fontWeight="400"
+            fontStyle="normal"
             x="50%"
-            y="70%"              
+            y="50%"
             textAnchor="middle"
+            dy={fontSize * 0.12} 
           >
             AGORA
           </SvgText>

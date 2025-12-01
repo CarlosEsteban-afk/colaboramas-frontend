@@ -1,11 +1,12 @@
 // UserCard.tsx
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   Image,
+  Animated,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
@@ -19,7 +20,7 @@ type Props = {
   location: string;
   tags?: string[];
   imageUrl?: string;
-  onContactPress: (id: number, name: string) => void; // 👈 NUEVO
+  onContactSent: (id: number) => void; // 👈 required
 };
 
 export default function UserCard({
@@ -29,61 +30,85 @@ export default function UserCard({
   location,
   tags = [],
   imageUrl,
-  onContactPress,
+  onContactSent,
 }: Props) {
   const { t } = useTranslation();
   const [modalVisible, setModalVisible] = useState(false);
 
+  // 🔥 Animaciones
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
+
+  const animateCardRemoval = () => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: -20,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      onContactSent(id); // 👈 avisa al padre que debe eliminarlo
+    });
+  };
+
   return (
-    <LinearGradient
-      colors={[
-        lightTheme.colors["primary-pink"],
-        lightTheme.colors["primary-purple"],
-      ]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.card}
+    <Animated.View
+      style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}
     >
-      <View style={styles.header}>
-        {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={styles.image} />
-        ) : (
-          <View style={[styles.image, styles.imagePlaceholder]} />
+      <LinearGradient
+        colors={[
+          lightTheme.colors["primary-pink"],
+          lightTheme.colors["primary-purple"],
+        ]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.card}
+      >
+        <View style={styles.header}>
+          {imageUrl ? (
+            <Image source={{ uri: imageUrl }} style={styles.image} />
+          ) : (
+            <View style={[styles.image, styles.imagePlaceholder]} />
+          )}
+
+          <View style={styles.infoContainer}>
+            <Text style={styles.name}>{name}</Text>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.location}>{location}</Text>
+          </View>
+        </View>
+
+        {tags.length > 0 && (
+          <View style={styles.tagsContainer}>
+            {tags.map((tag, i) => (
+              <View key={i} style={styles.tag}>
+                <Text style={styles.tagText}>{tag}</Text>
+              </View>
+            ))}
+          </View>
         )}
 
-        <View style={styles.infoContainer}>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.location}>{location}</Text>
-        </View>
-      </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.buttonText}>{t("user.contact")}</Text>
+        </TouchableOpacity>
 
-      {tags.length > 0 && (
-        <View style={styles.tagsContainer}>
-          {tags.map((tag, i) => (
-            <View key={i} style={styles.tag}>
-              <Text style={styles.tagText}>{tag}</Text>
-            </View>
-          ))}
-        </View>
-      )}
-
-      {/* 👉 SOLO abre el modal, no envia, no valida auth */}
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.buttonText}>{t("user.contact")}</Text>
-      </TouchableOpacity>
-
-
-      <SendMessageModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        recipientId={id}
-        recipientName={name}
-      />
-    </LinearGradient>
+        <SendMessageModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          recipientId={id}
+          recipientName={name}
+          onContactSent={animateCardRemoval} // 👈 DISPARA ANIMACIÓN
+        />
+      </LinearGradient>
+    </Animated.View>
   );
 }
 
@@ -114,9 +139,7 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     backgroundColor: "rgba(255,255,255,0.2)",
   },
-  infoContainer: {
-    flex: 1,
-  },
+  infoContainer: { flex: 1 },
   name: {
     fontSize: 18,
     fontWeight: "600",
