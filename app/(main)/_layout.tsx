@@ -5,6 +5,7 @@ import { Slot, useSegments } from "expo-router";
 import BottomBar from "../components/BottomBar";
 import TopBar from "../components/TopBar";
 import { lightTheme } from "../../theme";
+import GlobalNotifications from "../components/GlobalNotification";
 
 export default function HomeLayout() {
   const segments = useSegments();
@@ -33,6 +34,7 @@ export default function HomeLayout() {
       <View style={styles.bottomBar}>
         <BottomBar />
       </View>
+      <GlobalNotifications />
     </SafeAreaView>
   );
 }

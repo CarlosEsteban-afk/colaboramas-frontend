@@ -1,26 +1,25 @@
 import React, { createContext, useEffect, useState } from "react";
 import api from "../../client";
 import { useUser } from "../hooks/useUser";
-import { useAuth } from "../hooks/useAuth"; 
+import { useAuth } from "../hooks/useAuth";
+import useRealtimeNotifications from "../hooks/useRealTimeNotifications";
 
 export const ContactsContext = createContext(undefined);
 
 export const ContactsProvider = ({ children }) => {
   const { user } = useUser();
-  const { isAuthenticated } = useAuth(); 
+  const { isAuthenticated } = useAuth();
   const userId = user?.id;
 
-  const [sentMessages, setSentMessages] = useState([]);
-  const [receivedMessages, setReceivedMessages] = useState([]);
-  const [repliedMessages, setRepliedMessages] = useState([]);
+  const [sentMessages, setSentMessages] = useState<any[]>([]);
+  const [receivedMessages, setReceivedMessages] = useState<any[]>([]);
+  const [repliedMessages, setRepliedMessages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState<any[]>([]);
 
   const loadMessages = async () => {
-    if (!isAuthenticated || !userId) {
-      console.log("No autenticado o sin userId, omitiendo carga de mensajes");
-      return;
-    }
+    if (!isAuthenticated || !userId) return;
 
     setLoading(true);
     setError(null);
@@ -33,8 +32,6 @@ export const ContactsProvider = ({ children }) => {
 
       const sent = sentRes.data;
       const received = recRes.data;
-      console.log("Mensajes enviados:", sent);
-      console.log("Mensajes recibidos:", received);
 
       setSentMessages(sent.filter((m) => m.status === "pending"));
       setReceivedMessages(received.filter((m) => m.status === "pending"));
@@ -43,7 +40,6 @@ export const ContactsProvider = ({ children }) => {
         ...sent.filter((m) => m.status !== "pending"),
       ]);
     } catch (err: any) {
-      console.error("Error cargando mensajes:", err);
       setError(
         err.response?.data?.message || err.message || "Error desconocido"
       );
@@ -51,6 +47,11 @@ export const ContactsProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+  useRealtimeNotifications(userId, (newMessage) => {
+    console.log("Nueva notificación:", newMessage);
+    setReceivedMessages((prev) => [newMessage, ...prev]);
+  });
 
   useEffect(() => {
     if (isAuthenticated && userId) {
@@ -60,30 +61,24 @@ export const ContactsProvider = ({ children }) => {
       setReceivedMessages([]);
       setRepliedMessages([]);
     }
-  }, [isAuthenticated, userId]); 
+  }, [isAuthenticated, userId]);
 
   const sendMessage = async (payload: any) => {
-    if (!isAuthenticated || !userId) {
-      console.error("Usuario no autenticado");
-      return;
-    }
+    if (!isAuthenticated || !userId) return;
     try {
       await api.post(`/messages/send`, payload);
-      await loadMessages();
+      await loadMessages(); // actualizar lista enviada
     } catch (err) {
       console.error("Error enviando mensaje:", err);
     }
   };
 
   const respondToMessage = async (id: string, accepted: boolean) => {
-    if (!isAuthenticated || !userId) {
-      console.error("Usuario no autenticado");
-      return;
-    }
+    if (!isAuthenticated || !userId) return;
     const status = accepted ? "accepted" : "rejected";
     try {
       await api.put(`/messages/${id}/respond?status=${status}`);
-      await loadMessages();
+      await loadMessages(); // actualizar listas
     } catch (err) {
       console.error("Error respondiendo mensaje:", err);
     }
@@ -95,6 +90,8 @@ export const ContactsProvider = ({ children }) => {
         sentMessages,
         receivedMessages,
         repliedMessages,
+        notifications,
+        setNotifications,
         sendMessage,
         respondToMessage,
         reloadMessages: loadMessages,
