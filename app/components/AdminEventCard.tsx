@@ -40,8 +40,9 @@ export default function AdminEventCard({ event, active = true, onToggleActive, o
   const [typeModalVisible, setTypeModalVisible] = useState(false);
   const rawType = event?.type ?? "";
   const typeKey = String(rawType);
-  const upperType = typeKey.toUpperCase();
-  const color = TYPE_COLOR[typeKey] ?? TYPE_COLOR[upperType] ?? "#6B31E8";
+  const upperKey = typeKey.toUpperCase();
+  const displayType = typeKey ? typeKey.charAt(0).toUpperCase() + typeKey.slice(1).toLowerCase() : "";
+  const color = TYPE_COLOR[typeKey] ?? TYPE_COLOR[upperKey] ?? "#6B31E8";
   const displayTitle = String(event.title || "").replace(
     new RegExp(`^\\s*${typeKey}\\s*[:\\-–—]\\s*`, "i"),
     ""
@@ -62,7 +63,7 @@ export default function AdminEventCard({ event, active = true, onToggleActive, o
           )}
 
           <View style={styles.typeBadge}>
-            <Text style={styles.typeBadgeText}>{t(`event.types.${event.type}`, upperType)}</Text>
+            <Text style={styles.typeBadgeText}>{t(`event.types.${event.type}`, displayType)}</Text>
           </View>
         </View>
 
@@ -86,7 +87,7 @@ export default function AdminEventCard({ event, active = true, onToggleActive, o
               </TouchableOpacity>
 
               <TouchableOpacity style={[styles.fullBtn, { backgroundColor: color }]} onPress={() => setTypeModalVisible(true)}>
-                <Text style={styles.smallBtnText}>{upperType}</Text>
+                <Text style={styles.smallBtnText}>{displayType}</Text>
               </TouchableOpacity>
             </View>
           </View>
