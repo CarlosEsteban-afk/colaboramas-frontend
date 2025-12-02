@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, Modal, Pressable, ScrollView as RNScrollView } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../../theme";
 import { EventItem } from "../../components/EventCard";
+import api from "../../../client";
 
 type Params = { id?: string };
 
@@ -33,6 +34,7 @@ export default function AdminEventDetails() {
 
   const [event, setEvent] = useState<EventItem | null>(null);
   const [published, setPublished] = useState(false);
+  const [typeModalVisible, setTypeModalVisible] = useState(false);
 
   useEffect(() => {
     // Load from MOCK for now; replace with backend fetch if available
@@ -44,29 +46,21 @@ export default function AdminEventDetails() {
 
   if (!event) return null;
 
-  const onDelete = () => {
-    Alert.alert("Confirmar", "¿Eliminar este evento? Esta acción no se puede deshacer.", [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Eliminar",
-        style: "destructive",
-        onPress: () => {
-          console.log("DELETE EVENT", event.id);
-          Alert.alert("Hecho", "Evento eliminado.");
-          router.back();
-        },
-      },
-    ]);
-  };
-
   const onTogglePublished = () => {
     setPublished((p) => !p);
-    console.log("TOGGLE PUBLISHED", event.id, !published);
+    console.log("TOGGLE PUBLISHED", event?.id, !published);
   };
 
-  const onEdit = () => {
-    // If you later add an edit screen, navigate to it. Use a cast to avoid strict route typing here.
-    router.push((`/admin/event/${event.id}/edit`) as any);
+  const onChangeType = (newType: string) => {
+    if (!event) return;
+    setEvent({ ...event, type: newType });
+    (async () => {
+      try {
+        if (typeof api !== "undefined") await api.patch(`/admin/events/${event.id}`, { type: newType });
+      } catch (e) {
+        // ignore
+      }
+    })();
   };
 
   return (
@@ -90,27 +84,45 @@ export default function AdminEventDetails() {
         <Text style={styles.label}>Descripción</Text>
         <Text style={styles.description}>{event.description}</Text>
 
-        <View style={styles.actionsRow}>
-          <TouchableOpacity style={[styles.actionBtn, styles.ghostButton]} onPress={() => router.back()}>
-            <Text style={[styles.ghostText]}>Volver</Text>
+        <View style={styles.actionsRowSingle}>
+          <TouchableOpacity style={[styles.actionBtn, published ? styles.activeBtn : styles.inactiveBtn]} onPress={onTogglePublished}>
+            <Text style={[styles.actionText, styles.primaryText]}>{published ? "Activo" : "Inactivo"}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.actionBtn, published ? styles.unpublish : styles.primary]} onPress={onTogglePublished}>
-            <Text style={[styles.actionText, published ? styles.unpublishText : styles.primaryText]}>{published ? "Despublicar" : "Publicar"}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={[styles.actionBtn, styles.warn]} onPress={onDelete}>
-            <Text style={[styles.actionText, styles.warnText]}>Eliminar</Text>
+          <TouchableOpacity style={[styles.actionBtn, styles.typeBtn]} onPress={() => setTypeModalVisible(true)}>
+            <Text style={[styles.actionText, styles.primaryText]}>Editar tipo</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={{ marginTop: 8 }}>
-          <TouchableOpacity style={[styles.editBtn]} onPress={onEdit}>
-            <LinearGradient colors={[lightTheme.colors["primary-purple"], "#8e4bff"]} style={styles.submitGradient}>
-              <Text style={styles.submitText}>Editar evento</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-        </View>
+        <Modal visible={typeModalVisible} transparent animationType="fade" onRequestClose={() => setTypeModalVisible(false)}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalCard}>
+              <Text style={styles.modalTitle}>Seleccionar tipo</Text>
+              <RNScrollView>
+                {[
+                  "Congreso",
+                  "Concurso",
+                  "Charla",
+                  "Conferencia",
+                ].map((tpe) => (
+                  <Pressable
+                    key={tpe}
+                    style={[styles.modalOption, tpe === event.type ? styles.modalOptionActive : undefined]}
+                    onPress={() => {
+                      setTypeModalVisible(false);
+                      if (tpe !== event.type) onChangeType(tpe);
+                    }}
+                  >
+                    <Text style={styles.modalOptionText}>{tpe}</Text>
+                  </Pressable>
+                ))}
+              </RNScrollView>
+              <Pressable style={styles.modalClose} onPress={() => setTypeModalVisible(false)}>
+                <Text style={styles.modalCloseText}>Cancelar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -169,4 +181,16 @@ const styles = StyleSheet.create({
   submitGradient: { paddingVertical: 12, alignItems: "center", borderRadius: 8 },
   submitText: { color: "#fff", fontWeight: "800" },
   rowBetween: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 8 },
+  actionsRowSingle: { marginTop: 18, flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 },
+  activeBtn: { backgroundColor: "#4CAF50" },
+  inactiveBtn: { backgroundColor: "#e74c3c" },
+  typeBtn: { backgroundColor: lightTheme.colors["primary-purple"] },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center', padding: 20 },
+  modalCard: { width: '100%', maxWidth: 480, backgroundColor: '#fff', borderRadius: 8, overflow: 'hidden' },
+  modalTitle: { fontWeight: '700', fontSize: 16, padding: 14, backgroundColor: '#fff' },
+  modalOption: { paddingVertical: 12, paddingHorizontal: 14, borderBottomWidth: 1, borderBottomColor: '#eee' },
+  modalOptionActive: { backgroundColor: '#f0f6ff' },
+  modalOptionText: { fontSize: 14, color: '#222' },
+  modalClose: { padding: 12, alignItems: 'center', backgroundColor: '#fff' },
+  modalCloseText: { color: '#2b2b2b', fontWeight: '700' },
 });
