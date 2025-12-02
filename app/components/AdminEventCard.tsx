@@ -71,17 +71,17 @@ export default function AdminEventCard({ event, active = true, onToggleActive, o
               <Text style={styles.metaText}>{event.date}</Text>
             </View>
 
-            <View style={styles.actionsRowRight}>
-              <TouchableOpacity style={[styles.smallBtn, { backgroundColor: color }]} onPress={() => { /* type action */ }}>
-                <Text style={styles.smallBtnText}>{upperType}</Text>
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity style={[styles.fullBtn, { backgroundColor: lightTheme.colors["accent-blue"] }]} onPress={onViewDetails}>
+                <Text style={styles.smallBtnText}>Ver detalles</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.smallBtn, { backgroundColor: lightTheme.colors["accent-blue"] }]} onPress={onViewDetails}>
-                <Text style={styles.smallBtnText}>Detalles</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={[styles.smallBtn, active ? styles.activeBtn : styles.inactiveBtn]} onPress={onToggleActive}>
+              <TouchableOpacity style={[styles.fullBtn, active ? styles.activeBtn : styles.inactiveBtn]} onPress={onToggleActive}>
                 <Text style={styles.smallBtnText}>{active ? "Activo" : "Inactivo"}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={[styles.fullBtn, { backgroundColor: color }]} onPress={() => { /* type action */ }}>
+                <Text style={styles.smallBtnText}>{upperType}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -167,8 +167,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   imageContainer: {
-    width: 120,
-    height: 120,
+    width: 140,
+    minHeight: 140,
+    alignSelf: "stretch",
     backgroundColor: "#eee",
   },
   image: {
@@ -176,8 +177,7 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   imageGradient: {
-    width: "100%",
-    height: "100%",
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -206,4 +206,6 @@ const styles = StyleSheet.create({
   actionsRowRight: { marginTop: 8, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   smallBtn: { paddingVertical: 8, paddingHorizontal: 10, borderRadius: 8, marginLeft: 6, alignItems: "center", minWidth: 80 },
   smallBtnText: { color: lightTheme.colors.background, fontWeight: "700", fontSize: 13 },
+  buttonsContainer: { marginTop: 8, flexDirection: "column", width: "100%" },
+  fullBtn: { width: "100%", paddingVertical: 10, borderRadius: 8, marginVertical: 6, alignItems: "center" },
 });
