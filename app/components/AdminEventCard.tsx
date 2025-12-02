@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity, StyleSheet, Image, Modal, Pressable, ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,8 @@ export type EventItem = {
   place: string;
   type: string;
   description?: string;
+  image?: string;
+  ubication?: string;
 };
 
 type Props = {
@@ -18,6 +20,7 @@ type Props = {
   active?: boolean;
   onToggleActive?: () => void;
   onViewDetails?: () => void;
+  onChangeType?: (newType: string) => void;
   horizontal?: boolean;
 };
 
@@ -32,8 +35,9 @@ const TYPE_COLOR: Record<string, string> = {
   CONFERENCIA: "#82A50B",
 };
 
-export default function AdminEventCard({ event, active = true, onToggleActive, onViewDetails, horizontal = false, }: Props) {
+export default function AdminEventCard({ event, active = true, onToggleActive, onViewDetails, onChangeType, horizontal = false, }: Props) {
   const { t } = useTranslation();
+  const [typeModalVisible, setTypeModalVisible] = useState(false);
   const rawType = event?.type ?? "";
   const typeKey = String(rawType);
   const upperType = typeKey.toUpperCase();
@@ -44,8 +48,9 @@ export default function AdminEventCard({ event, active = true, onToggleActive, o
   ).trim();
 
   return (
-    <View style={[styles.wrapper, horizontal && styles.horizontal]}>
-      <View style={styles.row}>
+    <>
+      <View style={[styles.wrapper, horizontal && styles.horizontal]}>
+        <View style={styles.row}>
         {/* Left: Image or gradient */}
         <View style={styles.imageContainer}>
           {event.image ? (
@@ -80,14 +85,48 @@ export default function AdminEventCard({ event, active = true, onToggleActive, o
                 <Text style={styles.smallBtnText}>{active ? "Activo" : "Inactivo"}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={[styles.fullBtn, { backgroundColor: color }]} onPress={() => { /* type action */ }}>
+              <TouchableOpacity style={[styles.fullBtn, { backgroundColor: color }]} onPress={() => setTypeModalVisible(true)}>
                 <Text style={styles.smallBtnText}>{upperType}</Text>
               </TouchableOpacity>
             </View>
           </View>
         </LinearGradient>
       </View>
-    </View>
+      </View>
+
+      {/* Type selection modal */}
+      <Modal visible={typeModalVisible} transparent animationType="fade" onRequestClose={() => setTypeModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Seleccionar tipo</Text>
+            <ScrollView>
+              {[
+                "Congreso",
+                "Concurso",
+                "Charla",
+                "Conferencia",
+              ].map((tpe) => (
+                <Pressable
+                  key={tpe}
+                  style={[styles.modalOption, tpe === event.type ? styles.modalOptionActive : undefined]}
+                  onPress={() => {
+                    setTypeModalVisible(false);
+                    if (tpe !== event.type) {
+                      if (typeof onChangeType === "function") onChangeType(tpe);
+                    }
+                  }}
+                >
+                  <Text style={styles.modalOptionText}>{tpe}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+            <Pressable style={styles.modalClose} onPress={() => setTypeModalVisible(false)}>
+              <Text style={styles.modalCloseText}>Cancelar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </>
   );
 }
 
@@ -208,4 +247,12 @@ const styles = StyleSheet.create({
   smallBtnText: { color: lightTheme.colors.background, fontWeight: "700", fontSize: 13 },
   buttonsContainer: { marginTop: 8, flexDirection: "column", width: "100%" },
   fullBtn: { width: "100%", paddingVertical: 10, borderRadius: 8, marginVertical: 6, alignItems: "center" },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center', padding: 20 },
+  modalCard: { width: '100%', maxWidth: 480, backgroundColor: '#fff', borderRadius: 8, overflow: 'hidden' },
+  modalTitle: { fontWeight: '700', fontSize: 16, padding: 14, backgroundColor: '#fff' },
+  modalOption: { paddingVertical: 12, paddingHorizontal: 14, borderBottomWidth: 1, borderBottomColor: '#eee' },
+  modalOptionActive: { backgroundColor: '#f0f6ff' },
+  modalOptionText: { fontSize: 14, color: '#222' },
+  modalClose: { padding: 12, alignItems: 'center', backgroundColor: '#fff' },
+  modalCloseText: { color: '#2b2b2b', fontWeight: '700' },
 });

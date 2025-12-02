@@ -110,6 +110,18 @@ export default function AdminEvents(){
               active={item.status === "approved"}
               onToggleActive={() => toggleBan(item.id, item.status !== "approved")}
               onViewDetails={() => router.push((`/admin/event/${item.id}`) as any)}
+              onChangeType={(newType: string) => {
+                // optimistic local update
+                setEvents((prev) => prev.map((p) => (p.id === item.id ? { ...p, type: newType } : p)));
+                // try to persist to backend if available
+                (async () => {
+                  try {
+                    if (typeof api !== "undefined") await api.patch(`/admin/events/${item.id}`, { type: newType });
+                  } catch (e) {
+                    // ignore or revert if you want
+                  }
+                })();
+              }}
             />
           </View>
         )}
