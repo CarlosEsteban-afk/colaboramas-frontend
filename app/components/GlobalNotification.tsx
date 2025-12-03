@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+/*import React, { useContext, useEffect, useRef } from "react";
 import { View, Text, Animated, StyleSheet } from "react-native";
 import { ContactsContext } from "../../src/providers/ContactsProvider";
 export default function GlobalNotifications() {
@@ -51,3 +51,4 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+*/

@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import api from "../../client";
 import { useUser } from "../hooks/useUser";
 import { useAuth } from "../hooks/useAuth";
-import useRealtimeNotifications from "../hooks/useRealTimeNotifications";
+//import useRealtimeNotifications from "../hooks/useRealTimeNotifications";
 
 export const ContactsContext = createContext(undefined);
 
@@ -48,11 +48,10 @@ export const ContactsProvider = ({ children }) => {
     }
   };
 
-  useRealtimeNotifications(userId, (newMessage) => {
+  /*useRealtimeNotifications(userId, (newMessage) => {
     console.log("Nueva notificación:", newMessage);
     setReceivedMessages((prev) => [newMessage, ...prev]);
-  });
-
+  });*/
   useEffect(() => {
     if (isAuthenticated && userId) {
       loadMessages();

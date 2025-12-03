@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+/*import { useEffect } from "react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { useToken } from "./useToken";
@@ -36,3 +36,4 @@ export default function useRealtimeNotifications(
     };
   }, [userId]);
 }
+*/
