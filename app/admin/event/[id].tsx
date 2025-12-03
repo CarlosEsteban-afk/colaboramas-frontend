@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, Modal, Pressable, ScrollView as RNScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Platform, Modal, Pressable, ScrollView as RNScrollView, Image } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../../theme";
@@ -88,6 +88,17 @@ export default function AdminEventDetails() {
       </LinearGradient>
 
       <View style={styles.card}>
+        {/* Image area: show event.image if available, otherwise a placeholder */}
+        <View style={styles.imageContainerCard}>
+          {(event as any).image ? (
+            <Image source={{ uri: (event as any).image }} style={styles.cardImage} resizeMode="cover" />
+          ) : (
+            <View style={styles.cardImagePlaceholder}>
+              <Text style={styles.cardImagePlaceholderText}>Foto</Text>
+            </View>
+          )}
+        </View>
+
         <View style={styles.rowBetween}>
           <Text style={styles.label}>Lugar</Text>
           <Text style={styles.value}>{event.place}</Text>
@@ -147,7 +158,7 @@ export default function AdminEventDetails() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 40,
+    paddingBottom: 140,
     backgroundColor: "#F6F6F6",
   },
   header: {
@@ -174,6 +185,10 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
+  imageContainerCard: { width: "100%", height: 140, borderRadius: 8, overflow: 'hidden', marginBottom: 12, backgroundColor: '#eee' },
+  cardImage: { width: '100%', height: '100%' },
+  cardImagePlaceholder: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#f3f3f3' },
+  cardImagePlaceholderText: { color: '#888', fontWeight: '700' },
   label: { fontSize: 13, color: "#333", fontWeight: "700", marginTop: 6 },
   value: { fontSize: 14, color: "#222", fontWeight: "600" },
   description: { marginTop: 8, color: "#333", lineHeight: 20 },
