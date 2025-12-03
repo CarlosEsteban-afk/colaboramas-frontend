@@ -63,9 +63,26 @@ export default function AdminEventDetails() {
     })();
   };
 
+  // derive a color for the current event type (same mapping as AdminEventCard)
+  const TYPE_COLOR: Record<string, string> = {
+    Congreso: "#6B31E8",
+    CONGRESO: "#6B31E8",
+    Concurso: "#E91E63",
+    CONCURSO: "#E91E63",
+    Charla: "#EE6C21",
+    CHARLA: "#EE6C21",
+    Conferencia: "#82A50B",
+    CONFERENCIA: "#82A50B",
+  };
+
+  const rawType = event?.type ?? "";
+  const typeKey = String(rawType);
+  const upperKey = typeKey.toUpperCase();
+  const color = TYPE_COLOR[typeKey] ?? TYPE_COLOR[upperKey] ?? "#6B31E8";
+
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <LinearGradient colors={[lightTheme.colors["primary-purple"], "#9b5aff"]} style={styles.header}>
+      <LinearGradient colors={[color, `${color}CC`]} style={styles.header}>
         <Text style={styles.headerTitle}>{event.title}</Text>
         <Text style={styles.headerSubtitle}>{event.type} • {event.date}</Text>
       </LinearGradient>
@@ -89,7 +106,7 @@ export default function AdminEventDetails() {
             <Text style={[styles.actionText, styles.primaryText]}>{published ? "Activo" : "Inactivo"}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.actionBtn, styles.typeBtn]} onPress={() => setTypeModalVisible(true)}>
+          <TouchableOpacity style={[styles.actionBtn, { backgroundColor: color }]} onPress={() => setTypeModalVisible(true)}>
             <Text style={[styles.actionText, styles.primaryText]}>Editar tipo</Text>
           </TouchableOpacity>
         </View>
