@@ -6,7 +6,7 @@ import SearchBar from "../components/SearchBar";
 import AdminUserCard from "../components/AdminUserCard";
 import api from "../../client";
 
-type User = { id: string; name: string; email: string; country: string; role: string; banned?: boolean };
+type User = { id: string; name: string; email: string; country: string; role: string; banned?: boolean; imageUrl?: string };
 
 export default function AdminUsers() {
   const router = useRouter();
@@ -35,6 +35,7 @@ export default function AdminUsers() {
           country: u.pais || u.country || "",
           role: String(roleVal ?? "ACADEMICO"),
           banned: u.banned || false,
+          imageUrl: u.imageUrl || (u.image && (u.image.url || u.image)) || u.profileImage || u.avatar || undefined,
         };
       });
       setUsers(mappedUsers);
@@ -86,7 +87,7 @@ export default function AdminUsers() {
                 banned={!!item.banned}
                 location={`${item.country}`}
                 tags={[]}
-                imageUrl={undefined}
+                imageUrl={item.imageUrl}
                 onToggleRole={async () => {
                   const currentRole = String(item.role).toUpperCase();
                   const newRole = currentRole === "COMUNICADOR" ? "ACADEMICO" : "COMUNICADOR";
@@ -125,7 +126,7 @@ export default function AdminUsers() {
                 banned={!!item.banned}
                 location={`${item.country}`}
                 tags={[]}
-                imageUrl={undefined}
+                imageUrl={item.imageUrl}
                 onToggleRole={async () => {
                   const currentRole = String(item.role).toUpperCase();
                   const newRole = currentRole === "COMUNICADOR" ? "ACADEMICO" : "COMUNICADOR";
