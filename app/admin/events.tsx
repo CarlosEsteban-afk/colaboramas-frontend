@@ -13,7 +13,21 @@ export default function AdminEvents(){
     try {
       const res = await api.get("/admin/events");
       const data = res.data || [];
-      const mapped = Array.isArray(data) ? data.map((e: any) => ({ ...e, image: e.image ?? e.imageUrl })) : [];
+      const mapped = Array.isArray(data)
+        ? data.map((e: any) => ({
+            ...e,
+            id: String(e.id),
+            // normalize image field (backend may return imageUrl or image_url)
+            image: e.image ?? e.imageUrl ?? e.image_url,
+            // normalize enabled flag (backend may use is_enabled snake_case)
+            isEnabled:
+              typeof e.is_enabled === "boolean"
+                ? e.is_enabled
+                : typeof e.isEnabled === "boolean"
+                ? e.isEnabled
+                : e.status === "approved",
+          }))
+        : [];
       setEvents(mapped);
     } catch (e) {
       // Mock data that matches backend Event model
@@ -74,7 +88,8 @@ export default function AdminEvents(){
 
   const toggleBan = async (id: string, currentlyBanned: boolean) => {
     try {
-      await api.patch(`/admin/banEvent/${id}`);
+      // Backend expects the ban route under /admin/events/:id/ban
+      await api.patch(`/admin/events/${id}/ban`);
       await fetchEvents();
     } catch (e) {
       console.error("Error toggling event ban:", e);
@@ -102,8 +117,9 @@ export default function AdminEvents(){
           <View style={styles.item}>
             <AdminEventCard
               event={item}
-              active={item.status === "approved"}
-              onToggleActive={() => toggleBan(item.id, item.status !== "approved")}
+              // prefer explicit isEnabled from backend, fallback to status
+              active={typeof item.isEnabled === 'boolean' ? item.isEnabled : item.status === "approved"}
+              onToggleActive={() => toggleBan(item.id, !(typeof item.isEnabled === 'boolean' ? item.isEnabled : item.status === "approved"))}
               onViewDetails={() => router.push((`/admin/event/${item.id}`) as any)}
               onChangeType={async (newType: string) => {
                 try {

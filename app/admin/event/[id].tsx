@@ -51,10 +51,24 @@ export default function AdminEventDetails() {
         date: eventData.date || "",
         place: eventData.place || eventData.ubication || "",
         description: eventData.description || "",
-        // include image from API: prefer `imageUrl`, then `image.url`, then `image` raw
-        image: eventData.imageUrl || (eventData.image && (eventData.image.url || eventData.image)) || "",
-      });
-      setPublished(eventData.isEnabled || eventData.status === "approved");
+        // include image from API: prefer `imageUrl`, then `image.url`, then `image` raw or `image_url`
+        image:
+          eventData.imageUrl || (eventData.image && (eventData.image.url || eventData.image)) || eventData.image_url || "",
+        // expose normalized isEnabled flag (backend might use is_enabled)
+        isEnabled:
+          typeof eventData.is_enabled === "boolean"
+            ? eventData.is_enabled
+            : typeof eventData.isEnabled === "boolean"
+            ? eventData.isEnabled
+            : eventData.status === "approved",
+      } as any);
+      setPublished(
+        typeof eventData.is_enabled === "boolean"
+          ? eventData.is_enabled
+          : typeof eventData.isEnabled === "boolean"
+          ? eventData.isEnabled
+          : eventData.status === "approved"
+      );
     } catch (error) {
       console.error("Error fetching event detail:", error);
       // Fallback to mock
@@ -68,7 +82,8 @@ export default function AdminEventDetails() {
 
   const onTogglePublished = async () => {
     try {
-      await api.patch(`/admin/banEvent/${id}`);
+      // Backend expects the ban route under /admin/events/:id/ban
+      await api.patch(`/admin/events/${id}/ban`);
       await fetchEventDetail();
       Alert.alert("Éxito", "Estado actualizado correctamente");
     } catch (error) {
