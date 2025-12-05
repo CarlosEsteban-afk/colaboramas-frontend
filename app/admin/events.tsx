@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, Pressable, StyleSheet, Alert, Platform } from "react-native";
+import { View, Text, FlatList, Pressable, StyleSheet, Alert, Platform, ScrollView } from "react-native";
+import SearchBar from "../components/SearchBar";
 import { lightTheme } from "../../theme";
 import AdminEventCard from "../components/AdminEventCard";
 import { useRouter } from "expo-router";
@@ -7,6 +8,7 @@ import api from "../../client";
 
 export default function AdminEvents(){
   const router = useRouter();
+  const [q, setQ] = useState("");
   const [events, setEvents] = useState<any[]>([]);
 
   const fetchEvents = async () => {
@@ -101,13 +103,22 @@ export default function AdminEvents(){
     Alert.alert('Editar', 'Implementa la edición completa en backend.');
   };
 
+  const filtered = events.filter((e) => {
+    const title = String(e.title || "").toLowerCase();
+    const ql = q.toLowerCase();
+    return title.includes(ql) || String(e.description || "").toLowerCase().includes(ql);
+  });
+
+  const containerStyle = Platform.OS === 'web' ? { padding: 16, backgroundColor: '#F6F6F6' } : styles.container;
+
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
       <Text style={styles.title}>Eventos</Text>
+      <SearchBar value={q} onChangeText={setQ} placeholder="Buscar por título o descripción" />
 
       <FlatList
         style={Platform.OS === 'web' ? undefined : { flex: 1 }}
-        data={events}
+        data={filtered}
         keyExtractor={(i) => String(i.id)}
   contentContainerStyle={{ paddingVertical: 12, paddingBottom: 140 }}
         nestedScrollEnabled={true}
