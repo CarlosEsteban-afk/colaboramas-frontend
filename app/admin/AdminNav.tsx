@@ -20,7 +20,6 @@ export default function AdminNav() {
     // use a single-user icon for the Usuarios tab
     { label: "Usuarios", icon: "mdi:account-circle-outline", route: "/admin/users" },
     { label: "Eventos", icon: "mdi:calendar", route: "/admin/events" },
-    { label: "Ajustes", icon: "mdi:cog-outline", route: "/admin/settings" },
   ];
 
   const BAR_HEIGHT = Platform.OS === "web" ? 70 : 68;
