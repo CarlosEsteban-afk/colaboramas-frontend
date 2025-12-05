@@ -10,6 +10,8 @@ export default function AdminEvents(){
   const router = useRouter();
   const [q, setQ] = useState("");
   const [events, setEvents] = useState<any[]>([]);
+  const [selectedType, setSelectedType] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
   const fetchEvents = async () => {
     try {
@@ -103,10 +105,24 @@ export default function AdminEvents(){
     Alert.alert('Editar', 'Implementa la edición completa en backend.');
   };
 
+  const types = Array.from(new Set(events.map((ev) => String(ev.type || '').trim()).filter(Boolean)));
+
   const filtered = events.filter((e) => {
     const title = String(e.title || "").toLowerCase();
     const ql = q.toLowerCase();
-    return title.includes(ql) || String(e.description || "").toLowerCase().includes(ql);
+    if (!(title.includes(ql) || String(e.description || "").toLowerCase().includes(ql))) return false;
+
+    // filter by type if selected
+    if (selectedType) {
+      if (String(e.type || '').toLowerCase() !== selectedType.toLowerCase()) return false;
+    }
+
+    // filter by active/inactive
+    const isEnabled = typeof e.isEnabled === 'boolean' ? e.isEnabled : (e.status === 'approved');
+    if (statusFilter === 'active' && !isEnabled) return false;
+    if (statusFilter === 'inactive' && isEnabled) return false;
+
+    return true;
   });
 
   const containerStyle = Platform.OS === 'web' ? { padding: 16, backgroundColor: '#F6F6F6' } : styles.container;
@@ -115,6 +131,31 @@ export default function AdminEvents(){
     <View style={containerStyle}>
       <Text style={styles.title}>Eventos</Text>
       <SearchBar value={q} onChangeText={setQ} placeholder="Buscar por título o descripción" />
+
+      {/* Type filters (horizontal chips) */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 8, marginBottom: 8 }}>
+        <Pressable style={[styles.filterChip, selectedType === '' && styles.filterChipActive]} onPress={() => setSelectedType('')}>
+          <Text style={[styles.filterChipText, selectedType === '' && styles.filterChipTextActive]}>Todos</Text>
+        </Pressable>
+        {types.map((t) => (
+          <Pressable key={t} style={[styles.filterChip, selectedType === t && styles.filterChipActive]} onPress={() => setSelectedType(t)}>
+            <Text style={[styles.filterChipText, selectedType === t && styles.filterChipTextActive]}>{t}</Text>
+          </Pressable>
+        ))}
+      </ScrollView>
+
+      {/* Status filter buttons */}
+      <View style={styles.statusRow}>
+        <Pressable style={[styles.statusBtn, statusFilter === 'all' && styles.statusBtnActive]} onPress={() => setStatusFilter('all')}>
+          <Text style={[styles.statusBtnText, statusFilter === 'all' && styles.statusBtnTextActive]}>Todos</Text>
+        </Pressable>
+        <Pressable style={[styles.statusBtn, statusFilter === 'active' && styles.statusBtnActive]} onPress={() => setStatusFilter('active')}>
+          <Text style={[styles.statusBtnText, statusFilter === 'active' && styles.statusBtnTextActive]}>Activos</Text>
+        </Pressable>
+        <Pressable style={[styles.statusBtn, statusFilter === 'inactive' && styles.statusBtnActive]} onPress={() => setStatusFilter('inactive')}>
+          <Text style={[styles.statusBtnText, statusFilter === 'inactive' && styles.statusBtnTextActive]}>Inactivos</Text>
+        </Pressable>
+      </View>
 
       <FlatList
         style={Platform.OS === 'web' ? undefined : { flex: 1 }}
@@ -164,4 +205,14 @@ const styles = StyleSheet.create({
   approve: { backgroundColor: '#4CAF50' },
   approveText: { color: '#fff' },
   warn: { backgroundColor: '#E33' }
+    ,
+    filterChip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 20, borderWidth: 1, borderColor: '#E6DFFF', marginRight: 8, backgroundColor: '#fff' },
+    filterChipActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
+    filterChipText: { color: '#333', fontWeight: '600' },
+    filterChipTextActive: { color: '#fff' },
+    statusRow: { flexDirection: 'row', justifyContent: 'flex-start', gap: 8, marginBottom: 8, paddingHorizontal: 8 },
+    statusBtn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1, borderColor: '#eee', backgroundColor: '#fff', marginRight: 8 },
+    statusBtnActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
+    statusBtnText: { color: '#333', fontWeight: '700' },
+    statusBtnTextActive: { color: '#fff', fontWeight: '700' }
 });
