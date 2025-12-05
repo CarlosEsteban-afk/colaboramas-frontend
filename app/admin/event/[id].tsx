@@ -80,7 +80,7 @@ export default function AdminEventDetails() {
   const onChangeType = async (newType: string) => {
     if (!event) return;
     try {
-      await api.patch(`/admin/changeEventType/${id}`, { type: newType });
+      await api.patch(`/admin/events/${id}/type`, { type: newType });
       await fetchEventDetail();
       Alert.alert("Éxito", "Tipo actualizado correctamente");
     } catch (error) {

@@ -107,7 +107,7 @@ export default function AdminEvents(){
               onViewDetails={() => router.push((`/admin/event/${item.id}`) as any)}
               onChangeType={async (newType: string) => {
                 try {
-                  await api.patch(`/admin/changeEventType/${item.id}`, { type: newType });
+                  await api.patch(`/admin/events/${item.id}/type`, { type: newType });
                   await fetchEvents();
                 } catch (e) {
                   console.error("Error changing event type:", e);
