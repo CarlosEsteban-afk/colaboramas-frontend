@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { lightTheme } from "../../theme";
 import { PieChart } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import api from "../../client";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -14,28 +15,74 @@ export default function AdminDashboard() {
   const [byEventType, setByEventType] = useState<{ [k: string]: number }>({});
 
   useEffect(() => {
-    // For dev show mock data so charts render without backend
-    setTotalUsers(1240);
-    setByRole({ ACADEMICO: 870, COMUNICADOR: 370 });
-    setByCountry({
-      Perú: 1,
-      Brasil: 2,
-      España: 2,
-      Panamá: 1,
-      México: 1,
-      Argentina: 4,
-      Bolivia: 1,
-      Canadá: 1,
-      Paraguay: 1,
-      Uruguay: 1,
-      Chile: 3,
-      Colombia: 1,
-      Ecuador: 1,
-    });
-    // mock events
-    setTotalEvents(27);
-    setByEventType({ Conferencia: 6, Congreso: 8, Charla: 7, Concurso: 6 });
+    fetchDashboardData();
   }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      // Fetch all dashboard stats
+      const [usersNumberRes, eventsNumberRes, usersPerRolRes, eventsPerTypeRes, userPerCountryRes] = await Promise.all([
+        api.get("/admin/usersNumber"),
+        api.get("/admin/eventsNumber"),
+        api.get("/admin/usersPerRol"),
+        api.get("/admin/eventsPerType"),
+        api.get("/admin/userPerCountry"),
+      ]);
+
+      // Backend historically returned different keys. Accept either { total } or { usersNumber } / { eventsNumber }
+      const usersTotal = (usersNumberRes.data && (usersNumberRes.data.total ?? usersNumberRes.data.usersNumber)) ?? 0;
+      const eventsTotal = (eventsNumberRes.data && (eventsNumberRes.data.total ?? eventsNumberRes.data.eventsNumber)) ?? 0;
+      setTotalUsers(usersTotal);
+      setTotalEvents(eventsTotal);
+      
+      // Map role data - backend returns lowercase keys, normalize to uppercase
+      const roleData = usersPerRolRes.data || {};
+      const normalizedRoles: { [k: string]: number } = {};
+      if (roleData.comunicadores !== undefined) normalizedRoles.COMUNICADOR = roleData.comunicadores;
+      if (roleData.investigadores !== undefined) normalizedRoles.ACADEMICO = roleData.investigadores;
+      setByRole(normalizedRoles);
+
+      // Map event type data - normalize to title case
+      const eventTypeData = eventsPerTypeRes.data || {};
+      const normalizedEvents: { [k: string]: number } = {};
+      if (eventTypeData.conferencias !== undefined) normalizedEvents.Conferencia = eventTypeData.conferencias;
+      if (eventTypeData.charlas !== undefined) normalizedEvents.Charla = eventTypeData.charlas;
+      if (eventTypeData.concursos !== undefined) normalizedEvents.Concurso = eventTypeData.concursos;
+      if (eventTypeData.congresos !== undefined) normalizedEvents.Congreso = eventTypeData.congresos;
+      setByEventType(normalizedEvents);
+
+      // Normalize country names to title case
+      const countryData = userPerCountryRes.data || {};
+      const normalizedCountries: { [k: string]: number } = {};
+      for (const [country, count] of Object.entries(countryData)) {
+        const titleCaseCountry = country.charAt(0).toUpperCase() + country.slice(1).toLowerCase();
+        normalizedCountries[titleCaseCountry] = count as number;
+      }
+      setByCountry(normalizedCountries);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      // Fallback to mock data if API fails
+      setTotalUsers(1240);
+      setByRole({ ACADEMICO: 870, COMUNICADOR: 370 });
+      setByCountry({
+        Perú: 1,
+        Brasil: 2,
+        España: 2,
+        Panamá: 1,
+        México: 1,
+        Argentina: 4,
+        Bolivia: 1,
+        Canadá: 1,
+        Paraguay: 1,
+        Uruguay: 1,
+        Chile: 3,
+        Colombia: 1,
+        Ecuador: 1,
+      });
+      setTotalEvents(27);
+      setByEventType({ Conferencia: 6, Congreso: 8, Charla: 7, Concurso: 6 });
+    }
+  };
 
   const roles = ["ACADEMICO", "COMUNICADOR"];
   const maxRole = Math.max(...Object.values(byRole), 1);

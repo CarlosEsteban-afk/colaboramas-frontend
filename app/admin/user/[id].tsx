@@ -41,13 +41,14 @@ export default function AdminUserDetail() {
 
   const toggleBan = async () => {
     try {
-      if (user?.banned) {
-        await api.post(`/admin/users/${id}/unban`);
+      if (user?.banned || !user?.isEnabled) {
+        await api.patch(`/admin/users/${id}/ban`);
       } else {
-        await api.post(`/admin/users/${id}/ban`);
+        await api.patch(`/admin/users/${id}/ban`);
       }
       const res = await api.get(`/admin/users/${id}`);
       setUser(res.data);
+      Alert.alert('Éxito', 'Estado actualizado correctamente');
     } catch (e) {
       Alert.alert("Error", "No se pudo actualizar el estado");
     }
@@ -56,9 +57,10 @@ export default function AdminUserDetail() {
   const onChangeRole = async (newRole: string) => {
     setRoleEdit(newRole);
     try {
-      await api.patch(`/admin/users/${id}`, { roles: [newRole] });
+      await api.patch(`/admin/changeUserRole/${id}`, { role: newRole });
       const res = await api.get(`/admin/users/${id}`);
       setUser(res.data);
+      Alert.alert('Éxito', 'Rol actualizado correctamente');
     } catch (e) {
       Alert.alert('Error', 'No se pudo actualizar el rol');
     }

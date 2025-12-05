@@ -37,30 +37,54 @@ export default function AdminEventDetails() {
   const [typeModalVisible, setTypeModalVisible] = useState(false);
 
   useEffect(() => {
-    // Load from MOCK for now; replace with backend fetch if available
-    const found = MOCK.find((e) => e.id === id) ?? MOCK[0];
-    setEvent(found);
-    // default published state for demo
-    setPublished(true);
+    fetchEventDetail();
   }, [id]);
 
-  if (!event) return null;
-
-  const onTogglePublished = () => {
-    setPublished((p) => !p);
-    console.log("TOGGLE PUBLISHED", event?.id, !published);
+  const fetchEventDetail = async () => {
+    try {
+      const res = await api.get(`/admin/events/${id}`);
+      const eventData = res.data;
+      setEvent({
+        id: String(eventData.id),
+        title: eventData.title || "",
+        type: eventData.type || "Congreso",
+        date: eventData.date || "",
+        place: eventData.place || eventData.ubication || "",
+        description: eventData.description || "",
+      });
+      setPublished(eventData.isEnabled || eventData.status === "approved");
+    } catch (error) {
+      console.error("Error fetching event detail:", error);
+      // Fallback to mock
+      const found = MOCK.find((e) => e.id === id) ?? MOCK[0];
+      setEvent(found);
+      setPublished(true);
+    }
   };
 
-  const onChangeType = (newType: string) => {
+  if (!event) return <Text style={{ padding: 16 }}>Cargando...</Text>;
+
+  const onTogglePublished = async () => {
+    try {
+      await api.patch(`/admin/banEvent/${id}`);
+      await fetchEventDetail();
+      Alert.alert("Éxito", "Estado actualizado correctamente");
+    } catch (error) {
+      console.error("Error toggling event status:", error);
+      Alert.alert("Error", "No se pudo actualizar el estado del evento");
+    }
+  };
+
+  const onChangeType = async (newType: string) => {
     if (!event) return;
-    setEvent({ ...event, type: newType });
-    (async () => {
-      try {
-        if (typeof api !== "undefined") await api.patch(`/admin/events/${event.id}`, { type: newType });
-      } catch (e) {
-        // ignore
-      }
-    })();
+    try {
+      await api.patch(`/admin/changeEventType/${id}`, { type: newType });
+      await fetchEventDetail();
+      Alert.alert("Éxito", "Tipo actualizado correctamente");
+    } catch (error) {
+      console.error("Error changing event type:", error);
+      Alert.alert("Error", "No se pudo cambiar el tipo de evento");
+    }
   };
 
   // derive a color for the current event type (same mapping as AdminEventCard)

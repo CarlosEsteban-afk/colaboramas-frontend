@@ -72,19 +72,12 @@ export default function AdminEvents(){
 
   const toggleBan = async (id: string, currentlyBanned: boolean) => {
     try {
-      // try backend call; if API not available we'll optimistically update local state
-      if (typeof api !== "undefined") {
-        if (currentlyBanned) await api.post(`/admin/events/${id}/unban`);
-        else await api.post(`/admin/events/${id}/ban`);
-        fetchEvents();
-        return;
-      }
+      await api.patch(`/admin/banEvent/${id}`);
+      await fetchEvents();
     } catch (e) {
-      // ignore and fallback to local update
+      console.error("Error toggling event ban:", e);
+      Alert.alert("Error", "No se pudo actualizar el estado del evento");
     }
-
-    // local fallback: toggle status between 'approved' and 'pending'
-    setEvents((prev) => prev.map((p) => (p.id === id ? { ...p, status: p.status === "approved" ? "pending" : "approved" } : p)));
   };
 
   const patchEvent = async (id: string) => {
@@ -110,17 +103,14 @@ export default function AdminEvents(){
               active={item.status === "approved"}
               onToggleActive={() => toggleBan(item.id, item.status !== "approved")}
               onViewDetails={() => router.push((`/admin/event/${item.id}`) as any)}
-              onChangeType={(newType: string) => {
-                // optimistic local update
-                setEvents((prev) => prev.map((p) => (p.id === item.id ? { ...p, type: newType } : p)));
-                // try to persist to backend if available
-                (async () => {
-                  try {
-                    if (typeof api !== "undefined") await api.patch(`/admin/events/${item.id}`, { type: newType });
-                  } catch (e) {
-                    // ignore or revert if you want
-                  }
-                })();
+              onChangeType={async (newType: string) => {
+                try {
+                  await api.patch(`/admin/changeEventType/${item.id}`, { type: newType });
+                  await fetchEvents();
+                } catch (e) {
+                  console.error("Error changing event type:", e);
+                  Alert.alert("Error", "No se pudo cambiar el tipo de evento");
+                }
               }}
             />
           </View>

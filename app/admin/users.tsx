@@ -4,27 +4,57 @@ import { useRouter } from "expo-router";
 import { lightTheme } from "../../theme";
 import SearchBar from "../components/SearchBar";
 import AdminUserCard from "../components/AdminUserCard";
+import api from "../../client";
 
 type User = { id: string; name: string; email: string; country: string; role: string; banned?: boolean };
-
-const MOCK: User[] = [
-  { id: "1", name: "Ana Pérez", email: "ana@uni.cl", country: "Chile", role: "Investigador" },
-  { id: "2", name: "Luis Gómez", email: "luis@uni.ar", country: "Argentina", role: "Comunicador", banned: true },
-  { id: "3", name: "María Ruiz", email: "mruiz@uni.pe", country: "Perú", role: "Investigador" },
-];
 
 export default function AdminUsers() {
   const router = useRouter();
   const [q, setQ] = useState("");
-  const [users, setUsers] = useState<User[]>(MOCK);
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    // keep MOCK for dev; if backend exists, fetch here
+    fetchUsers();
   }, []);
 
-  const onBanToggle = (u: User) => {
-    // Toggle immediately without confirmation so the card updates instantly.
-    setUsers((prev) => prev.map((p) => (p.id === u.id ? { ...p, banned: !p.banned } : p)));
+  const fetchUsers = async () => {
+    try {
+      const res = await api.get("/admin/users");
+      const usersData = res.data || [];
+      // Map backend user data to our User type
+      const mappedUsers: User[] = usersData.map((u: any) => ({
+        id: String(u.id),
+        name: u.username || u.nombre || "Usuario",
+        email: u.email || "",
+        country: u.pais || u.country || "",
+        role: Array.isArray(u.roles) ? u.roles[0] : u.roles || "ACADEMICO",
+        banned: u.banned || false,
+      }));
+      setUsers(mappedUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      // Fallback to mock data
+      setUsers([
+        { id: "1", name: "Ana Pérez", email: "ana@uni.cl", country: "Chile", role: "Investigador" },
+        { id: "2", name: "Luis Gómez", email: "luis@uni.ar", country: "Argentina", role: "Comunicador", banned: true },
+        { id: "3", name: "María Ruiz", email: "mruiz@uni.pe", country: "Perú", role: "Investigador" },
+      ]);
+    }
+  };
+
+  const onBanToggle = async (u: User) => {
+    try {
+      if (u.banned) {
+        await api.patch(`/admin/users/${u.id}/unban`);
+      } else {
+        await api.patch(`/admin/users/${u.id}/ban`);
+      }
+      // Refresh users list
+      await fetchUsers();
+    } catch (error) {
+      console.error("Error toggling ban:", error);
+      Alert.alert("Error", "No se pudo actualizar el estado del usuario");
+    }
   };
 
   const filtered = users.filter(
@@ -50,8 +80,16 @@ export default function AdminUsers() {
                 location={`${item.country}`}
                 tags={[]}
                 imageUrl={undefined}
-                onToggleRole={() => {
-                  setUsers((prev) => prev.map((p) => (p.id === item.id ? { ...p, role: p.role === "Comunicador" || p.role === "comunicador" ? "Investigador" : "Comunicador" } : p)));
+                onToggleRole={async () => {
+                  const currentRole = String(item.role).toUpperCase();
+                  const newRole = currentRole === "COMUNICADOR" ? "ACADEMICO" : "COMUNICADOR";
+                  try {
+                    await api.patch(`/admin/changeUserRole/${item.id}`, { role: newRole });
+                    await fetchUsers();
+                  } catch (error) {
+                    console.error("Error changing role:", error);
+                    Alert.alert("Error", "No se pudo cambiar el rol");
+                  }
                 }}
                 onToggleBan={() => onBanToggle(item)}
                 onViewDetails={() => router.push(`/admin/user/${item.id}`)}
@@ -81,8 +119,16 @@ export default function AdminUsers() {
                 location={`${item.country}`}
                 tags={[]}
                 imageUrl={undefined}
-                onToggleRole={() => {
-                  setUsers((prev) => prev.map((p) => (p.id === item.id ? { ...p, role: p.role === "Comunicador" || p.role === "comunicador" ? "Investigador" : "Comunicador" } : p)));
+                onToggleRole={async () => {
+                  const currentRole = String(item.role).toUpperCase();
+                  const newRole = currentRole === "COMUNICADOR" ? "ACADEMICO" : "COMUNICADOR";
+                  try {
+                    await api.patch(`/admin/changeUserRole/${item.id}`, { role: newRole });
+                    await fetchUsers();
+                  } catch (error) {
+                    console.error("Error changing role:", error);
+                    Alert.alert("Error", "No se pudo cambiar el rol");
+                  }
                 }}
                 onToggleBan={() => onBanToggle(item)}
                 onViewDetails={() => router.push(`/admin/user/${item.id}`)}
