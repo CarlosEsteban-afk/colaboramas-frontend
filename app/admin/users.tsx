@@ -22,14 +22,21 @@ export default function AdminUsers() {
       const res = await api.get("/admin/users");
       const usersData = res.data || [];
       // Map backend user data to our User type
-      const mappedUsers: User[] = usersData.map((u: any) => ({
-        id: String(u.id),
-        name: u.username || u.nombre || "Usuario",
-        email: u.email || "",
-        country: u.pais || u.country || "",
-        role: Array.isArray(u.roles) ? u.roles[0] : u.roles || "ACADEMICO",
-        banned: u.banned || false,
-      }));
+      const mappedUsers: User[] = usersData.map((u: any) => {
+        let roleVal: any = Array.isArray(u.roles) ? u.roles[0] : u.roles || "ACADEMICO";
+        if (roleVal && typeof roleVal === "object") {
+          // common server shape: { id, roleName, permissionEntities }
+          roleVal = roleVal.roleName || roleVal.name || String(roleVal);
+        }
+        return {
+          id: String(u.id),
+          name: u.username || u.nombre || "Usuario",
+          email: u.email || "",
+          country: u.pais || u.country || "",
+          role: String(roleVal ?? "ACADEMICO"),
+          banned: u.banned || false,
+        };
+      });
       setUsers(mappedUsers);
     } catch (error) {
       console.error("Error fetching users:", error);

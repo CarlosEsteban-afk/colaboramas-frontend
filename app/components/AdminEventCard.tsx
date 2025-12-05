@@ -12,6 +12,7 @@ export type EventItem = {
   type: string;
   description?: string;
   image?: string;
+  imageUrl?: string;
   ubication?: string;
 };
 
@@ -54,8 +55,8 @@ export default function AdminEventCard({ event, active = true, onToggleActive, o
         <View style={styles.row}>
         {/* Left: Image or gradient */}
         <View style={styles.imageContainer}>
-          {event.image ? (
-            <Image source={{ uri: event.image }} style={styles.image} resizeMode="cover" />
+          {(event.image || event.imageUrl) ? (
+            <Image source={{ uri: event.image ?? event.imageUrl }} style={styles.image} resizeMode="cover" />
           ) : (
             <LinearGradient colors={[color, `${color}CC`]} style={styles.imageGradient}>
               <Text style={{ color: "#fff", fontWeight: "700" }}>{t(`event.types.${event.type}`, event.type)}</Text>

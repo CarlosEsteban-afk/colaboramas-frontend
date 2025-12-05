@@ -18,7 +18,13 @@ export default function AdminUserDetail() {
       try {
         const res = await api.get(`/admin/users/${id}`);
         setUser(res.data);
-        setRoleEdit(res.data?.roles?.[0] ?? "");
+        // normalize role value (server may return role objects)
+        const rawRole = res.data?.roles?.[0] ?? res.data?.roles ?? "";
+        let roleStr = "";
+        if (rawRole) {
+          roleStr = typeof rawRole === "object" ? (rawRole.roleName || rawRole.name || JSON.stringify(rawRole)) : String(rawRole);
+        }
+        setRoleEdit(roleStr);
       } catch (e) {
         // fallback mock
         setUser({ id, username: "Usuario", email: "user@example.com", pais: "Chile", ciudad: "Santiago", lineasInteres: ["IA"], proyectosRecientes: ["Proyecto A"], roles:["ACADEMICO"], banned:false });
@@ -29,7 +35,7 @@ export default function AdminUserDetail() {
 
   const saveRole = async () => {
     try {
-      await api.patch(`/admin/users/${id}`, { roles: [roleEdit] });
+      await api.patch(`/admin/changeUserRole/${id}`, { role: roleEdit });
       Alert.alert("OK", "Rol actualizado");
       // refresh
       const res = await api.get(`/admin/users/${id}`);
@@ -75,7 +81,7 @@ export default function AdminUserDetail() {
     <ScrollView contentContainerStyle={{ paddingBottom: 140 }} keyboardShouldPersistTaps="handled">
       <LinearGradient colors={[headerColor, `${headerColor}CC`]} style={styles.header}>
         <Text style={styles.headerTitle}>{user.username ?? user.nombre ?? "Usuario"}</Text>
-        <Text style={styles.headerSubtitle}>{user.roles ? (Array.isArray(user.roles) ? String(user.roles?.[0]) : String(user.roles)) : ""} • {user.email}</Text>
+        <Text style={styles.headerSubtitle}>{user.roles ? (Array.isArray(user.roles) ? (typeof user.roles[0] === 'object' ? (user.roles[0].roleName || user.roles[0].name || String(user.roles[0])) : String(user.roles[0])) : (typeof user.roles === 'object' ? (user.roles.roleName || user.roles.name || String(user.roles)) : String(user.roles))) : ""} • {user.email}</Text>
       </LinearGradient>
 
       <View style={styles.card}>

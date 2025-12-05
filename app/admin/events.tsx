@@ -12,7 +12,9 @@ export default function AdminEvents(){
   const fetchEvents = async () => {
     try {
       const res = await api.get("/admin/events");
-      setEvents(res.data || []);
+      const data = res.data || [];
+      const mapped = Array.isArray(data) ? data.map((e: any) => ({ ...e, image: e.image ?? e.imageUrl })) : [];
+      setEvents(mapped);
     } catch (e) {
       // Mock data that matches backend Event model
       setEvents([
@@ -38,7 +40,7 @@ export default function AdminEvents(){
           description: 'Charla corta sobre aplicaciones prácticas de IA en entornos clínicos.',
           isEnabled: true,
           status: 'approved',
-          image: undefined,
+          imageUrl: undefined,
         },
         {
           id: 'e3',
@@ -50,7 +52,7 @@ export default function AdminEvents(){
           description: 'Concurso de soluciones tecnológicas para mejora de procesos clínicos.',
           isEnabled: true,
           status: 'approved',
-          image: undefined,
+          imageUrl: undefined,
         },
         {
           id: 'e4',
@@ -62,7 +64,7 @@ export default function AdminEvents(){
           description: 'Conferencia internacional que reúne investigadores en neurociencia aplicada.',
           isEnabled: false,
           status: 'pending',
-          image: undefined,
+          imageUrl: undefined,
         },
       ]);
     }
