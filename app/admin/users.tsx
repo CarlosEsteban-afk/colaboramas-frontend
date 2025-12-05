@@ -46,7 +46,8 @@ export default function AdminUsers() {
           email: u.email || "",
           country: u.pais || u.country || "",
           role: String(roleVal ?? "ACADEMICO"),
-          banned: u.banned || false,
+          // backend uses `isEnabled` — derive `banned` as inverse of isEnabled when available
+          banned: typeof u.isEnabled === 'boolean' ? !u.isEnabled : (u.banned || false),
           imageUrl: u.imageUrl || (u.image && (u.image.url || u.image)) || u.profileImage || u.avatar || undefined,
         };
       });
@@ -66,13 +67,23 @@ export default function AdminUsers() {
     try {
       // Debug: show if Authorization header is present on the client defaults
       console.debug('[admin] toggleBan headers:', api.defaults.headers.common?.Authorization ? 'present' : 'missing');
-      if (u.banned) {
-        await api.patch(`/admin/users/${u.id}/unban`);
-      } else {
-        await api.patch(`/admin/users/${u.id}/ban`);
+      // Call API and use returned user to update local state so the card doesn't disappear
+      const res = await api.patch(`/admin/users/${u.id}/ban`);
+      const updated = res.data;
+      // Debug: log PATCH response so we can see server-side fields (isEnabled etc.)
+      console.debug('[admin] PATCH /admin/users/{id}/ban response:', updated);
+
+      // derive banned from response (server uses isEnabled)
+      const updatedBanned = typeof updated.isEnabled === 'boolean' ? !updated.isEnabled : (updated.banned || false);
+      setUsers((prev) => prev.map((pu) => (String(pu.id) === String(updated.id) ? { ...pu, banned: updatedBanned } : pu)));
+
+      // Verify server state by fetching the single user resource and logging it
+      try {
+        const fresh = await api.get(`/admin/users/${u.id}`);
+        console.debug('[admin] GET /admin/users/{id} after PATCH:', fresh.data);
+      } catch (getErr) {
+        console.debug('[admin] failed to GET user after PATCH', getErr?.response?.status || getErr);
       }
-      // Refresh users list
-      await fetchUsers();
     } catch (error) {
       console.error("Error toggling ban:", error);
       Alert.alert("Error", "No se pudo actualizar el estado del usuario");

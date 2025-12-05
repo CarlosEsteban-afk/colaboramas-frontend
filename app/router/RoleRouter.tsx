@@ -16,12 +16,21 @@ export default function RoleRouter() {
 
     if (!user) return;
 
-    if (user.roles?.includes("ACADEMICO")) {
+    // Normalize roles to strings and uppercase for robust matching
+    const rolesArr: string[] = Array.isArray(user.roles) ? user.roles.map((r: any) => String(r).toUpperCase()) : [String(user.roles).toUpperCase()];
+
+    // If user is admin, go to admin dashboard
+    if (rolesArr.some((r) => r.includes("ADMIN"))) {
+      router.replace("/admin");
+      return;
+    }
+
+    if (rolesArr.includes("ACADEMICO")) {
       router.replace("/academico");
       return;
     }
 
-    if (user.roles?.includes("COMUNICADOR")) {
+    if (rolesArr.includes("COMUNICADOR")) {
       router.replace("/comunicador");
       return;
     }
