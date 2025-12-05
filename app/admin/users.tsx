@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet, Platform, ScrollView } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet, Platform, ScrollView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { lightTheme } from "../../theme";
 import SearchBar from "../components/SearchBar";
@@ -12,6 +12,8 @@ export default function AdminUsers() {
   const router = useRouter();
   const [q, setQ] = useState("");
   const [users, setUsers] = useState<User[]>([]);
+  const [selectedRole, setSelectedRole] = useState<'all' | 'investigador' | 'comunicador'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
 
   useEffect(() => {
     fetchUsers();
@@ -91,7 +93,22 @@ export default function AdminUsers() {
   };
 
   const filtered = users.filter(
-    (u) => u.name.toLowerCase().includes(q.toLowerCase()) || u.email.toLowerCase().includes(q.toLowerCase()) || u.country.toLowerCase().includes(q.toLowerCase()),
+    (u) => {
+      const ql = q.toLowerCase();
+      const matchesQ = u.name.toLowerCase().includes(ql) || u.email.toLowerCase().includes(ql) || u.country.toLowerCase().includes(ql);
+      if (!matchesQ) return false;
+
+      // role filter
+      const roleLower = String(u.role || '').toLowerCase();
+      if (selectedRole === 'comunicador' && !roleLower.includes('comunicador')) return false;
+      if (selectedRole === 'investigador' && roleLower.includes('comunicador')) return false;
+
+      // status filter (banned === true => inactive)
+      if (statusFilter === 'active' && !!u.banned) return false;
+      if (statusFilter === 'inactive' && !u.banned) return false;
+
+      return true;
+    },
   );
 
   const containerStyle = Platform.OS === 'web' ? { padding: 16, backgroundColor: '#F6F6F6' } : styles.container;
@@ -100,6 +117,32 @@ export default function AdminUsers() {
     <View style={containerStyle}>
       <Text style={styles.title}>Usuarios</Text>
       <SearchBar value={q} onChangeText={setQ} placeholder="Buscar por nombre, email o país" />
+
+      {/* Role filters */}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 8, marginBottom: 8 }}>
+        <Pressable style={[styles.filterChip, selectedRole === 'all' && styles.filterChipActive]} onPress={() => setSelectedRole('all')}>
+          <Text style={[styles.filterChipText, selectedRole === 'all' && styles.filterChipTextActive]}>Todos</Text>
+        </Pressable>
+        <Pressable style={[styles.filterChip, selectedRole === 'investigador' && styles.filterChipActive]} onPress={() => setSelectedRole('investigador')}>
+          <Text style={[styles.filterChipText, selectedRole === 'investigador' && styles.filterChipTextActive]}>Investigador</Text>
+        </Pressable>
+        <Pressable style={[styles.filterChip, selectedRole === 'comunicador' && styles.filterChipActive]} onPress={() => setSelectedRole('comunicador')}>
+          <Text style={[styles.filterChipText, selectedRole === 'comunicador' && styles.filterChipTextActive]}>Comunicador</Text>
+        </Pressable>
+      </ScrollView>
+
+      {/* Status filter buttons */}
+      <View style={styles.statusRow}>
+        <Pressable style={[styles.statusBtn, statusFilter === 'all' && styles.statusBtnActive]} onPress={() => setStatusFilter('all')}>
+          <Text style={[styles.statusBtnText, statusFilter === 'all' && styles.statusBtnTextActive]}>Todos</Text>
+        </Pressable>
+        <Pressable style={[styles.statusBtn, statusFilter === 'active' && styles.statusBtnActive]} onPress={() => setStatusFilter('active')}>
+          <Text style={[styles.statusBtnText, statusFilter === 'active' && styles.statusBtnTextActive]}>Activos</Text>
+        </Pressable>
+        <Pressable style={[styles.statusBtn, statusFilter === 'inactive' && styles.statusBtnActive]} onPress={() => setStatusFilter('inactive')}>
+          <Text style={[styles.statusBtnText, statusFilter === 'inactive' && styles.statusBtnTextActive]}>Inactivos</Text>
+        </Pressable>
+      </View>
 
       {Platform.OS === 'web' ? (
   <ScrollView contentContainerStyle={{ paddingVertical: 12, paddingBottom: 140 }} showsVerticalScrollIndicator={true}>
@@ -188,4 +231,15 @@ const styles = StyleSheet.create({
   warnText: { color: '#fff' },
   unban: { backgroundColor: '#4CAF50' },
   unbanText: { color: '#fff' },
+  // filter / chip styles
+  filterChip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 20, borderWidth: 1, borderColor: '#E6DFFF', marginRight: 8, backgroundColor: '#fff' },
+  filterChipActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
+  filterChipText: { color: '#333', fontWeight: '600' },
+  filterChipTextActive: { color: '#fff' },
+  statusRow: { flexDirection: 'row', justifyContent: 'flex-start', gap: 8, marginBottom: 8, paddingHorizontal: 8 },
+  statusBtn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1, borderColor: '#eee', backgroundColor: '#fff', marginRight: 8 },
+  statusBtnActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
+  statusBtnText: { color: '#333', fontWeight: '700' },
+  statusBtnTextActive: { color: '#fff', fontWeight: '700' },
 });
+
