@@ -10,6 +10,7 @@ export type EventItem = {
   place: string;
   type: string;
   description?: string;
+  image?: string;
 };
 
 type Props = {

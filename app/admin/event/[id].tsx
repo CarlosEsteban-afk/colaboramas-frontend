@@ -51,6 +51,8 @@ export default function AdminEventDetails() {
         date: eventData.date || "",
         place: eventData.place || eventData.ubication || "",
         description: eventData.description || "",
+        // include image from API: prefer `imageUrl`, then `image.url`, then `image` raw
+        image: eventData.imageUrl || (eventData.image && (eventData.image.url || eventData.image)) || "",
       });
       setPublished(eventData.isEnabled || eventData.status === "approved");
     } catch (error) {
