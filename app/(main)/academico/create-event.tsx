@@ -12,8 +12,8 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme";
-import { EventItem } from "../components/EventCard";
+import { lightTheme } from "../../../theme";
+import { EventItem } from "../../components/EventCard";
 
 export default function CreateEventScreen() {
   const router = useRouter();

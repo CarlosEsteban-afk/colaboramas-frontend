@@ -21,14 +21,12 @@ export default function Select({ label, options, value, onSelect }) {
     setSelectedValue(value);
   }, [value]);
 
-  // Cada vez que abra el modal, cargamos primeros 40
   const openModal = () => {
     setPage(1);
     setVisibleOptions(options.slice(0, PAGE_SIZE));
     setOpen(true);
   };
 
-  // Cuando scrollea al final → cargar más
   const loadMore = () => {
     const nextPage = page + 1;
     const next = options.slice(0, nextPage * PAGE_SIZE);

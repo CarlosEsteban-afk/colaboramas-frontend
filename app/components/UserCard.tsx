@@ -1,150 +1,112 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React, { useRef, useState } from "react";
+import { View, Text, TouchableOpacity, Image, Animated } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme";
 import { useTranslation } from "react-i18next";
+import { lightTheme } from "../../theme";
+import SendMessageModal from "./SendMessageModal";
 
 type Props = {
+  id: number;
   name: string;
   title: string;
   location: string;
-  tags: string[];
+  tags?: string[];
   imageUrl?: string;
-  isOwnProfile?: boolean;
-  hideContact?: boolean;
+  onContactSent: (id: number) => void;
 };
 
 export default function UserCard({
+  id,
   name,
   title,
   location,
   tags = [],
   imageUrl,
-  isOwnProfile = false,
-  hideContact = false,
+  onContactSent,
 }: Props) {
   const { t } = useTranslation();
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
+
+  const animateCardRemoval = () => {
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: -20,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      onContactSent(id);
+    });
+  };
 
   return (
-    <LinearGradient
-      colors={[
-        lightTheme.colors["primary-pink"],
-        lightTheme.colors["primary-purple"],
-      ]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.card}
+    <Animated.View
+      style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }] }}
     >
-      <View style={styles.headerRow}>
-        {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={styles.profileImage} />
-        ) : (
-          <View style={styles.placeholderImage} />
-        )}
-        <View style={styles.textContainer}>
-          <Text style={styles.name}>{name}</Text>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.location}>{location}</Text>
-        </View>
-      </View>
-
-      {Array.isArray(tags) && tags.length > 0 && (
-        <View style={styles.tagsContainer}>
-          {tags.map((tag, index) => (
-            <View key={index} style={styles.tag}>
-              <Text style={styles.tagText}>{tag}</Text>
-            </View>
-          ))}
-        </View>
-      )}
-
-      {!hideContact && (
-        <TouchableOpacity
-          style={[styles.button, isOwnProfile && { opacity: 0.0 }]}
-          disabled={isOwnProfile}
+      <View className="rounded-xl border border-white w-full max-w-[375px] mx-auto my-2 overflow-hidden">
+        <LinearGradient
+          colors={[
+            lightTheme.colors["primary-pink"],
+            lightTheme.colors["primary-purple"],
+          ]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          className="p-4"
         >
-          <Text style={styles.buttonText}>{t("user.contact")}</Text>
-        </TouchableOpacity>
-      )}
-    </LinearGradient>
+          <View className="flex-row items-center mb-2">
+            {imageUrl ? (
+              <Image
+                source={{ uri: imageUrl }}
+                className="w-16 h-16 rounded-full border-2 border-white mr-3"
+              />
+            ) : (
+              <View className="w-16 h-16 rounded-full border-2 border-white mr-3 bg-white/20" />
+            )}
+            <View className="flex-1">
+              <Text className="text-lg font-semibold text-white">{name}</Text>
+              <Text className="text-sm text-white mt-0.5">{title}</Text>
+              <Text className="text-xs text-gray-300 mt-0.5">{location}</Text>
+            </View>
+          </View>
+
+          {/* Tags */}
+          {tags.length > 0 && (
+            <View className="flex-row flex-wrap mt-2 gap-2">
+              {tags.map((tag, i) => (
+                <View key={i} className="bg-orange-500 rounded-full py-1 px-3">
+                  <Text className="text-xs text-white">{tag}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* Botón */}
+          <TouchableOpacity
+            className="bg-blue-500 py-2 px-4 rounded mt-3 self-end"
+            onPress={() => setModalVisible(true)}
+          >
+            <Text className="text-white font-semibold">
+              {t("user.contact")}
+            </Text>
+          </TouchableOpacity>
+
+          <SendMessageModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            recipientId={id}
+            recipientName={name}
+            onContactSent={animateCardRemoval}
+          />
+        </LinearGradient>
+      </View>
+    </Animated.View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 6,
-    padding: 20,
-    marginHorizontal: 20,
-    marginTop: 16,
-    maxWidth: 300,
-    alignSelf: "center",
-    width: "100%",
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 12,
-    borderWidth: 2,
-    borderColor: lightTheme.colors.background,
-  },
-  placeholderImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: lightTheme.colors["muted-foreground"],
-    marginRight: 12,
-  },
-  textContainer: {
-    flex: 1,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: lightTheme.colors.background,
-  },
-  title: {
-    fontSize: 14,
-    color: lightTheme.colors.background,
-    marginTop: 2,
-  },
-  location: {
-    fontSize: 12,
-    color: lightTheme.colors["muted-foreground"],
-    marginTop: 2,
-  },
-  tagsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 8,
-    gap: 6,
-  },
-  tag: {
-    backgroundColor: lightTheme.colors["orange"],
-    borderRadius: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  tagText: {
-    color: lightTheme.colors.background,
-    fontSize: 12,
-  },
-  button: {
-    backgroundColor: lightTheme.colors["accent-blue"],
-    width: 80,
-    paddingVertical: 6,
-    borderRadius: 6,
-    marginTop: 12,
-    alignItems: "center",
-    alignSelf: "flex-end",
-  },
-  buttonText: {
-    color: lightTheme.colors.background,
-    fontWeight: "600",
-  },
-});

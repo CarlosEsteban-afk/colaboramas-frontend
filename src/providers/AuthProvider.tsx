@@ -8,6 +8,7 @@ const AUTHUSER = "auth_user";
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (
     name: string,
@@ -58,18 +59,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const response = await api.post("/auth/login", { email, password });
-    const token = response.data.token;
+    try {
+      const response = await api.post("/auth/login", { email, password });
+      const token = response.data.token;
 
-    await AsyncStorage.setItem(AUTHTOKEN, token);
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      await AsyncStorage.setItem(AUTHTOKEN, token);
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    const userResponse = await api.get("/auth/me");
-    const user = userResponse.data;
-    console.log("User data on signIn:", user);
-    await AsyncStorage.setItem(AUTHUSER, JSON.stringify(user));
-    setUser(user);
-    setIsAuthenticated(true);
+      const userResponse = await api.get("/auth/me");
+      const user = userResponse.data;
+      console.log("User data on signIn:", user);
+
+      await AsyncStorage.setItem(AUTHUSER, JSON.stringify(user));
+      setUser(user);
+      setIsAuthenticated(true);
+    } catch (error: any) {
+      if (error.response) {
+        if (error.response.status === 401 || error.response.status === 404) {
+          throw new Error("INVALID_CREDENTIALS");
+        }
+      }
+      throw new Error("NETWORK_ERROR");
+    }
   };
 
   const signUp = async (
@@ -115,10 +126,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthenticated(false);
   };
 
-  if (loading) return null;
-
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signUp, signOut }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, loading, signIn, signUp, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );

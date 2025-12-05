@@ -1,75 +1,27 @@
 import React from "react";
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Platform,
-} from "react-native";
+import { TouchableOpacity, Text, StyleSheet, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
-import { useRouter, useSegments } from "expo-router";
-import { useUser } from "../../src/hooks/useUser";
-
+import { useRouter } from "expo-router";
+import { useBottomBarItems } from "../../src/hooks/useBottomBarItems";
 export default function BottomBar() {
   const router = useRouter();
-  const segments = useSegments();
-  const { user } = useUser();
+  const { items, currentRoute } = useBottomBarItems();
 
-  const mainSegment = segments[0] || "";
-  if (!user || !["academico", "comunicador"].includes(mainSegment)) return null;
-
-  const currentRoute = segments[segments.length - 1] || "index";
-
-  const getHomeRoute = () => {
-    if (!user) return "/auth/login";
-    if (user.roles?.includes("ACADEMICO")) return "/academico";
-    if (user.roles?.includes("COMUNICADOR")) return "/comunicador";
-    return "/screens";
-  };
-
-  const baseItems = [
-    { label: "Inicio", icon: "mdi:home-outline", route: getHomeRoute() },
-    { label: "Buscar", icon: "feather:search", route: "/screens/search" },
-    {
-      label: "Eventos",
-      icon: "mdi:calendar",
-      route: "/academico/events",
-      role: "ACADEMICO",
-    },
-    {
-      label: "Contactos",
-      icon: "fluent:alert-20-regular",
-      route: "/screens/contacts",
-    },
-    {
-      label: "Perfil",
-      icon: "mdi:account-circle-outline",
-      route: "/screens/profile",
-    },
-  ];
-
-  const items = baseItems.filter((item) => {
-    if (!item.role) return true;
-    return user?.roles?.includes(item.role);
-  });
+  if (items.length === 0) return null;
 
   const BAR_HEIGHT = Platform.OS === "web" ? 70 : 64;
 
   return (
     <LinearGradient
-      colors={[
-        lightTheme.colors["primary-purple"],
-        lightTheme.colors["primary-pink"],
-      ]}
+      colors={[lightTheme.colors["primary-purple"], lightTheme.colors["primary-pink"]]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={[styles.bar, { height: BAR_HEIGHT }]}
     >
       {items.map((item, index) => {
-        const itemRouteSegment = item.route.split("/").pop() || "";
-        const isActive =
-          itemRouteSegment === currentRoute || item.route === getHomeRoute();
+        const isActive = currentRoute.includes(item.route.replace("/", ""));
 
         return (
           <TouchableOpacity
@@ -91,12 +43,7 @@ export default function BottomBar() {
               size={isActive ? 28 : 22}
               color={isActive ? lightTheme.colors["green-light"] : "#fff"}
             />
-            <Text
-              style={[
-                styles.label,
-                isActive && { color: lightTheme.colors["green-light"] },
-              ]}
-            >
+            <Text style={[styles.label, isActive && { color: lightTheme.colors["green-light"] }]}>
               {item.label}
             </Text>
           </TouchableOpacity>

@@ -1,0 +1,23 @@
+export const researchFields = [
+  "Psicología social",
+  "Antropología",
+  "Sociología",
+  "Neurociencia",
+  "Educación",
+  "Cognición",
+  "Filosofía",
+  "Historia",
+  "Economía",
+  "Inteligencia Artificial",
+  "Desarrollo humano",
+  "Género y diversidad",
+  "Política pública",
+  "Comunicación",
+  "Cultura digital",
+  "Bioética",
+  "Ecología",
+  "Derecho",
+  "Matemáticas aplicadas",
+  "Literatura comparada",
+  // ... agrega todos los campos que necesites
+];

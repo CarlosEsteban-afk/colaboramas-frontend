@@ -24,6 +24,39 @@
     "deleteAccount": "Delete account",
     "termsOfService": "Terms of service",
     "appInfo": "App info"
+  },
+  "sendMessageModal": {
+    "title": "Send message to {{name}}",
+    "subtitle": "Complete the subject and your message",
+    "subjectPlaceholder": "Subject",
+    "messagePlaceholder": "Write your message...",
+    "cancel": "Cancel",
+    "send": "Send",
+    "errorEmptyFields": "You must complete all fields."
+  },
+  "multiSelect": {
+    "placeholder": "Select...",
+    "searchPlaceholder": "Search...",
+    "noResults": "No results"
+  },
+  "contacts": {
+    "title": "Contacts",
+    "description": "Manage your contact requests.",
+    "tabs": {
+      "recibidas": "Received",
+      "enviadas": "Sent",
+      "contestadas": "Answered"
+    },
+    "empty": "There are no {{type}} requests.",
+    "actions": {
+      "accept": "Accept",
+      "reject": "Reject"
+    },
+    "status": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    }
   }
 }
 
