@@ -33,8 +33,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const token = await AsyncStorage.getItem(AUTHTOKEN);
         if (token) {
           api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          await loadUser();
-          setIsAuthenticated(true);
+          // Try to fetch current user from server to ensure token validity and latest data
+          try {
+            const meResp = await api.get("/auth/me");
+            const currentUser = meResp.data;
+            console.debug("[auth] current user loaded from /auth/me:", currentUser);
+            await AsyncStorage.setItem(AUTHUSER, JSON.stringify(currentUser));
+            setUser(currentUser);
+            setIsAuthenticated(true);
+          } catch (meErr) {
+            // If fetching /auth/me fails, fallback to stored user (if any)
+            console.debug("[auth] /auth/me failed, falling back to stored user", meErr?.response?.status || meErr);
+            await loadUser();
+            setIsAuthenticated(true);
+          }
         }
       } catch (e) {
         console.error("Failed to load auth state", e);

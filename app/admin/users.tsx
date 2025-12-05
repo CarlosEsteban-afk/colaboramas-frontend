@@ -17,6 +17,18 @@ export default function AdminUsers() {
     fetchUsers();
   }, []);
 
+  // Debug: verify authenticated user and roles from current token
+  useEffect(() => {
+    (async () => {
+      try {
+        const me = await api.get("/auth/me");
+        console.debug('[auth/me]', me.data);
+      } catch (err) {
+        console.debug('[auth/me] error', err?.response?.status, err?.response?.data || err);
+      }
+    })();
+  }, []);
+
   const fetchUsers = async () => {
     try {
       const res = await api.get("/admin/users");
@@ -52,6 +64,8 @@ export default function AdminUsers() {
 
   const onBanToggle = async (u: User) => {
     try {
+      // Debug: show if Authorization header is present on the client defaults
+      console.debug('[admin] toggleBan headers:', api.defaults.headers.common?.Authorization ? 'present' : 'missing');
       if (u.banned) {
         await api.patch(`/admin/users/${u.id}/unban`);
       } else {
@@ -92,6 +106,7 @@ export default function AdminUsers() {
                   const currentRole = String(item.role).toUpperCase();
                   const newRole = currentRole === "COMUNICADOR" ? "ACADEMICO" : "COMUNICADOR";
                   try {
+                    console.debug('[admin] changeRole headers:', api.defaults.headers.common?.Authorization ? 'present' : 'missing');
                     await api.patch(`/admin/changeUserRole/${item.id}`, { role: newRole });
                     await fetchUsers();
                   } catch (error) {

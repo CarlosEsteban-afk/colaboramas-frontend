@@ -21,6 +21,11 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem("auth_token");
+    const hasToken = !!token;
+    // Debug: log whether we have a token when making requests (web/dev only)
+    if (Platform.OS === "web") {
+      console.debug("[api] request", config.method, config.url, "hasToken:", hasToken);
+    }
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
