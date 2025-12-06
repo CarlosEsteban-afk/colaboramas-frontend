@@ -18,6 +18,7 @@ export default function BottomBar() {
       colors={[lightTheme.colors["primary-purple"], lightTheme.colors["primary-pink"]]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
+      nativeID="app-bottom-bar"
       style={[styles.bar, { height: BAR_HEIGHT }]}
     >
       {items.map((item, index) => {
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     paddingHorizontal: 8,
-    position: Platform.OS === "web" ? "sticky" : "absolute",
+    position: Platform.OS === "web" ? "fixed" : "absolute",
     bottom: 0,
     left: 0,
     right: 0,

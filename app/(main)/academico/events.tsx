@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import SearchBar from "../../components/SearchBar";
 import EventCardRight, { EventItem } from "../../components/EventCardRight";
@@ -189,9 +189,9 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   fab: {
-    position: "absolute",
+    position: Platform.OS === "web" ? "fixed" : "absolute",
     right: 20,
-    bottom: 30,
+    bottom: Platform.OS === "web" ? 90 : 80,
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -203,6 +203,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
+    zIndex: 20,
   },
   fabIcon: {
     color: "#fff",
