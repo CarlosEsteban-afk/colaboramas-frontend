@@ -53,6 +53,8 @@ export default function Login() {
     try {
       await Promise.race([signIn(email, password), TIMEOUT]);
 
+      // Wait for state updates to propagate
+      await new Promise(resolve => setTimeout(resolve, 100));
       router.replace("/router/RoleRouter");
     } catch (error) {
       if (error.message === "timeout") {

@@ -1,7 +1,8 @@
-/*import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { View, Text, Animated, StyleSheet } from "react-native";
 import { ContactsContext } from "../../src/providers/ContactsProvider";
-export default function GlobalNotifications() {
+
+export default function GlobalNotification() {
   const { notifications, setNotifications } = useContext(ContactsContext);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -14,7 +15,7 @@ export default function GlobalNotifications() {
       }).start();
 
       const timer = setTimeout(() => {
-        setNotifications((prev) => prev.slice(1)); 
+        setNotifications((prev) => prev.slice(1));
         fadeAnim.setValue(0);
       }, 4000);
 
@@ -22,14 +23,14 @@ export default function GlobalNotifications() {
     }
   }, [notifications]);
 
-  if (notifications.length === 0) return null;
+  if (!notifications || notifications.length === 0) return null;
 
   const msg = notifications[0];
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
       <Text style={styles.text}>
-        Nuevo mensaje de {msg.fromUser.username}: {msg.message}
+        Nuevo mensaje de {msg.fromUser?.username ?? "usuario"}: {msg.message}
       </Text>
     </Animated.View>
   );
@@ -51,4 +52,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-*/
