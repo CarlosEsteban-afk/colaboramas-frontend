@@ -13,17 +13,15 @@ export function useBottomBarItems() {
     if (typeof r === "string") return r.toUpperCase();
     if (typeof r === "number") return String(r).toUpperCase();
     if (typeof r === "object") {
-      // Try common keys (include uppercase keys like ROLENAME)
-      const keys = ["ROLENAME", "name", "nombre", "role", "rol", "code", "type", "label", "value"];
+      // Keys to try (including uppercase keys like ROLENAME)
+      const keys = ["ROLENAME", "ROLENAME", "name", "nombre", "role", "rol", "code", "type", "label", "value"];
       for (const k of keys) {
         if (k in r && (r as any)[k]) return String((r as any)[k]).toUpperCase();
       }
-      // If object has a useful toString
       try {
         const s = (r as any).toString?.();
         if (typeof s === "string" && s && s !== "[object Object]") return s.toUpperCase();
       } catch {}
-      // As last resort, JSON stringify
       try {
         return JSON.stringify(r).toUpperCase();
       } catch {
@@ -39,13 +37,16 @@ export function useBottomBarItems() {
       : [normalizeRole(user.roles)]
     : [];
 
-  const hasAccess = rolesNormalized.some((r) => allowedRoles.includes(r));
+  // Use substring matching so JSON stringified roles are detected
+  const hasAccess = rolesNormalized.some((r) =>
+    allowedRoles.some((ar) => r.includes(ar))
+  );
 
   if (!hasAccess) return { items: [], currentRoute };
 
   const getHomeRoute = () => {
-    if (rolesNormalized.some((r) => r === "ACADEMICO")) return "/academico";
-    if (rolesNormalized.some((r) => r === "COMUNICADOR")) return "/comunicador";
+    if (rolesNormalized.some((r) => r.includes("ACADEMICO"))) return "/academico";
+    if (rolesNormalized.some((r) => r.includes("COMUNICADOR"))) return "/comunicador";
     return "/screens";
   };
 
@@ -60,7 +61,7 @@ export function useBottomBarItems() {
   const items = baseItems.filter((item) => {
     if (!item.roles) return true;
     const allowed = item.roles.map((role) => String(role).toUpperCase());
-    return rolesNormalized.some((r) => allowed.includes(r));
+    return rolesNormalized.some((r) => allowed.some((a) => r.includes(a)));
   });
 
   return { items, currentRoute };
