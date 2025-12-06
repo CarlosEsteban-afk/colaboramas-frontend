@@ -14,6 +14,10 @@ export default function EventsScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Search & filters (same behavior as admin/events)
+  const [q, setQ] = useState("");
+  const [selectedType, setSelectedType] = useState<string>("");
+
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -34,7 +38,7 @@ export default function EventsScreen() {
           return map[t.toUpperCase()] ?? (t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
         };
 
-        const mapped: EventItem[] = data.map((e: any) => ({
+            const mapped: EventItem[] = data.map((e: any) => ({
           id: String(e.id),
           title: e.title ?? "",
           date: e.date ?? "",
@@ -66,19 +70,50 @@ export default function EventsScreen() {
     }
 
     if (events.length === 0) {
-        return <Text style={styles.errorText}>No se encontraron eventos.</Text>;
+      return <Text style={styles.errorText}>No se encontraron eventos.</Text>;
     }
 
-    return events.map((event) => (
-      <View key={event.id} style={styles.eventWrapper}>
-        <EventCardRight
-          event={event}
-          onPress={() =>
-            router.push({ pathname: "/(main)/academico/event/[id]", params: { id: String(event.id) } })
-          }
-        />
-      </View>
-    ));
+    // derive types from loaded events
+    const types = Array.from(new Set(events.map((ev) => String(ev.type || '').trim()).filter(Boolean)));
+
+      // apply filters (title/description q and type)
+    const filtered = events.filter((e) => {
+      const title = String(e.title || "").toLowerCase();
+      const ql = q.toLowerCase();
+      if (!(title.includes(ql) || String(e.description || "").toLowerCase().includes(ql))) return false;
+
+      if (selectedType) {
+        if (String(e.type || '').toLowerCase() !== selectedType.toLowerCase()) return false;
+      }
+      return true;
+    });
+
+    return (
+      <>
+        {/* Type filters (horizontal chips) */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 8, marginBottom: 8 }}>
+          <TouchableOpacity style={[styles.filterChip, selectedType === '' && styles.filterChipActive]} onPress={() => setSelectedType('')}>
+            <Text style={[styles.filterChipText, selectedType === '' && styles.filterChipTextActive]}>Todos</Text>
+          </TouchableOpacity>
+          {types.map((t) => (
+            <TouchableOpacity key={t} style={[styles.filterChip, selectedType === t && styles.filterChipActive]} onPress={() => setSelectedType(t)}>
+              <Text style={[styles.filterChipText, selectedType === t && styles.filterChipTextActive]}>{t}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Status filter removed (no active/inactive filter) */}
+
+        {filtered.map((event) => (
+          <View key={event.id} style={styles.eventWrapper}>
+            <EventCardRight
+              event={event}
+              onPress={() => router.push(`/academico/event/${event.id}`)}
+            />
+          </View>
+        ))}
+      </>
+    );
   };
 
   return (
@@ -87,9 +122,9 @@ export default function EventsScreen() {
         <Text style={styles.title}>Events</Text>
         <Text style={styles.subtitle}>Find events and contests</Text>
         <SearchBar
-          placeholder="Buscar..."
-          onChangeText={() => {}}
-          value={""}
+          placeholder="Buscar por título o descripción"
+          onChangeText={setQ}
+          value={q}
           onApplyFilters={() => {}}
         />
       </View>
@@ -175,4 +210,9 @@ const styles = StyleSheet.create({
     lineHeight: 32,
     fontWeight: "700",
   },
+  filterChip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 20, borderWidth: 1, borderColor: '#E6DFFF', marginRight: 8, backgroundColor: '#fff' },
+  filterChipActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
+  filterChipText: { color: '#333', fontWeight: '600' },
+  filterChipTextActive: { color: '#fff' },
+  // status filter styles removed
 });
