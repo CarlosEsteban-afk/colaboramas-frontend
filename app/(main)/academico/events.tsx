@@ -71,7 +71,12 @@ export default function EventsScreen() {
 
     return events.map((event) => (
       <View key={event.id} style={styles.eventWrapper}>
-        <EventCardRight event={event} />
+        <EventCardRight
+          event={event}
+          onPress={() =>
+            router.push({ pathname: "/(main)/academico/event/[id]", params: { id: String(event.id) } })
+          }
+        />
       </View>
     ));
   };
