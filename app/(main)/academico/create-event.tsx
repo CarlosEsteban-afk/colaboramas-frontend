@@ -16,6 +16,7 @@ import { lightTheme } from "../../../theme";
 import { EventItem } from "../../components/EventCard";
 import api from "../../../client";
 import { useUser } from "../../../src/hooks/useUser";
+// DateTimePickerModal will be required lazily (only on native platforms)
 
 export default function CreateEventScreen() {
   const router = useRouter();
@@ -28,6 +29,15 @@ export default function CreateEventScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   const { user } = useUser();
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+
+  const showDatePicker = () => setDatePickerVisible(true);
+  const hideDatePicker = () => setDatePickerVisible(false);
+  const handleConfirm = (selectedDate: Date) => {
+    // store ISO format expected by backend
+    setDate(selectedDate.toISOString());
+    hideDatePicker();
+  };
 
   const submit = () => {
     if (!title.trim()) return Alert.alert("Error", "El título es obligatorio.");
@@ -97,7 +107,50 @@ export default function CreateEventScreen() {
           </View>
 
           <Text style={styles.label}>Fecha</Text>
-          <TextInput value={date} onChangeText={setDate} placeholder="Ej. October 10th, 2025" style={styles.input} placeholderTextColor="#999" />
+          <TouchableOpacity onPress={showDatePicker} style={[styles.input, { justifyContent: 'center' }]}> 
+            <Text style={{ color: date ? '#222' : '#999' }}>{date ? new Date(date).toLocaleString() : 'Seleccionar fecha y hora'}</Text>
+          </TouchableOpacity>
+          {Platform.OS === 'web' ? (
+            // Use native HTML datetime-local input on web
+            <input
+              type="datetime-local"
+              value={date ? new Date(date).toISOString().slice(0, 16) : ""}
+              onChange={(e: any) => {
+                const v = e.target.value;
+                if (!v) return setDate("");
+                const iso = new Date(v).toISOString();
+                setDate(iso);
+              }}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                border: '1px solid #eee',
+                backgroundColor: '#fafafa',
+                color: '#222',
+              }}
+            />
+          ) : (
+            (() => {
+              // Lazy require native picker to avoid bundling it on web
+              let NativeDateTimePicker: any = null;
+              try {
+                // eslint-disable-next-line @typescript-eslint/no-var-requires
+                NativeDateTimePicker = require('react-native-modal-datetime-picker').default;
+              } catch (e) {
+                NativeDateTimePicker = null;
+              }
+              return NativeDateTimePicker ? (
+                <NativeDateTimePicker
+                  isVisible={isDatePickerVisible}
+                  mode="datetime"
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+                  display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                />
+              ) : null;
+            })()
+          )}
 
           <Text style={styles.label}>Lugar</Text>
           <TextInput value={place} onChangeText={setPlace} placeholder="Ej. Auditorio B" style={styles.input} placeholderTextColor="#999" />
