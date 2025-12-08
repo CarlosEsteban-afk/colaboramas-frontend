@@ -1,46 +1,87 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, useWindowDimensions } from "react-native";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, {
   Defs,
   LinearGradient as SVGLinearGradient,
   Stop,
   Text as SvgText,
 } from "react-native-svg";
-import { useRouter } from "expo-router"; // 🔹 import router
+import { useRouter } from "expo-router";
+import { useFontsLoaded } from "../../src/providers/FontsProvider";
 
 export default function TopBar() {
-  const insets = useSafeAreaInsets();
-  const router = useRouter(); // 🔹 inicializamos router
+  const fontsLoaded = useFontsLoaded();
+  const router = useRouter();
+  const { width } = useWindowDimensions();
+
+  if (!fontsLoaded) return null;
+
+  const fontSize = Math.min(width * 0.18, 64);
+  const svgHeight = fontSize * 1.3; // altura total del logo SVG
+  const svgWidth = width * 0.6; // ancho del logo
 
   const handleConfigPress = () => {
-    router.push("/screens/Settings"); // 🔹 ruta al pulsar el botón
+    router.push("/screens/Settings");
   };
 
   return (
     <View
       style={{
         backgroundColor: "#FFF",
-        paddingTop: insets.top + 10,
-        paddingBottom: 4,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
         shadowColor: "#000",
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
+        shadowOpacity: 0.03,
+        shadowRadius: 3,
         elevation: 2,
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      {/* Botón de configuración */}
+      {/* Logo SVG */}
+      <Svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <Defs>
+          <SVGLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+            <Stop offset="0" stopColor={lightTheme.colors["primary-pink"]} />
+            <Stop offset="1" stopColor={lightTheme.colors["primary-purple"]} />
+          </SVGLinearGradient>
+        </Defs>
+
+        <SvgText
+          fill="url(#grad)"
+          fontSize={fontSize}
+          fontFamily="CinzelDecorative_400Regular"
+          fontWeight="400"
+          x="50%"
+          y="50%"
+          textAnchor="middle"
+          dy={fontSize * 0.12}
+        >
+          AGORA
+        </SvgText>
+      </Svg>
+
+      {/* Botón Configuración */}
       <TouchableOpacity
         activeOpacity={0.7}
-        onPress={handleConfigPress} // 🔹 aquí llamamos a la función
+        onPress={handleConfigPress}
         style={{
           position: "absolute",
-          top: insets.top + 10,
           right: 16,
-          backgroundColor: "transparent",
-          zIndex:10
+          top: svgHeight / 2 - 20, // centra verticalmente respecto al SVG
+          width: 40,
+          height: 40,
+          borderRadius: 20,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "rgba(0,0,0,0.05)", // sutil efecto al presionar
         }}
       >
         <Monicon
@@ -49,30 +90,6 @@ export default function TopBar() {
           color={lightTheme.colors["primary-purple"]}
         />
       </TouchableOpacity>
-
-      {/* 🔹 Título AGORA */}
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Svg viewBox="0 -5 80 30" width="100%" height="60">
-          <Defs>
-            <SVGLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
-              <Stop offset="0" stopColor={lightTheme.colors["primary-pink"]} />
-              <Stop offset="1" stopColor={lightTheme.colors["primary-purple"]} />
-            </SVGLinearGradient>
-          </Defs>
-
-          <SvgText
-            fill="url(#grad)"
-            fontSize="64"
-            fontFamily="CinzelDecorative_400Regular"
-            fontWeight="bold"
-            x="50%"
-            y="55%"
-            textAnchor="middle"
-          >
-            AGORA
-          </SvgText>
-        </Svg>
-      </View>
     </View>
   );
 }

@@ -1,19 +1,13 @@
 import React from "react";
-import {
-  TextInput,
-  TouchableOpacity,
-  Text,
-  Alert,
-  StyleSheet,
-} from "react-native";
+import { TouchableOpacity, Text, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import useRegister from "../../src/hooks/useRegister";
 import AuthLayout from "../layouts/authLayout";
-
+import FormField from "../components/FormField";
 export default function RegisterScreen() {
   const { role } = useLocalSearchParams<{ role?: string }>();
-
   const router = useRouter();
+
   const {
     name,
     setName,
@@ -27,102 +21,72 @@ export default function RegisterScreen() {
     handleRegister,
   } = useRegister();
 
-const onRegister = async () => {
-  const roles = role ? [role as "ACADEMICO" | "COMUNICADOR"] : [];
-  const success = await handleRegister(roles);
-  if (!success) {
-    Alert.alert("Error", "Revisa tus datos o el correo ya está registrado");
-    return;
-  }
-  router.push("/auth/completeProfile"); 
-};
+  const onRegister = async () => {
+    const roles = role ? [role as "ACADEMICO" | "COMUNICADOR"] : [];
+    const success = await handleRegister(roles);
 
+    if (!success) return;
+
+    router.push("/auth/completeProfile");
+  };
 
   return (
     <AuthLayout title="Crear Cuenta" card cardGradient showLogo={false}>
-      <TextInput
-        style={styles.input}
-        placeholder="Nombre completo"
-        placeholderTextColor="#6B7280"
-        value={name}
-        onChangeText={setName}
-      />
+      <View className="w-full space-y-2 ">
+        <FormField
+          value={name}
+          onChangeText={setName}
+          placeholder="Nombre completo"
+          error={errors.name}
+        />
 
-      <TextInput
-        style={[styles.input, errors.email && styles.inputError]}
-        placeholder="Correo electrónico"
-        placeholderTextColor="#6B7280"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
+        <FormField
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Correo electrónico"
+          error={errors.email}
+          keyboardType="email-address"
+        />
 
-      <TextInput
-        style={[styles.input, errors.password && styles.inputError]}
-        placeholder="Contraseña"
-        placeholderTextColor="#6B7280"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+        <FormField
+          value={password}
+          onChangeText={setPassword}
+          placeholder="Contraseña"
+          secureTextEntry
+          error={errors.password}
+        />
 
-      {/* Confirmar contraseña */}
-      <TextInput
-        style={[styles.input, errors.password && styles.inputError, { marginBottom: 16 }]}
-        placeholder="Repetir contraseña"
-        placeholderTextColor="#6B7280"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-      />
+        <FormField
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          placeholder="Repetir contraseña"
+          secureTextEntry
+          error={errors.confirmPassword}
+        />
 
-      {/* Botón de registro */}
-      <TouchableOpacity style={styles.registerButton} onPress={onRegister}>
-        <Text style={styles.registerButtonText}>Registrarse</Text>
-      </TouchableOpacity>
+        {/* BOTON */}
+        <TouchableOpacity
+          onPress={onRegister}
+          className="w-[80%] mt-4 self-center rounded-md overflow-hidden"
+        >
+          <Text
+            className="
+      text-center text-white font-semibold text-base py-3
+      bg-blue-500
+    "
+          >
+            Registrarse
+          </Text>
+        </TouchableOpacity>
 
-      {/* Enlace a login */}
-      <TouchableOpacity onPress={() => router.push("/auth/login")}>
-        <Text style={styles.loginLink}>¿Ya tienes cuenta? Inicia sesión</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push("/auth/login")}>
+          <Text className="text-center text-blue-300 underline text-sm mt-2">
+            ¿Ya tienes cuenta? Inicia sesión
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      
     </AuthLayout>
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.5)",
-    backgroundColor: "rgba(255,255,255,0.9)",
-    borderRadius: 6,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    marginBottom: 8,
-    fontSize: 16,
-    color: "#2563eb",
-  },
-  inputError: {
-    borderColor: "#ef4444",
-  },
-  registerButton: {
-    backgroundColor: "#3b82f6",
-    paddingVertical: 12,
-    borderRadius: 6,
-    alignItems: "center",
-    marginBottom: 16,
-    alignSelf: "center",
-    width: "80%",
-  },
-  registerButtonText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 16,
-  },
-  loginLink: {
-    textAlign: "center",
-    color: "#93c5fd",
-    textDecorationLine: "underline",
-    fontSize: 14,
-  },
-});

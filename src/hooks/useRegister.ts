@@ -8,39 +8,89 @@ export default function useRegister() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errors, setErrors] = useState({ email: "", password: "" });
+
+  const [touched, setTouched] = useState({
+    name: false,
+    email: false,
+    password: false,
+    confirmPassword: false,
+  });
+
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    setErrors(prev => ({
-      ...prev,
-      email: email.length > 0 && !emailRegex.test(email) ? "Correo inválido" : "",
+
+    setErrors({
+      name:
+        touched.name && name.trim().length === 0
+          ? "El nombre es obligatorio"
+          : "",
+      email:
+        touched.email && !emailRegex.test(email)
+          ? "Correo inválido"
+          : "",
       password:
-        password.length > 0 && password.length < 6
+        touched.password && password.length < 6
           ? "La contraseña debe tener al menos 6 caracteres"
-          : confirmPassword.length > 0 && password !== confirmPassword
+          : "",
+      confirmPassword:
+        touched.confirmPassword && confirmPassword !== password
           ? "Las contraseñas no coinciden"
           : "",
-    }));
-  }, [email, password, confirmPassword]);
+    });
+  }, [name, email, password, confirmPassword, touched]);
 
-const handleRegister = async (roles: string[]): Promise<boolean> => {
-  if (!errors.email && !errors.password && email && password && confirmPassword) {
-    return await signUp(name, email, password, roles); 
-  }
-  return false;
-};
+  const handleRegister = async (roles: string[]): Promise<boolean> => {
+    setTouched({
+      name: true,
+      email: true,
+      password: true,
+      confirmPassword: true,
+    });
 
+    if (
+      errors.name ||
+      errors.email ||
+      errors.password ||
+      errors.confirmPassword ||
+      !name ||
+      !email ||
+      !password ||
+      !confirmPassword
+    ) {
+      return false;
+    }
+
+    return await signUp(name, email, password, roles);
+  };
 
   return {
     name,
-    setName,
+    setName: (v: string) => {
+      setName(v);
+      setTouched(prev => ({ ...prev, name: true }));
+    },
     email,
-    setEmail,
+    setEmail: (v: string) => {
+      setEmail(v);
+      setTouched(prev => ({ ...prev, email: true }));
+    },
     password,
-    setPassword,
+    setPassword: (v: string) => {
+      setPassword(v);
+      setTouched(prev => ({ ...prev, password: true }));
+    },
     confirmPassword,
-    setConfirmPassword,
+    setConfirmPassword: (v: string) => {
+      setConfirmPassword(v);
+      setTouched(prev => ({ ...prev, confirmPassword: true }));
+    },
     errors,
     handleRegister,
   };

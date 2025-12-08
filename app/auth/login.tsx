@@ -21,18 +21,53 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert("Error", "Debes ingresar tu correo y contraseña");
       return;
     }
 
+    if (!validateEmail(email)) {
+      Alert.alert("Correo inválido", "Ingresa un correo electrónico válido.");
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert(
+        "Contraseña demasiado corta",
+        "La contraseña debe tener al menos 6 caracteres."
+      );
+      return;
+    }
+
     setLoading(true);
+
+    const TIMEOUT = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("timeout")), 5000)
+    );
+
     try {
-      await signIn(email, password);
-      router.push("/screens");
+      await Promise.race([signIn(email, password), TIMEOUT]);
+
+      // Wait for state updates to propagate
+      await new Promise(resolve => setTimeout(resolve, 100));
+      router.replace("/router/RoleRouter");
     } catch (error) {
-      Alert.alert("Error", "Correo o contraseña incorrectos");
+      if (error.message === "timeout") {
+        Alert.alert(
+          "Error",
+          "El servidor no respondió. Verifica tu correo o intenta más tarde."
+        );
+      } else {
+        Alert.alert(
+          "Error",
+          "Correo o contraseña incorrectos. Verifica tus datos e inténtalo nuevamente."
+        );
+      }
     } finally {
       setLoading(false);
     }
@@ -88,11 +123,8 @@ export default function Login() {
         </Text>
       </TouchableOpacity>
 
-      {/* Enlace registro */}
       <TouchableOpacity onPress={() => router.push("/auth/preregister")}>
-        <Text style={styles.registerLink}>
-          ¿No tienes cuenta? Regístrate
-        </Text>
+        <Text style={styles.registerLink}>¿No tienes cuenta? Regístrate</Text>
       </TouchableOpacity>
     </AuthLayout>
   );

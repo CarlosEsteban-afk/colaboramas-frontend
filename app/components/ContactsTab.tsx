@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import { useContacts } from "../../src/hooks/useContact";
@@ -11,8 +11,7 @@ interface Props {
 
 export default function ContactsTab({ type }: Props) {
   const { t } = useTranslation();
-  const { receivedMessages, sentMessages, repliedMessages, respondToMessage } =
-    useContacts();
+  const { receivedMessages, sentMessages, repliedMessages, respondToMessage } = useContacts();
 
   const data =
     type === "recibidas"
@@ -23,127 +22,103 @@ export default function ContactsTab({ type }: Props) {
 
   if (data.length === 0) {
     return (
-      <Text style={{ color: "#666", textAlign: "center", marginTop: 20 }}>
+      <Text className="text-center mt-5" style={{ color: "#666" }}>
         {t("contacts.empty", { type: t(`contacts.tabs.${type}`) })}
       </Text>
     );
   }
 
   return (
-    <View style={{ gap: 10 }}>
-      {data.map((c, index) => (
-        <LinearGradient
-          key={index}
-          colors={[
-            lightTheme.colors["primary-pink"],
-            lightTheme.colors["primary-purple"],
-          ]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.card}
-        >
-          <View style={styles.innerCard}>
-            <Text style={styles.name}>
-              {type === "recibidas" ? c.fromUserId : `${c.toUserId}`}
-            </Text>
-            <Text style={styles.message}>{c.message}</Text>
+    <View className="rounded-xl flex-col w-full space-y-2 max-w-[375px] mx-auto">
+      {data.map((c, index) => {
+        const user = type === "recibidas" ? c.fromUser : c.toUser;
 
-            {type === "recibidas" && (
-              <View style={styles.row}>
-                <TouchableOpacity
-                  style={[styles.btn, { backgroundColor: "#E91E63" }]}
-                  onPress={() => respondToMessage(c.id, false)}  // rechazar solicitud
-                >
-                  <Text style={styles.btnText}>{t("contacts.actions.reject")}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.btn, { backgroundColor: "#82A50B" }]}
-                  onPress={() => respondToMessage(c.id, true)}   // aceptar solicitud
-                >
-                  <Text style={styles.btnText}>{t("contacts.actions.accept")}</Text>
-                </TouchableOpacity>
+        return (
+          <LinearGradient
+            key={index}
+            colors={[lightTheme.colors["primary-pink"], lightTheme.colors["primary-purple"]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className="rounded-lg p-1"
+            style={{
+              shadowColor: "#000",
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              shadowOffset: { width: 0, height: 2 },
+            }}
+          >
+            <View className="rounded-lg p-4 bg-transparent space-y-2">
+              <View className="flex-row items-center space-x-3">
+                <Image
+                  source={{ uri: user.imageUrl }}
+                  className="w-10 h-10 rounded-full"
+                />
+                <View className="flex-col">
+                  <Text className="text-white font-bold text-base">{user.username}</Text>
+                  <Text className="text-white text-sm">{user.email}</Text>
+                </View>
               </View>
-            )}
 
-            {type === "enviadas" && (
-              <View style={{ alignItems: "flex-end" }}>
-                <TouchableOpacity
-                  style={[
-                    styles.btn,
-                    { backgroundColor: lightTheme.colors["orange"] },
-                  ]}
-                >
-                  <Text style={styles.btnText}>{t("contacts.status.pending")}</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+              <Text className="text-white">{c.message}</Text>
 
-            {type === "contestadas" && (
-              <View style={{ alignItems: "flex-end" }}>
-                <TouchableOpacity
-                  style={[
-                    styles.btn,
-                    {
+              {type === "recibidas" && (
+                <View className="flex-row justify-end space-x-2">
+                  <TouchableOpacity
+                    className="rounded-md px-3 py-1"
+                    style={{ backgroundColor: "#E91E63" }}
+                    onPress={() => respondToMessage(c.id, false)}
+                  >
+                    <Text className="text-white font-semibold">
+                      {t("contacts.actions.reject")}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    className="rounded-md px-3 py-1"
+                    style={{ backgroundColor: "#82A50B" }}
+                    onPress={() => respondToMessage(c.id, true)}
+                  >
+                    <Text className="text-white font-semibold">
+                      {t("contacts.actions.accept")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {type === "enviadas" && (
+                <View className="items-end">
+                  <TouchableOpacity
+                    className="rounded-md px-3 py-1"
+                    style={{ backgroundColor: lightTheme.colors["orange"] }}
+                  >
+                    <Text className="text-white font-semibold">
+                      {t("contacts.status.pending")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {type === "contestadas" && (
+                <View className="items-end">
+                  <TouchableOpacity
+                    className="rounded-md px-3 py-1"
+                    style={{
                       backgroundColor:
                         c.status === "aceptada" ? "#82A50B" : "#E91E63",
-                    },
-                  ]}
-                >
-                  <Text style={styles.btnText}>
-                    {c.status === "aceptada"
-                      ? t("contacts.status.accepted")
-                      : t("contacts.status.rejected")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        </LinearGradient>
-      ))}
+                    }}
+                  >
+                    <Text className="text-white font-semibold">
+                      {c.status === "aceptada"
+                        ? t("contacts.status.accepted")
+                        : t("contacts.status.rejected")}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </LinearGradient>
+        );
+      })}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 6,
-    padding: 2,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-  },
-  innerCard: {
-    borderRadius: 6,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-  },
-  name: {
-    fontWeight: "bold",
-    fontSize: 16,
-    color: "#fff",
-  },
-  message: {
-    marginBottom: 12,
-    color: "#fff",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: 8,
-  },
-  btn: {
-    borderRadius: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  btnText: {
-    color: "#FFF",
-    fontWeight: "600",
-  },
-});
