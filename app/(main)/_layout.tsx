@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingBottom: Platform.OS === "web" ? 80 : 55, // espacio para la BottomBar
   },
   bottomBar: {
     // kept for reference; BottomBar handles its own positioning (fixed on web)
