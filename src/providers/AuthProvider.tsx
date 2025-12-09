@@ -38,13 +38,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           try {
             const meResp = await api.get("/auth/me");
             const currentUser = meResp.data;
-            console.debug("[auth] current user loaded from /auth/me:", currentUser);
             await AsyncStorage.setItem(AUTHUSER, JSON.stringify(currentUser));
             setUser(currentUser);
             setIsAuthenticated(true);
           } catch (meErr) {
             // If fetching /auth/me fails, fallback to stored user (if any)
-            console.debug("[auth] /auth/me failed, falling back to stored user", meErr?.response?.status || meErr);
             await loadUser();
             setIsAuthenticated(true);
           }
