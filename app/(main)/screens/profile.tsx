@@ -1,60 +1,73 @@
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../../theme";
 import { useUser } from "../../../src/hooks/useUser";
 import { useLogout } from "../../../src/hooks/useLogOut";
 import ProfileCard from "../../components/ProfileCard";
+
 export const unstable_settings = {
   topBar: "hidden",
 };
 
 export default function ProfileScreen() {
-  const { user } = useUser();
+  const { user, loading } = useUser();
   const { handleLogout } = useLogout();
-  console.log("ROLES:", user.roles);
-  const normalizeRole = (role: string) =>
-    role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
 
-const formattedRoles =
-  user?.roles
-    ?.map((r) => normalizeRole(r.roleName || ""))
-    .join(", ") || "Sin rol definido";
-
-
-  if (!user) {
+  console.log("ROLES:", Array.isArray(user?.roles) ? user.roles : "undefined");
+//protejer carga
+  if (loading || !user) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
-        <Text className="text-xl text-primary-purple font-semibold">
+        <ActivityIndicator size="large" color="#6B31E8" />
+        <Text className="text-xl text-primary-purple mt-3">
           Cargando usuario...
         </Text>
       </View>
     );
   }
 
+//evita crasheeo
+  const safeRoles = Array.isArray(user.roles) ? user.roles : [];
+
+  const normalizeRole = (role: string) =>
+    role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+
+  const formattedRoles =
+    safeRoles.map((r) => normalizeRole(r?.roleName || "")).join(", ") ||
+    "Sin rol definido";
+
   const infoItems = [
-    { label: "Email", value: user.email },
+    { label: "Email", value: user.email || "No especificado" },
     { label: "Rol", value: formattedRoles },
+
     {
       label: "Motivaciones",
       value: Array.isArray(user.motivaciones)
         ? user.motivaciones.join("\n")
-        : user.motivaciones,
+        : user.motivaciones || "No especificado",
     },
     {
       label: "Intereses personales",
       value: Array.isArray(user.actividadesPersonales)
         ? user.actividadesPersonales.join("\n")
-        : user.actividadesPersonales,
+        : user.actividadesPersonales || "No especificado",
     },
     {
       label: "Proyectos",
       value: Array.isArray(user.proyectosRecientes)
         ? user.proyectosRecientes.join("\n")
-        : user.proyectosRecientes,
+        : user.proyectosRecientes || "No especificado",
     },
     {
-      label: "Ubicacion",
+      label: "Ubicación",
       value: `${user.ciudad || "No especificada"}, ${user.pais || ""}`,
     },
   ];
@@ -77,7 +90,7 @@ const formattedRoles =
       >
         <View className="mb-5 px-4">
           <ProfileCard
-            name={user.username}
+            name={user.username || "Usuario"}
             title={formattedRoles}
             location={`${user.ciudad || "No especificada"}, ${user.pais || ""}`}
             tags={[]}
@@ -98,10 +111,7 @@ const formattedRoles =
               "Cerrar sesión",
               "¿Estás seguro que deseas cerrar sesión?",
               [
-                {
-                  text: "Cancelar",
-                  style: "cancel",
-                },
+                { text: "Cancelar", style: "cancel" },
                 {
                   text: "Sí, cerrar sesión",
                   style: "destructive",
