@@ -14,6 +14,9 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../../theme";
 import { EventItem } from "../../components/EventCard";
+import api from "../../../client";
+import { useUser } from "../../../src/hooks/useUser";
+// DateTimePickerModal will be required lazily (only on native platforms)
 
 export default function CreateEventScreen() {
   const router = useRouter();
@@ -22,20 +25,51 @@ export default function CreateEventScreen() {
   const [date, setDate] = useState("");
   const [place, setPlace] = useState("");
   const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const { user } = useUser();
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+
+  const showDatePicker = () => setDatePickerVisible(true);
+  const hideDatePicker = () => setDatePickerVisible(false);
+  const handleConfirm = (selectedDate: Date) => {
+    // store ISO format expected by backend
+    setDate(selectedDate.toISOString());
+    hideDatePicker();
+  };
 
   const submit = () => {
     if (!title.trim()) return Alert.alert("Error", "El título es obligatorio.");
-    const newEvent: EventItem = {
-      id: String(Date.now()),
-      title,
-      type,
-      date,
-      place,
-      description,
+    // Build payload matching backend expectations
+    const payload = {
+      title: title.trim(),
+      type: String(type).toUpperCase(),
+      date: date.trim(),
+      ubication: place.trim(),
+      description: description.trim(),
+      userId: user?.id ?? null,
+      imageUrl: imageUrl.trim() || undefined,
+    } as any;
+
+    const doSubmit = async () => {
+      try {
+        setSubmitting(true);
+        const res = await api.post("/events", payload);
+        console.log("Event created:", res.data);
+        Alert.alert("Éxito", "Evento creado correctamente.", [
+          { text: "Ver evento", onPress: () => router.push(`/academico/event/${res.data.id}`) },
+          { text: "Volver", onPress: () => router.back(), style: "cancel" },
+        ]);
+      } catch (err: any) {
+        console.error("Error creating event:", err);
+        Alert.alert("Error", err?.response?.data?.message ?? err?.message ?? "No se pudo crear el evento");
+      } finally {
+        setSubmitting(false);
+      }
     };
-    console.log("CREATED EVENT", newEvent);
-    Alert.alert("Hecho", "Evento creado.");
-    router.back();
+
+    doSubmit();
   };
 
   return (
@@ -73,10 +107,56 @@ export default function CreateEventScreen() {
           </View>
 
           <Text style={styles.label}>Fecha</Text>
-          <TextInput value={date} onChangeText={setDate} placeholder="Ej. October 10th, 2025" style={styles.input} placeholderTextColor="#999" />
+          <TouchableOpacity onPress={showDatePicker} style={[styles.input, { justifyContent: 'center' }]}> 
+            <Text style={{ color: date ? '#222' : '#999' }}>{date ? new Date(date).toLocaleString() : 'Seleccionar fecha y hora'}</Text>
+          </TouchableOpacity>
+          {Platform.OS === 'web' ? (
+            // Use native HTML datetime-local input on web
+            <input
+              type="datetime-local"
+              value={date ? new Date(date).toISOString().slice(0, 16) : ""}
+              onChange={(e: any) => {
+                const v = e.target.value;
+                if (!v) return setDate("");
+                const iso = new Date(v).toISOString();
+                setDate(iso);
+              }}
+              style={{
+                width: '100%',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                border: '1px solid #eee',
+                backgroundColor: '#fafafa',
+                color: '#222',
+              }}
+            />
+          ) : (
+            (() => {
+              // Lazy require native picker to avoid bundling it on web
+              let NativeDateTimePicker: any = null;
+              try {
+                // eslint-disable-next-line @typescript-eslint/no-var-requires
+                NativeDateTimePicker = require('react-native-modal-datetime-picker').default;
+              } catch (e) {
+                NativeDateTimePicker = null;
+              }
+              return NativeDateTimePicker ? (
+                <NativeDateTimePicker
+                  isVisible={isDatePickerVisible}
+                  mode="datetime"
+                  onConfirm={handleConfirm}
+                  onCancel={hideDatePicker}
+                  display={Platform.OS === 'ios' ? 'inline' : 'default'}
+                />
+              ) : null;
+            })()
+          )}
 
           <Text style={styles.label}>Lugar</Text>
           <TextInput value={place} onChangeText={setPlace} placeholder="Ej. Auditorio B" style={styles.input} placeholderTextColor="#999" />
+
+          <Text style={styles.label}>Imagen (URL)</Text>
+          <TextInput value={imageUrl} onChangeText={setImageUrl} placeholder="https://example.com/image.png" style={styles.input} placeholderTextColor="#999" />
 
           <Text style={styles.label}>Descripción</Text>
           <TextInput
@@ -93,9 +173,9 @@ export default function CreateEventScreen() {
               <Text style={styles.ghostText}>Cancelar</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.submitButton} onPress={submit}>
+            <TouchableOpacity style={styles.submitButton} onPress={submit} disabled={submitting}>
               <LinearGradient colors={[lightTheme.colors["primary-purple"], "#8e4bff"]} style={styles.submitGradient}>
-                <Text style={styles.submitText}>Crear evento</Text>
+                <Text style={styles.submitText}>{submitting ? "Creando..." : "Crear evento"}</Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>

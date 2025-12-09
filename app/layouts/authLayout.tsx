@@ -6,6 +6,7 @@ import {
   Platform,
   Text,
   useWindowDimensions,
+  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
@@ -52,8 +53,8 @@ export default function AuthLayout({
             flexGrow: 1,
             justifyContent: isWeb ? "flex-start" : "center",
             alignItems: "center",
-            paddingHorizontal: 28,
-            paddingVertical: isSmallScreen ? 40 : 70,
+            paddingHorizontal: 36,
+            paddingVertical: isSmallScreen ? 60 : 160,
           }}
         >
           <View
@@ -64,8 +65,15 @@ export default function AuthLayout({
           >
             {showLogo && (
               <View className="items-center mb-6">
-                <View className="w-24 h-24 rounded-full bg-white/20 border border-white/50 justify-center items-center">
-                  <Text className="text-white text-sm">Logo App</Text>
+                <View className="w-32 h-32 justify-center items-center overflow-hidden">
+                  <Image
+                    source={require("../../assets/images/logo.png")}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      resizeMode: "contain",
+                    }}
+                  />
                 </View>
               </View>
             )}

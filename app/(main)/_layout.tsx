@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Slot, useSegments } from "expo-router";
@@ -23,6 +23,20 @@ export default function HomeLayout() {
 
   const hideTopBar = hiddenTopBarScreens.includes(current);
 
+  // Ensure the page can scroll on web: some dev overlays or wrappers set
+  // `body { overflow: hidden }` which prevents scrolling — restore it while
+  // this layout is mounted and revert on unmount.
+  useEffect(() => {
+    if (Platform.OS === "web" && typeof document !== "undefined") {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "auto";
+      return () => {
+        document.body.style.overflow = prev || "";
+      };
+    }
+    return;
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeContainer}>
       {!hideTopBar && <TopBar />}
@@ -31,13 +45,12 @@ export default function HomeLayout() {
         <Slot />
       </View>
 
-      <View style={styles.bottomBar}>
-        <BottomBar />
-      </View>
+      <BottomBar />
       {/*<GlobalNotifications />*/}
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   safeContainer: {
@@ -46,16 +59,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingBottom: 25, // espacio para la BottomBar
+    paddingBottom: Platform.OS === "web" ? 80 : 55, // espacio para la BottomBar
   },
   bottomBar: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    ...Platform.select({
-      web: { pointerEvents: "auto" },
-    }),
+    // kept for reference; BottomBar handles its own positioning (fixed on web)
+    height: Platform.OS === "web" ? 70 : 64,
   },
 });

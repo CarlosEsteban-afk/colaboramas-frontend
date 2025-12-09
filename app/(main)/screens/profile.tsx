@@ -12,12 +12,15 @@ export const unstable_settings = {
 export default function ProfileScreen() {
   const { user } = useUser();
   const { handleLogout } = useLogout();
-
+  console.log("ROLES:", user.roles);
   const normalizeRole = (role: string) =>
     role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
 
-  const formattedRoles =
-    user?.roles?.map(normalizeRole).join(", ") || "Sin rol definido";
+const formattedRoles =
+  user?.roles
+    ?.map((r) => normalizeRole(r.roleName || ""))
+    .join(", ") || "Sin rol definido";
+
 
   if (!user) {
     return (

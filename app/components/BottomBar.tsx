@@ -5,20 +5,27 @@ import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
 import { useRouter } from "expo-router";
 import { useBottomBarItems } from "../../src/hooks/useBottomBarItems";
+
+// 🔥 Exportamos la altura real de la barra
+export const BOTTOM_BAR_HEIGHT = Platform.OS === "ios" ? 90 : 80;
+// (antes eran 64–70; ahora dejamos altura pro + padding)
+
 export default function BottomBar() {
   const router = useRouter();
   const { items, currentRoute } = useBottomBarItems();
 
   if (items.length === 0) return null;
 
-  const BAR_HEIGHT = Platform.OS === "web" ? 70 : 64;
-
   return (
     <LinearGradient
-      colors={[lightTheme.colors["primary-purple"], lightTheme.colors["primary-pink"]]}
+      colors={[
+        lightTheme.colors["primary-purple"],
+        lightTheme.colors["primary-pink"],
+      ]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={[styles.bar, { height: BAR_HEIGHT }]}
+      nativeID="app-bottom-bar"
+      style={[styles.bar, { height: BOTTOM_BAR_HEIGHT }]}
     >
       {items.map((item, index) => {
         const isActive = currentRoute.includes(item.route.replace("/", ""));
@@ -43,7 +50,12 @@ export default function BottomBar() {
               size={isActive ? 28 : 22}
               color={isActive ? lightTheme.colors["green-light"] : "#fff"}
             />
-            <Text style={[styles.label, isActive && { color: lightTheme.colors["green-light"] }]}>
+            <Text
+              style={[
+                styles.label,
+                isActive && { color: lightTheme.colors["green-light"] },
+              ]}
+            >
               {item.label}
             </Text>
           </TouchableOpacity>
@@ -59,24 +71,29 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    paddingHorizontal: 8,
-    position: Platform.OS === "web" ? "sticky" : "absolute",
+
+    paddingHorizontal: 10,
+    paddingBottom: 20, // ⭐ espacio interno para evitar que queden pegados al borde
+
+    position: Platform.OS === "web" ? "fixed" : "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    zIndex: 10,
+    zIndex: 20,
   },
   button: {
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: 6,
+
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 10,
-    paddingVertical: 4,
+    borderRadius: 12,
+
+    paddingVertical: 6, // más aire entre ícono y texto
   },
   label: {
     fontSize: 12,
-    marginTop: 4,
+    marginTop: 3,
     fontWeight: "600",
     color: "#fff",
   },

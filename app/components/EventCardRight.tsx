@@ -39,7 +39,10 @@ export default function EventCardRight({ event, onPress }: Props) {
   return (
     <>
       <Pressable
-        onPress={() => setModalVisible(true)}
+        onPress={() => {
+          if (onPress) return onPress();
+          setModalVisible(true);
+        }}
         style={{
           flexDirection: "row",
           borderRadius: 8,
@@ -117,8 +120,8 @@ export default function EventCardRight({ event, onPress }: Props) {
                 alignItems: "center",
               }}
               onPress={() => {
+                if (onPress) return onPress();
                 setModalVisible(true);
-                if (onPress) onPress();
               }}
             >
               <Text style={{ color: "#FFF", fontWeight: "600" }}>

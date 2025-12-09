@@ -83,6 +83,17 @@ export const ContactsProvider = ({ children }) => {
     }
   };
 
+  const reportUser = async (targetUserId: number) => {
+    try {
+      const res = await api.post(`/users/${targetUserId}/report`);
+
+      return true;
+    } catch (err) {
+      console.error("Error reporting user:", err);
+      return false;
+    }
+  };
+
   return (
     <ContactsContext.Provider
       value={{
@@ -93,6 +104,7 @@ export const ContactsProvider = ({ children }) => {
         setNotifications,
         sendMessage,
         respondToMessage,
+        reportUser,
         reloadMessages: loadMessages,
         loading,
         error,

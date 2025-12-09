@@ -32,40 +32,54 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const loadAuthState = async () => {
       try {
         const token = await AsyncStorage.getItem(AUTHTOKEN);
-        if (token) {
-          api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-          await loadUser();
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+        try {
+          const { data: user } = await api.get("/auth/me");
+
+          await AsyncStorage.setItem(AUTHUSER, JSON.stringify(user));
+          setUser(user);
           setIsAuthenticated(true);
+        } catch (err) {
+          await AsyncStorage.multiRemove([AUTHTOKEN, AUTHUSER]);
+          setUser(undefined);
+          setIsAuthenticated(false);
         }
       } catch (e) {
-        console.error("Failed to load auth state", e);
+        console.error("Error loading auth state:", e);
       } finally {
         setLoading(false);
       }
     };
+
     loadAuthState();
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
+      await AsyncStorage.multiRemove([AUTHTOKEN, AUTHUSER]);
+      setUser(undefined);
+      setIsAuthenticated(false);
+
       const response = await api.post("/auth/login", { email, password });
       const token = response.data.token;
 
       await AsyncStorage.setItem(AUTHTOKEN, token);
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const userResponse = await api.get("/auth/me");
-      const user = userResponse.data;
-      console.log("User data on signIn:", user);
+      const { data: user } = await api.get("/auth/me");
 
       await AsyncStorage.setItem(AUTHUSER, JSON.stringify(user));
       setUser(user);
       setIsAuthenticated(true);
     } catch (error: any) {
-      if (error.response) {
-        if (error.response.status === 401 || error.response.status === 404) {
-          throw new Error("INVALID_CREDENTIALS");
-        }
+      if (error.response?.status === 401) {
+        throw new Error("INVALID_CREDENTIALS");
       }
       throw new Error("NETWORK_ERROR");
     }
@@ -84,30 +98,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password,
         roleRequest: { roleListName: roles },
       });
-      const token = response.data.token;
-      if (!token) {
-        console.error("No se recibió token en la respuesta");
-        return false;
-      }
-      await AsyncStorage.setItem(AUTHTOKEN, token);
 
+      const token = response.data.token;
+      if (!token) return false;
+
+      await AsyncStorage.setItem(AUTHTOKEN, token);
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      const userResponse = await api.get("/auth/me");
-      const user = userResponse.data;
+      const { data: user } = await api.get("/auth/me");
+
       await AsyncStorage.setItem(AUTHUSER, JSON.stringify(user));
-      console.log("User data on signUp:", user);
-      console.log("Roles assigned:", token);
       setUser(user);
       setIsAuthenticated(true);
-
       return true;
-    } catch (error: any) {
-      console.error("Error de registro:", error.response?.data || error);
+    } catch (error) {
+      console.error("Error registrando:", error);
       return false;
     }
   };
 
+  // ---- LOGOUT ----
   const signOut = async () => {
     await AsyncStorage.multiRemove([AUTHTOKEN, AUTHUSER]);
     setUser(undefined);

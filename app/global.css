@@ -2,3 +2,20 @@
     @tailwind base;
     @tailwind components;
     @tailwind utilities;
+
+/* Ensure BottomBar stays fixed on web visual viewport and respects safe-area */
+#app-bottom-bar {
+    position: fixed !important;
+    bottom: env(safe-area-inset-bottom, 0) !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+    /* add a small backdrop so it visually sits above content */
+}
+
+/* Keep FAB above the BottomBar on web */
+.fab-web-fix {
+    position: fixed !important;
+    z-index: 10000 !important;
+}

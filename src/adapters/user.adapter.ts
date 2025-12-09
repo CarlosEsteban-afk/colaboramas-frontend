@@ -14,6 +14,7 @@ export const userAdapter = {
       profesion: dto.profesion,
       camposInvestigacion: toArray(dto.camposInvestigacion),
       lineasInteres: toArray(dto.lineasInteres),
+      reportCount: dto.reportCount ?? 0,
     };
   },
 };

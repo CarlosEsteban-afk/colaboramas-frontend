@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import { useContacts } from "../../src/hooks/useContact";
@@ -11,7 +11,7 @@ interface Props {
 
 export default function ContactsTab({ type }: Props) {
   const { t } = useTranslation();
-  const { receivedMessages, sentMessages, repliedMessages, respondToMessage } = useContacts();
+  const { receivedMessages, sentMessages, repliedMessages, respondToMessage, reportUser } = useContacts();
 
   const data =
     type === "recibidas"
@@ -63,6 +63,14 @@ export default function ContactsTab({ type }: Props) {
 
               {type === "recibidas" && (
                 <View className="flex-row justify-end space-x-2">
+                  <TouchableOpacity
+                    className="rounded-md px-3 py-1"
+                    style={{ backgroundColor: "#FF5722" }}
+                    onPress={() => reportUser(user.id)}
+                  >
+                    <Text className="text-white font-semibold">Reportar</Text>
+                  </TouchableOpacity>
+
                   <TouchableOpacity
                     className="rounded-md px-3 py-1"
                     style={{ backgroundColor: "#E91E63" }}
