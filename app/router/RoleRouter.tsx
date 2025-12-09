@@ -1,9 +1,8 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 import { useUser } from "../../src/hooks/useUser";
 import { useAuth } from "../../src/hooks/useAuth";
-import React from "react";
 
 export default function RoleRouter() {
   const router = useRouter();
@@ -25,7 +24,6 @@ export default function RoleRouter() {
       console.log("[RoleRouter] User not loaded yet...");
       return;
     }
-
 
     console.log("[RoleRouter] User loaded:", user);
     console.log("[RoleRouter] Raw roles:", user.roles);
@@ -69,7 +67,6 @@ export default function RoleRouter() {
       return;
     }
 
-    // Si llega acá → sin rol válido
     console.log("[RoleRouter] No valid role found → redirect to login");
     router.replace("/auth/login");
   }, [user, isAuthenticated, loading]);
