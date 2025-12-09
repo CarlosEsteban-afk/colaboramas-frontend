@@ -10,6 +10,12 @@ import {
 } from "@expo-google-fonts/cinzel-decorative";
 import { Lato_400Regular } from "@expo-google-fonts/lato";
 import { ContactsProvider } from "../src/providers/ContactsProvider";
+import { useNotifications } from "../src/hooks/useNotifications";
+
+function NotificationWrapper() {
+  useNotifications();
+  return <Slot />;
+}
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -27,7 +33,7 @@ export default function RootLayout() {
         <UserProvider>
           <AuthProvider>
             <ContactsProvider>
-              <Slot />
+              <NotificationWrapper />
             </ContactsProvider>
           </AuthProvider>
         </UserProvider>

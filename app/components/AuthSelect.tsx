@@ -6,11 +6,14 @@ import {
   Modal,
   TouchableWithoutFeedback,
   FlatList,
+  TextInput,
 } from "react-native";
 
 export default function Select({ label, options, value, onSelect }) {
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value);
+  const [searchText, setSearchText] = useState("");
+  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
 
   // PAGINACIÓN
   const PAGE_SIZE = 40;
@@ -21,7 +24,24 @@ export default function Select({ label, options, value, onSelect }) {
     setSelectedValue(value);
   }, [value]);
 
+  // Filter options based on search text
+  useEffect(() => {
+    let filtered: string[] = [];
+    if (searchText.trim() === "") {
+      filtered = options;
+      setFilteredOptions(options);
+    } else {
+      filtered = options.filter((option) =>
+        option.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setFilteredOptions(filtered);
+    }
+    setPage(1);
+    setVisibleOptions(filtered.slice(0, PAGE_SIZE));
+  }, [searchText, options]);
+
   const openModal = () => {
+    setSearchText("");
     setPage(1);
     setVisibleOptions(options.slice(0, PAGE_SIZE));
     setOpen(true);
@@ -29,7 +49,7 @@ export default function Select({ label, options, value, onSelect }) {
 
   const loadMore = () => {
     const nextPage = page + 1;
-    const next = options.slice(0, nextPage * PAGE_SIZE);
+    const next = filteredOptions.slice(0, nextPage * PAGE_SIZE);
     setVisibleOptions(next);
     setPage(nextPage);
   };
@@ -57,7 +77,17 @@ export default function Select({ label, options, value, onSelect }) {
               paddingHorizontal: 20,
             }}
           >
-            <View className="bg-white rounded-lg max-h-72 overflow-hidden">
+            <View className="bg-white rounded-lg max-h-96 overflow-hidden">
+              {/* Search Input */}
+              <TextInput
+                className="px-4 py-3 border-b border-gray-300 text-gray-800"
+                placeholder={`Buscar ${label.toLowerCase()}...`}
+                placeholderTextColor="#aaa"
+                value={searchText}
+                onChangeText={setSearchText}
+              />
+              
+              {/* Options List */}
               <FlatList
                 data={visibleOptions}
                 keyExtractor={(item, index) => `${label}-${item}-${index}`}
