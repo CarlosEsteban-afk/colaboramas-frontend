@@ -29,7 +29,6 @@ export default function AuthLayout({
   cardGradient = false,
 }: Props) {
   const { height } = useWindowDimensions();
-
   const isSmallScreen = height < 700;
   const isWeb = Platform.OS === "web";
 
@@ -41,14 +40,15 @@ export default function AuthLayout({
       ]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      className="flex-1"
+      style={{ flex: 1 }}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
         <ScrollView
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled" 
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: isWeb ? "flex-start" : "center",
@@ -57,24 +57,17 @@ export default function AuthLayout({
             paddingVertical: isSmallScreen ? 60 : 160,
           }}
         >
-          <View
-            style={{
-              width: "100%",
-              maxWidth: 480,
-            }}
-          >
+          <View style={{ width: "100%", maxWidth: 480 }}>
             {showLogo && (
-              <View className="items-center mb-6">
-                <View className="w-32 h-32 justify-center items-center overflow-hidden">
-                  <Image
-                    source={require("../../assets/images/logo.png")}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      resizeMode: "contain",
-                    }}
-                  />
-                </View>
+              <View style={{ alignItems: "center", marginBottom: 24 }}>
+                <Image
+                  source={require("../../assets/images/logo.png")}
+                  style={{
+                    width: 128,
+                    height: 128,
+                    resizeMode: "contain",
+                  }}
+                />
               </View>
             )}
 
@@ -109,7 +102,7 @@ export default function AuthLayout({
                 </View>
               )
             ) : (
-              <View className="w-full">{children}</View>
+              <View style={{ width: "100%" }}>{children}</View>
             )}
           </View>
         </ScrollView>

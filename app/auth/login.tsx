@@ -87,7 +87,6 @@ export default function Login() {
           placeholder="Correo electrónico"
           value={email}
           onChangeText={setEmail}
-          keyboardType="email-address"
           placeholderTextColor="#3b82f6"
           autoCapitalize="none"
         />
