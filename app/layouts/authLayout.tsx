@@ -9,7 +9,7 @@ import {
   Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { lightTheme } from "../../theme"; // Asegúrate de que esta ruta sea correcta
+import { lightTheme } from "../../theme";
 
 type Props = {
   children: React.ReactNode;
@@ -48,12 +48,10 @@ export default function AuthLayout({
       >
         <ScrollView
           showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled" // 🔥 IMPORTANTE
+          keyboardShouldPersistTaps="handled" 
           contentContainerStyle={{
             flexGrow: 1,
-            // ❌ ELIMINADO: justifyContent: isWeb ? "flex-start" : "center",
-            // Esto permite que el contenido se desplace desde la parte superior
-            // cuando el teclado lo empuja.
+            justifyContent: isWeb ? "flex-start" : "center",
             alignItems: "center",
             paddingHorizontal: 36,
             paddingVertical: isSmallScreen ? 60 : 160,
@@ -63,7 +61,7 @@ export default function AuthLayout({
             {showLogo && (
               <View style={{ alignItems: "center", marginBottom: 24 }}>
                 <Image
-                  source={require("../../assets/images/logo.png")} // Asegúrate de que esta ruta sea correcta
+                  source={require("../../assets/images/logo.png")}
                   style={{
                     width: 128,
                     height: 128,
