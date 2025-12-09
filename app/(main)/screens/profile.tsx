@@ -21,8 +21,6 @@ export default function ProfileScreen() {
   const { user, loading } = useUser();
   const { handleLogout } = useLogout();
 
-  console.log("ROLES:", Array.isArray(user?.roles) ? user.roles : "undefined");
-//protejer carga
   if (loading || !user) {
     return (
       <View className="flex-1 justify-center items-center bg-white">
@@ -34,7 +32,6 @@ export default function ProfileScreen() {
     );
   }
 
-//evita crasheeo
   const safeRoles = Array.isArray(user.roles) ? user.roles : [];
 
   const normalizeRole = (role: string) =>
@@ -47,7 +44,6 @@ export default function ProfileScreen() {
   const infoItems = [
     { label: "Email", value: user.email || "No especificado" },
     { label: "Rol", value: formattedRoles },
-
     {
       label: "Motivaciones",
       value: Array.isArray(user.motivaciones)
@@ -74,20 +70,24 @@ export default function ProfileScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <Text
-        className="text-2xl md:text-3xl text-primary-purple font-semibold text-center pt-5"
-        style={{ color: lightTheme.colors["primary-purple"] }}
-      >
-        Perfil
-      </Text>
-      <Text className="text-dark-gray text-center mb-5">
-        Gestiona tu información personal.
-      </Text>
-
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 0 }}
+        contentContainerStyle={{
+          paddingBottom: 50,
+          flexGrow: 1,
+        }}
         showsVerticalScrollIndicator={false}
       >
+        <Text
+          className="text-2xl md:text-3xl text-primary-purple font-semibold text-center pt-5"
+          style={{ color: lightTheme.colors["primary-purple"] }}
+        >
+          Perfil
+        </Text>
+
+        <Text className="text-dark-gray text-center mb-5">
+          Gestiona tu información personal.
+        </Text>
+
         <View className="mb-5 px-4">
           <ProfileCard
             name={user.username || "Usuario"}
@@ -99,7 +99,7 @@ export default function ProfileScreen() {
         </View>
 
         {infoItems.map((item) => (
-          <View key={item.label} className="mb-4 w-full max-w-3xl self-center">
+          <View key={item.label} className="mb-4 w-full max-w-3xl self-center px-4">
             <GradientLabel text={item.label} />
             <Text className="text-dark-gray text-base ml-2">{item.value}</Text>
           </View>
