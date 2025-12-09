@@ -5,16 +5,16 @@ import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
 import { useRouter } from "expo-router";
 import { useBottomBarItems } from "../../src/hooks/useBottomBarItems";
-
-// 🔥 Exportamos la altura real de la barra
-export const BOTTOM_BAR_HEIGHT = Platform.OS === "ios" ? 90 : 80;
-// (antes eran 64–70; ahora dejamos altura pro + padding)
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function BottomBar() {
   const router = useRouter();
   const { items, currentRoute } = useBottomBarItems();
+  const insets = useSafeAreaInsets();
 
   if (items.length === 0) return null;
+
+  const BAR_HEIGHT = Platform.OS === "web" ? 70 : 64;
 
   return (
     <LinearGradient
@@ -25,7 +25,13 @@ export default function BottomBar() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       nativeID="app-bottom-bar"
-      style={[styles.bar, { height: BOTTOM_BAR_HEIGHT }]}
+      style={[
+        styles.bar,
+        {
+          height: BAR_HEIGHT + insets.bottom,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
+        },
+      ]}
     >
       {items.map((item, index) => {
         const isActive = currentRoute.includes(item.route.replace("/", ""));
@@ -37,12 +43,7 @@ export default function BottomBar() {
             onPress={() => router.push(item.route as any)}
             style={[
               styles.button,
-              isActive && {
-                shadowColor: "#000",
-                shadowOpacity: 0.3,
-                shadowOffset: { width: 0, height: 2 },
-                shadowRadius: 4,
-              },
+              isActive && styles.activeShadow,
             ]}
           >
             <Monicon
@@ -50,6 +51,7 @@ export default function BottomBar() {
               size={isActive ? 28 : 22}
               color={isActive ? lightTheme.colors["green-light"] : "#fff"}
             />
+
             <Text
               style={[
                 styles.label,
@@ -71,29 +73,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-
-    paddingHorizontal: 10,
-    paddingBottom: 20, // ⭐ espacio interno para evitar que queden pegados al borde
-
+    paddingHorizontal: 8,
     position: Platform.OS === "web" ? "fixed" : "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    zIndex: 20,
+    zIndex: 50,
   },
   button: {
     flex: 1,
-    marginHorizontal: 6,
-
+    marginHorizontal: 4,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
-
-    paddingVertical: 6, // más aire entre ícono y texto
+    borderRadius: 10,
+    paddingVertical: 4,
+  },
+  activeShadow: {
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
   label: {
     fontSize: 12,
-    marginTop: 3,
+    marginTop: 4,
     fontWeight: "600",
     color: "#fff",
   },
