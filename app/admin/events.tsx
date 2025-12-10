@@ -133,7 +133,11 @@ export default function AdminEvents(){
       <SearchBar value={q} onChangeText={setQ} placeholder="Buscar por título o descripción" />
 
       {/* Type filters (horizontal chips) */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 8, marginBottom: 8 }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 8, marginBottom: 8, alignItems: 'center' }}
+      >
         <Pressable style={[styles.filterChip, selectedType === '' && styles.filterChipActive]} onPress={() => setSelectedType('')}>
           <Text style={[styles.filterChipText, selectedType === '' && styles.filterChipTextActive]}>Todos</Text>
         </Pressable>
@@ -206,7 +210,20 @@ const styles = StyleSheet.create({
   approveText: { color: '#fff' },
   warn: { backgroundColor: '#E33' }
     ,
-    filterChip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 20, borderWidth: 1, borderColor: '#E6DFFF', marginRight: 8, backgroundColor: '#fff' },
+    filterChip: {
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      minWidth: 68,
+      minHeight: 32,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: '#E6DFFF',
+      marginRight: 6,
+      backgroundColor: '#fff',
+      alignSelf: 'center',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     filterChipActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
     filterChipText: { color: '#333', fontWeight: '600' },
     filterChipTextActive: { color: '#fff' },

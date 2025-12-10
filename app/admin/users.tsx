@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet, Platform, ScrollView, Pressable } from "react-native";
+import { View, Text, FlatList, Alert, StyleSheet, Platform, ScrollView, Pressable } from "react-native";
 import { useRouter } from "expo-router";
 import { lightTheme } from "../../theme";
 import SearchBar from "../components/SearchBar";
@@ -83,8 +83,8 @@ export default function AdminUsers() {
       try {
         const fresh = await api.get(`/admin/users/${u.id}`);
         console.debug('[admin] GET /admin/users/{id} after PATCH:', fresh.data);
-      } catch (getErr) {
-        console.debug('[admin] failed to GET user after PATCH', getErr?.response?.status || getErr);
+      } catch (error_) {
+        console.debug('[admin] failed to GET user after PATCH', error_?.response?.status || error_);
       }
     } catch (error) {
       console.error("Error toggling ban:", error);
@@ -118,30 +118,37 @@ export default function AdminUsers() {
       <Text style={styles.title}>Usuarios</Text>
       <SearchBar value={q} onChangeText={setQ} placeholder="Buscar por nombre, email o país" />
 
-      {/* Role filters */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 8, marginBottom: 8 }}>
-        <Pressable style={[styles.filterChip, selectedRole === 'all' && styles.filterChipActive]} onPress={() => setSelectedRole('all')}>
-          <Text style={[styles.filterChipText, selectedRole === 'all' && styles.filterChipTextActive]}>Todos</Text>
-        </Pressable>
-        <Pressable style={[styles.filterChip, selectedRole === 'investigador' && styles.filterChipActive]} onPress={() => setSelectedRole('investigador')}>
-          <Text style={[styles.filterChipText, selectedRole === 'investigador' && styles.filterChipTextActive]}>Investigador</Text>
-        </Pressable>
-        <Pressable style={[styles.filterChip, selectedRole === 'comunicador' && styles.filterChipActive]} onPress={() => setSelectedRole('comunicador')}>
-          <Text style={[styles.filterChipText, selectedRole === 'comunicador' && styles.filterChipTextActive]}>Comunicador</Text>
-        </Pressable>
-      </ScrollView>
+      {/* Filters (roles + status) grouped so spacing between groups is easy to control */}
+      <View style={styles.filtersWrapper}>
+        {/* Role filters */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 8, alignItems: 'center' }}
+        >
+          <Pressable style={[styles.filterChip, selectedRole === 'all' && styles.filterChipActive]} onPress={() => setSelectedRole('all')}>
+            <Text style={[styles.filterChipText, selectedRole === 'all' && styles.filterChipTextActive]}>Todos</Text>
+          </Pressable>
+          <Pressable style={[styles.filterChip, selectedRole === 'investigador' && styles.filterChipActive]} onPress={() => setSelectedRole('investigador')}>
+            <Text style={[styles.filterChipText, selectedRole === 'investigador' && styles.filterChipTextActive]}>Investigador</Text>
+          </Pressable>
+          <Pressable style={[styles.filterChip, selectedRole === 'comunicador' && styles.filterChipActive]} onPress={() => setSelectedRole('comunicador')}>
+            <Text style={[styles.filterChipText, selectedRole === 'comunicador' && styles.filterChipTextActive]}>Comunicador</Text>
+          </Pressable>
+        </ScrollView>
 
-      {/* Status filter buttons */}
-      <View style={styles.statusRow}>
-        <Pressable style={[styles.statusBtn, statusFilter === 'all' && styles.statusBtnActive]} onPress={() => setStatusFilter('all')}>
-          <Text style={[styles.statusBtnText, statusFilter === 'all' && styles.statusBtnTextActive]}>Todos</Text>
-        </Pressable>
-        <Pressable style={[styles.statusBtn, statusFilter === 'active' && styles.statusBtnActive]} onPress={() => setStatusFilter('active')}>
-          <Text style={[styles.statusBtnText, statusFilter === 'active' && styles.statusBtnTextActive]}>Activos</Text>
-        </Pressable>
-        <Pressable style={[styles.statusBtn, statusFilter === 'inactive' && styles.statusBtnActive]} onPress={() => setStatusFilter('inactive')}>
-          <Text style={[styles.statusBtnText, statusFilter === 'inactive' && styles.statusBtnTextActive]}>Inactivos</Text>
-        </Pressable>
+        {/* Status filter buttons */}
+        <View style={styles.statusRow}>
+          <Pressable style={[styles.statusBtn, statusFilter === 'all' && styles.statusBtnActive]} onPress={() => setStatusFilter('all')}>
+            <Text style={[styles.statusBtnText, statusFilter === 'all' && styles.statusBtnTextActive]}>Todos</Text>
+          </Pressable>
+          <Pressable style={[styles.statusBtn, statusFilter === 'active' && styles.statusBtnActive]} onPress={() => setStatusFilter('active')}>
+            <Text style={[styles.statusBtnText, statusFilter === 'active' && styles.statusBtnTextActive]}>Activos</Text>
+          </Pressable>
+          <Pressable style={[styles.statusBtn, statusFilter === 'inactive' && styles.statusBtnActive]} onPress={() => setStatusFilter('inactive')}>
+            <Text style={[styles.statusBtnText, statusFilter === 'inactive' && styles.statusBtnTextActive]}>Inactivos</Text>
+          </Pressable>
+        </View>
       </View>
 
       {Platform.OS === 'web' ? (
@@ -232,11 +239,25 @@ const styles = StyleSheet.create({
   unban: { backgroundColor: '#4CAF50' },
   unbanText: { color: '#fff' },
   // filter / chip styles
-  filterChip: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 20, borderWidth: 1, borderColor: '#E6DFFF', marginRight: 8, backgroundColor: '#fff' },
+  filterChip: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    minWidth: 68,
+    minHeight: 32,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#E6DFFF',
+    marginRight: 8,
+    backgroundColor: '#fff',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   filterChipActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
   filterChipText: { color: '#333', fontWeight: '600' },
   filterChipTextActive: { color: '#fff' },
-  statusRow: { flexDirection: 'row', justifyContent: 'flex-start', gap: 8, marginBottom: 8, paddingHorizontal: 8 },
+  statusRow: { flexDirection: 'row', justifyContent: 'flex-start', gap: 8, marginTop: 8, marginBottom: 8, paddingHorizontal: 8 },
+  filtersWrapper: { paddingHorizontal: 8, marginBottom: 8 },
   statusBtn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1, borderColor: '#eee', backgroundColor: '#fff', marginRight: 8 },
   statusBtnActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
   statusBtnText: { color: '#333', fontWeight: '700' },
