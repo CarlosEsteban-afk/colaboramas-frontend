@@ -36,6 +36,24 @@ export default function EventCardRight({ event, onPress }: Props) {
     ""
   ).trim();
 
+  const formatDateTime = (d?: string) => {
+    if (!d) return { date: "", time: "" };
+    try {
+      const parsed = new Date(d);
+      if (isNaN(parsed.getTime())) return { date: d, time: "" };
+      const day = String(parsed.getDate()).padStart(2, "0");
+      const month = String(parsed.getMonth() + 1).padStart(2, "0");
+      const year = parsed.getFullYear();
+      const hours = String(parsed.getHours()).padStart(2, "0");
+      const minutes = String(parsed.getMinutes()).padStart(2, "0");
+      return { date: `${day}-${month}-${year}`, time: `${hours}:${minutes}` };
+    } catch (e) {
+      return { date: d, time: "" };
+    }
+  };
+
+  const { date: formattedDate, time: formattedTime } = formatDateTime(event.date);
+
   return (
     <>
       <Pressable
@@ -49,10 +67,11 @@ export default function EventCardRight({ event, onPress }: Props) {
           backgroundColor: "#F6F6F6",
           overflow: "hidden",
           alignItems: "stretch", // Cambiado para que ambos lados ocupen toda la altura
+          minHeight: 120,
         }}
       >
         {/* Parte Izquierda: Imagen */}
-        <View style={{ width: 120 }}>
+        <View style={{ width: 120, height: 120 }}>
           {event.image ? (
             <Image
               source={{ uri: event.image }}
@@ -107,7 +126,7 @@ export default function EventCardRight({ event, onPress }: Props) {
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 }}>
               <Calendar size={14} color="#FFF" />
               <Text style={{ fontSize: 12, color: "#FFF", flex: 1 }}>
-                {event.date}
+                {formattedDate}{formattedTime ? ` • ${formattedTime}` : ""}
               </Text>
             </View>
 
@@ -171,7 +190,7 @@ export default function EventCardRight({ event, onPress }: Props) {
   
               <View style={{ marginBottom: 10 }}>
                 <Text style={{ fontWeight: "700", marginBottom: 4 }}>{t("event.date") ?? "Fecha"}</Text>
-                <Text style={{ color: "#333" }}>{event.date}</Text>
+                <Text style={{ color: "#333" }}>{formattedDate}{formattedTime ? ` • ${formattedTime}` : ""}</Text>
               </View>
   
               <View style={{ marginBottom: 10 }}>

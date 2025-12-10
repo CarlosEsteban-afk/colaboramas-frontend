@@ -38,6 +38,24 @@ export default function EventCard({ event, onPress, horizontal = false }: Props)
     ""
   ).trim();
   
+  const formatDateTime = (d?: string) => {
+    if (!d) return { date: "", time: "" };
+    try {
+      const parsed = new Date(d);
+      if (isNaN(parsed.getTime())) return { date: d, time: "" };
+      const day = String(parsed.getDate()).padStart(2, "0");
+      const month = String(parsed.getMonth() + 1).padStart(2, "0");
+      const year = parsed.getFullYear();
+      const hours = String(parsed.getHours()).padStart(2, "0");
+      const minutes = String(parsed.getMinutes()).padStart(2, "0");
+      return { date: `${day}-${month}-${year}`, time: `${hours}:${minutes}` };
+    } catch (e) {
+      return { date: d, time: "" };
+    }
+  };
+
+  const { date: formattedDate, time: formattedTime } = formatDateTime(event.date);
+  
   return (
     <>
       <Pressable
@@ -93,7 +111,7 @@ export default function EventCard({ event, onPress, horizontal = false }: Props)
           <View>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 10 }}>
               <Calendar size={14} color="#FFF" />
-              <Text style={{ fontSize: 12, color: "#FFF" }}>{event.date}</Text>
+              <Text style={{ fontSize: 12, color: "#FFF" }}>{formattedDate}{formattedTime ? ` • ${formattedTime}` : ""}</Text>
             </View>
 
             <Pressable
@@ -156,7 +174,7 @@ export default function EventCard({ event, onPress, horizontal = false }: Props)
   
               <View style={{ marginBottom: 10 }}>
                 <Text style={{ fontWeight: "700", marginBottom: 4 }}>{t("event.date") ?? "Fecha"}</Text>
-                <Text style={{ color: "#333" }}>{event.date}</Text>
+                <Text style={{ color: "#333" }}>{formattedDate}{formattedTime ? ` • ${formattedTime}` : ""}</Text>
               </View>
   
               {/* ID oculto por petición */}

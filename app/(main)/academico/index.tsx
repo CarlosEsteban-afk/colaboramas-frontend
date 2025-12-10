@@ -1,10 +1,12 @@
 // HomeScreen.tsx
 import React, { useEffect, useState } from "react";
-import EventCard, { EventItem } from "../../components/EventCard";
-import { View, Text, ScrollView } from "react-native";
+import EventCardRight, { EventItem } from "../../components/EventCardRight";
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import UserCard from "../../components/UserCard";
 import { useTranslation } from "react-i18next";
 import { useUserCard } from "../../../src/hooks/useUserCard";
+import { lightTheme } from "../../../theme";
+import api from "../../../client";
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -20,12 +22,49 @@ export default function HomeScreen() {
     setUsers(fetchedUsers);
   }, [fetchedUsers]);
 
-  const events: EventItem[] = [
-    { id: "ev-1", title: "2do Congreso Internacional de Ciencias de la Rehabilitación", date: "23 y 24 de Octubre, 2025", place: "Santiago, Chile", type: "Congreso" },
-    { id: "ev-2", title: "Concurso ANID FAPESQ 2025", date: "10 Septiembre, 2025", place: "Chile", type: "Concurso" },
-    { id: "ev-3", title: "Charlas de Innovación en Salud", date: "15 Noviembre, 2025", place: "Temuco, Chile", type: "Charla" },
-    { id: "ev-4", title: "Conferencia ANDI-FAU", date: "30 Noviembre, 2025", place: "Valdivia, Chile", type: "Conferencia" },
-  ];
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [eventsError, setEventsError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const resp = await api.get("/events");
+        const data = resp.data;
+        if (!Array.isArray(data)) throw new Error("Invalid events response");
+
+        const mapType = (t: string) => {
+          if (!t) return t;
+          const map: Record<string, string> = {
+            CHARLA: "Charla",
+            CONGRESO: "Congreso",
+            CONCURSO: "Concurso",
+            CONFERENCIA: "Conferencia",
+          };
+          return map[t.toUpperCase()] ?? (t.charAt(0).toUpperCase() + t.slice(1).toLowerCase());
+        };
+
+        const mapped: EventItem[] = data.map((e: any) => ({
+          id: String(e.id),
+          title: e.title ?? "",
+          date: e.date ?? "",
+          place: e.ubication ?? e.ubication ?? e.place ?? "",
+          type: mapType(e.type ?? e.tipo ?? ""),
+          description: e.description ?? "",
+          image: e.imageUrl ?? e.image_url ?? e.image ?? undefined,
+        }));
+
+        setEvents(mapped);
+      } catch (err: any) {
+        console.error("Error fetching events for home:", err);
+        setEventsError(err?.message ? String(err.message) : "Error cargando eventos");
+      } finally {
+        setEventsLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
     <View style={{ backgroundColor: "#FFF" }}>
@@ -64,9 +103,17 @@ export default function HomeScreen() {
         </Text>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 4 }}>
-          {events.map((ev) => (
-            <EventCard key={ev.id} event={ev} onPress={() => {}} horizontal />
-          ))}
+          {eventsLoading ? (
+            <View style={{ paddingVertical: 20 }}>
+              <ActivityIndicator size="small" color={lightTheme.colors["primary-purple"]} />
+            </View>
+          ) : eventsError ? (
+            <Text style={{ color: "red" }}>{eventsError}</Text>
+          ) : (
+            events.map((ev) => (
+              <EventCardRight key={ev.id} event={ev} onPress={() => {}} />
+            ))
+          )}
         </ScrollView>
       </ScrollView>
     </View>

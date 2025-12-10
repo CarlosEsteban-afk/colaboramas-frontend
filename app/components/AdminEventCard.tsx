@@ -48,6 +48,24 @@ export default function AdminEventCard({ event, active = true, onToggleActive, o
     new RegExp(`^\\s*${typeKey}\\s*[:\\-–—]\\s*`, "i"),
     ""
   ).trim();
+  
+  const formatDateTime = (d?: string) => {
+    if (!d) return { date: "", time: "" };
+    try {
+      const parsed = new Date(d);
+      if (isNaN(parsed.getTime())) return { date: d, time: "" };
+      const day = String(parsed.getDate()).padStart(2, "0");
+      const month = String(parsed.getMonth() + 1).padStart(2, "0");
+      const year = parsed.getFullYear();
+      const hours = String(parsed.getHours()).padStart(2, "0");
+      const minutes = String(parsed.getMinutes()).padStart(2, "0");
+      return { date: `${day}-${month}-${year}`, time: `${hours}:${minutes}` };
+    } catch (e) {
+      return { date: d, time: "" };
+    }
+  };
+
+  const { date: formattedDate, time: formattedTime } = formatDateTime(event.date);
 
   return (
     <>
@@ -75,7 +93,7 @@ export default function AdminEventCard({ event, active = true, onToggleActive, o
           <View>
             <View style={styles.metaRow}>
               <Text style={{ color: '#FFF', fontSize: 14, marginRight: 6 }}>📅</Text>
-              <Text style={styles.metaText}>{event.date}</Text>
+              <Text style={styles.metaText}>{formattedDate}{formattedTime ? ` • ${formattedTime}` : ""}</Text>
             </View>
 
             <View style={styles.buttonsContainer}>
