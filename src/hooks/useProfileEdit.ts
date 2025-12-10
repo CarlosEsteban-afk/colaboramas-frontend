@@ -6,25 +6,31 @@ import { useRouter } from "expo-router";
 import { useCompleteProfile } from "./useCompleteProfile";
 import { useUser } from "./useUser";
 import countries from "../data/countries.json";
+import researchFields from "../data/research_fields.json";
+import interests from "../data/interest.json";
+import { getLocationCoords } from "../utils/locationUtils";
 
 export const useProfileEdit = () => {
   const { completeProfile } = useCompleteProfile();
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const router = useRouter();
   const cityCache = useRef({});
 
   const [formData, setFormData] = useState({
     profileImage: "",
-    educacion: "",
     pais: "",
     ciudad: "",
-    investigacion: "",
-    formacion: "",
-    intereses: "",
     motivaciones: "",
-    actividades: "",
-    proyectos: "",
+    actividadesPersonales: "",
+    proyectosRecientes: "",
     aceptaTerminos: false,
+    latitude: null as number | null,
+    longitude: null as number | null,
+    camposInvestigacion: [] as string[],
+    lineasInteres: [] as string[],
+    historialEducativo: [
+      { institucion: "", titulo: "" },
+    ] as Array<{ institucion: string; titulo: string }>,
   });
 
   const [filteredCities, setFilteredCities] = useState<string[]>([]);
@@ -91,8 +97,8 @@ export const useProfileEdit = () => {
 
   const getHomeRouteByRole = (roles: string[]) => {
     if (!roles) return "/auth/login";
-    if (roles.includes("ACADEMICO")) return "/academico/screens";
-    if (roles.includes("COMUNICADOR")) return "/comunicador/screens";
+    if (roles.includes("ACADEMICO")) return "/academico";
+    if (roles.includes("COMUNICADOR")) return "/comunicador";
     return "/auth/login";
   };
 
@@ -102,10 +108,47 @@ export const useProfileEdit = () => {
       return;
     }
 
-    try {
-      const updatedUser = await completeProfile(user.id, formData);
+    if (formData.camposInvestigacion.length === 0 && formData.lineasInteres.length === 0) {
+      Alert.alert("Atención", "Debes seleccionar al menos un campo de investigación o línea de interés.");
+      return;
+    }
 
-      setUser(updatedUser);
+    try {
+      // Fetch location from device GPS or geocode from city/country
+      const locationCoords = await getLocationCoords(
+        formData.ciudad,
+        formData.pais
+      );
+
+      // Build keywords array from selected fields and interests
+      const keywords = [
+        ...formData.camposInvestigacion.map((field) => ({
+          name: field,
+          type: "CAMPO_INVESTIGACION",
+        })),
+        ...formData.lineasInteres.map((interest) => ({
+          name: interest,
+          type: "LINEA_INTERES",
+        })),
+      ];
+
+      // Build profile data in the expected format
+      const profileData = {
+        pais: formData.pais,
+        ciudad: formData.ciudad,
+        latitud: locationCoords?.latitude ?? null,
+        longitud: locationCoords?.longitude ?? null,
+        motivaciones: formData.motivaciones,
+        actividadesPersonales: formData.actividadesPersonales,
+        proyectosRecientes: formData.proyectosRecientes,
+        historialEducativo: formData.historialEducativo.filter(
+          (edu) => edu.institucion && edu.titulo
+        ),
+        keywords,
+      };
+
+      const updatedUser = await completeProfile(user.id, profileData);
+
       await AsyncStorage.setItem("auth_user", JSON.stringify(updatedUser));
 
       router.replace(getHomeRouteByRole(updatedUser.roles));
@@ -116,49 +159,44 @@ export const useProfileEdit = () => {
     }
   };
 
+  const addEducationEntry = () => {
+    setFormData((prev) => ({
+      ...prev,
+      historialEducativo: [
+        ...prev.historialEducativo,
+        { institucion: "", titulo: "" },
+      ],
+    }));
+  };
+
+  const removeEducationEntry = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      historialEducativo: prev.historialEducativo.filter((_, i) => i !== index),
+    }));
+  };
+
+  const updateEducationEntry = (
+    index: number,
+    field: "institucion" | "titulo",
+    value: string
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      historialEducativo: prev.historialEducativo.map((edu, i) =>
+        i === index ? { ...edu, [field]: value } : edu
+      ),
+    }));
+  };
+
   // Convertir countries object a array para el Picker
   const countryOptions = Object.keys(countries).map((country) => ({
     label: country,
     value: country,
   }));
 
-  const fields = [
-    {
-      label: "Educación",
-      name: "educacion",
-      placeholder: "Ej: Universidad XYZ",
-    },
-    {
-      label: "Campos de investigación",
-      name: "investigacion",
-      placeholder: "¿Qué has investigado?",
-    },
-    {
-      label: "Formación",
-      name: "formacion",
-      placeholder: "Nivel de formación",
-    },
-    {
-      label: "Líneas de interés",
-      name: "intereses",
-      placeholder: "¿Qué te gustaría investigar?",
-    },
-    {
-      label: "Motivaciones",
-      name: "motivaciones",
-      placeholder: "¿Qué te motiva?",
-    },
-    {
-      label: "Actividades personales",
-      name: "actividades",
-      placeholder: "¿Qué te gusta hacer?",
-    },
-    {
-      label: "Proyectos recientes",
-      name: "proyectos",
-      placeholder: "Menciona algunos proyectos",
-    },
-  ];
+  const researchFieldsList = researchFields.research_fields;
+  const interestsList = interests.interests;
 
   return {
     formData,
@@ -166,8 +204,12 @@ export const useProfileEdit = () => {
     handleChange,
     pickImage,
     handleSubmit,
-    fields,
+    addEducationEntry,
+    removeEducationEntry,
+    updateEducationEntry,
     countries: countryOptions,
     filteredCities,
+    researchFieldsList,
+    interestsList,
   };
 };

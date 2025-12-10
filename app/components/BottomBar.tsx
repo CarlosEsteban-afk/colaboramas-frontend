@@ -5,14 +5,14 @@ import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
 import { useRouter } from "expo-router";
 import { useBottomBarItems } from "../../src/hooks/useBottomBarItems";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-// 🔥 Exportamos la altura real de la barra
-export const BOTTOM_BAR_HEIGHT = Platform.OS === "ios" ? 90 : 80;
-// (antes eran 64–70; ahora dejamos altura pro + padding)
+const BAR_HEIGHT = Platform.OS === "web" ? 70 : 64;
 
 export default function BottomBar() {
   const router = useRouter();
   const { items, currentRoute } = useBottomBarItems();
+  const insets = useSafeAreaInsets();
 
   if (items.length === 0) return null;
 
@@ -25,7 +25,11 @@ export default function BottomBar() {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       nativeID="app-bottom-bar"
-      style={[styles.bar, { height: BOTTOM_BAR_HEIGHT }]}
+      style={[styles.bar,
+      {
+        height: BAR_HEIGHT + insets.bottom,
+        paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
+      },]}
     >
       {items.map((item, index) => {
         const isActive = currentRoute.includes(item.route.replace("/", ""));
@@ -37,12 +41,7 @@ export default function BottomBar() {
             onPress={() => router.push(item.route as any)}
             style={[
               styles.button,
-              isActive && {
-                shadowColor: "#000",
-                shadowOpacity: 0.3,
-                shadowOffset: { width: 0, height: 2 },
-                shadowRadius: 4,
-              },
+              isActive && styles.activeShadow,
             ]}
           >
             <Monicon
@@ -72,8 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
 
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingHorizontal: 8,
 
     position: Platform.OS === "web" ? "fixed" : "absolute",
     bottom: 0,
@@ -83,16 +81,22 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    marginHorizontal: 6,
+    marginHorizontal: 4,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 12,
 
     paddingVertical: 6, // más aire entre ícono y texto
+  }, 
+  activeShadow: {
+    shadowColor: "#000",
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
   },
   label: {
     fontSize: 12,
-    marginTop: 3,
+    marginTop: 4,
     fontWeight: "600",
     color: "#fff",
   },

@@ -10,6 +10,12 @@ import {
 } from "@expo-google-fonts/cinzel-decorative";
 import { Lato_400Regular } from "@expo-google-fonts/lato";
 import { ContactsProvider } from "../src/providers/ContactsProvider";
+import { useNotifications } from "../src/hooks/useNotifications";
+
+function NotificationWrapper() {
+  useNotifications();
+  return <Slot />;
+}
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -20,18 +26,19 @@ export default function RootLayout() {
   useEffect(() => {
     initI18n();
   }, []);
+
   if (!fontsLoaded) return null;
 
   return (
-      <FontsProvider>
-        <UserProvider>
-          <AuthProvider>
-            <ContactsProvider>
-              <Slot />
-            </ContactsProvider>
-          </AuthProvider>
-        </UserProvider>
-      </FontsProvider>
+    <FontsProvider>
+      <UserProvider>
+        <AuthProvider>
+          <ContactsProvider>
+            <NotificationWrapper />
+          </ContactsProvider>
+        </AuthProvider>
+      </UserProvider>
+    </FontsProvider>
   );
 }
 
