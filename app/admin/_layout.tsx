@@ -33,7 +33,14 @@ export default function AdminLayout() {
       {/* Slot occupies the remaining space; pages should manage their own scrolling
           (they mostly use ScrollView/FlatList). Keeping Slot inside a flex:1
           container so inner lists can scroll independently from this layout. */}
-      <View style={styles.content}>
+      <View style={[
+        styles.content,
+        // On native platforms we must allow the content area to flex so
+        // that children with `flex: 1` (ScrollView/FlatList) receive a
+        // proper height. On web we keep the non-flex behaviour to allow
+        // the page to grow and use the browser scroll.
+        Platform.OS === "web" ? {} : { flex: 1 },
+      ]}>
         <Slot />
       </View>
       <AdminNav />
