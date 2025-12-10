@@ -18,10 +18,10 @@ export default function TopBar() {
 
   if (!fontsLoaded) return null;
 
-  const containerHeight = 100;
+  const containerHeight = 120;
 
   const fontSize = Math.min(width * 0.18, 64);
-  const svgHeight = Math.max(fontSize * 1.3, 36); 
+  const svgHeight = Math.max(fontSize * 1.8, 24);
   const svgWidth = width * 0.6;
 
   const handleConfigPress = () => {
@@ -32,8 +32,7 @@ export default function TopBar() {
     <View
       style={{
         backgroundColor: "#FFF",
-        paddingVertical: 12,
-        paddingHorizontal: 16,
+        paddingTop: 12,
         shadowColor: "#000",
         shadowOpacity: 0.03,
         shadowRadius: 3,
@@ -49,7 +48,7 @@ export default function TopBar() {
         height={svgHeight}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         preserveAspectRatio="xMidYMid meet"
-        style={{ alignSelf: "center" }}
+        style={{ alignSelf: "center", paddingTop: 12 }}
       >
         <Defs>
           <SVGLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
@@ -78,15 +77,11 @@ export default function TopBar() {
         onPress={handleConfigPress}
         style={{
           position: "absolute",
-          right: 16,
-          top: "50%",
-          marginTop: -20, 
+          right: 20,
           width: 40,
           height: 40,
-          borderRadius: 20,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "rgba(0,0,0,0.05)",
         }}
       >
         <Monicon

@@ -22,7 +22,10 @@ declare module "@monicon/icon-loader" {
 	| "mdi:help-circle"
 	| "material-symbols:filter-alt-outline"
 	| "material-symbols:filter-alt"
-	| "mdi:chevron-down";
+	| "mdi:chevron-down"
+	| "mdi:check"
+	| "mdi:close"
+	| "mdi:filter-variant";
 
   export type MoniconProps = {
     /**

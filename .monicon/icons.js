@@ -99,5 +99,20 @@ module.exports = {
     "svg": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" ><path fill=\"currentColor\" d=\"M7.41 8.58L12 13.17l4.59-4.59L18 10l-6 6l-6-6z\"/></svg>",
     "width": 16,
     "height": 16
+  },
+  "mdi:check": {
+    "svg": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" ><path fill=\"currentColor\" d=\"M21 7L9 19l-5.5-5.5l1.41-1.41L9 16.17L19.59 5.59z\"/></svg>",
+    "width": 16,
+    "height": 16
+  },
+  "mdi:close": {
+    "svg": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" ><path fill=\"currentColor\" d=\"M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12z\"/></svg>",
+    "width": 16,
+    "height": 16
+  },
+  "mdi:filter-variant": {
+    "svg": "<svg viewBox=\"0 0 24 24\" width=\"1em\" height=\"1em\" ><path fill=\"currentColor\" d=\"M6 13h12v-2H6M3 6v2h18V6M10 18h4v-2h-4z\"/></svg>",
+    "width": 16,
+    "height": 16
   }
 };

@@ -29,7 +29,7 @@ export default function HomeScreen() {
 
   return (
     <View style={{ backgroundColor: "#FFF" }}>
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
+      <ScrollView contentContainerStyle={{ paddingHorizontal: 20 }}>
         <Text style={{ fontSize: 22, fontWeight: "bold", marginBottom: 8 }}>
           {t("home.recommendations")}
         </Text>
@@ -59,7 +59,7 @@ export default function HomeScreen() {
           ))
         )}
 
-        <Text style={{ fontSize: 22, fontWeight: "bold", marginTop: 24, marginBottom: 8 }}>
+        <Text style={{ fontSize: 22, fontWeight: "bold", marginVertical: 10, marginBottom: 8 }}>
           {t("home.events")}
         </Text>
 
