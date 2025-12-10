@@ -132,33 +132,36 @@ export default function AdminEvents(){
       <Text style={styles.title}>Eventos</Text>
       <SearchBar value={q} onChangeText={setQ} placeholder="Buscar por título o descripción" />
 
-      {/* Type filters (horizontal chips) */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 8, marginBottom: 8, alignItems: 'center' }}
-      >
-        <Pressable style={[styles.filterChip, selectedType === '' && styles.filterChipActive]} onPress={() => setSelectedType('')}>
-          <Text style={[styles.filterChipText, selectedType === '' && styles.filterChipTextActive]}>Todos</Text>
-        </Pressable>
-        {types.map((t) => (
-          <Pressable key={t} style={[styles.filterChip, selectedType === t && styles.filterChipActive]} onPress={() => setSelectedType(t)}>
-            <Text style={[styles.filterChipText, selectedType === t && styles.filterChipTextActive]}>{t}</Text>
+      {/* Filters (types + status) grouped so spacing between groups is easy to control */}
+      <View style={styles.filtersWrapper}>
+        {/* Type filters (horizontal chips) */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 8, alignItems: 'center' }}
+        >
+          <Pressable style={[styles.filterChip, selectedType === '' && styles.filterChipActive]} onPress={() => setSelectedType('')}>
+            <Text style={[styles.filterChipText, selectedType === '' && styles.filterChipTextActive]}>Todos</Text>
           </Pressable>
-        ))}
-      </ScrollView>
+          {types.map((t) => (
+            <Pressable key={t} style={[styles.filterChip, selectedType === t && styles.filterChipActive]} onPress={() => setSelectedType(t)}>
+              <Text style={[styles.filterChipText, selectedType === t && styles.filterChipTextActive]}>{t}</Text>
+            </Pressable>
+          ))}
+        </ScrollView>
 
-      {/* Status filter buttons */}
-      <View style={styles.statusRow}>
-        <Pressable style={[styles.statusBtn, statusFilter === 'all' && styles.statusBtnActive]} onPress={() => setStatusFilter('all')}>
-          <Text style={[styles.statusBtnText, statusFilter === 'all' && styles.statusBtnTextActive]}>Todos</Text>
-        </Pressable>
-        <Pressable style={[styles.statusBtn, statusFilter === 'active' && styles.statusBtnActive]} onPress={() => setStatusFilter('active')}>
-          <Text style={[styles.statusBtnText, statusFilter === 'active' && styles.statusBtnTextActive]}>Activos</Text>
-        </Pressable>
-        <Pressable style={[styles.statusBtn, statusFilter === 'inactive' && styles.statusBtnActive]} onPress={() => setStatusFilter('inactive')}>
-          <Text style={[styles.statusBtnText, statusFilter === 'inactive' && styles.statusBtnTextActive]}>Inactivos</Text>
-        </Pressable>
+        {/* Status filter buttons */}
+        <View style={styles.statusRow}>
+          <Pressable style={[styles.statusBtn, statusFilter === 'all' && styles.statusBtnActive]} onPress={() => setStatusFilter('all')}>
+            <Text style={[styles.statusBtnText, statusFilter === 'all' && styles.statusBtnTextActive]}>Todos</Text>
+          </Pressable>
+          <Pressable style={[styles.statusBtn, statusFilter === 'active' && styles.statusBtnActive]} onPress={() => setStatusFilter('active')}>
+            <Text style={[styles.statusBtnText, statusFilter === 'active' && styles.statusBtnTextActive]}>Activos</Text>
+          </Pressable>
+          <Pressable style={[styles.statusBtn, statusFilter === 'inactive' && styles.statusBtnActive]} onPress={() => setStatusFilter('inactive')}>
+            <Text style={[styles.statusBtnText, statusFilter === 'inactive' && styles.statusBtnTextActive]}>Inactivos</Text>
+          </Pressable>
+        </View>
       </View>
 
       <FlatList
@@ -218,7 +221,7 @@ const styles = StyleSheet.create({
       borderRadius: 20,
       borderWidth: 1,
       borderColor: '#E6DFFF',
-      marginRight: 6,
+      marginRight: 8,
       backgroundColor: '#fff',
       alignSelf: 'center',
       justifyContent: 'center',
@@ -227,7 +230,8 @@ const styles = StyleSheet.create({
     filterChipActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
     filterChipText: { color: '#333', fontWeight: '600' },
     filterChipTextActive: { color: '#fff' },
-    statusRow: { flexDirection: 'row', justifyContent: 'flex-start', gap: 8, marginBottom: 8, paddingHorizontal: 8 },
+    statusRow: { flexDirection: 'row', justifyContent: 'flex-start', gap: 8, marginTop: 8, marginBottom: 8, paddingHorizontal: 8 },
+    filtersWrapper: { paddingHorizontal: 8, marginBottom: 8, marginTop: 8 },
     statusBtn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1, borderColor: '#eee', backgroundColor: '#fff', marginRight: 8 },
     statusBtnActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
     statusBtnText: { color: '#333', fontWeight: '700' },
