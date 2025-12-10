@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, View, useWindowDimensions } from "react-native";
+import { TouchableOpacity, View, useWindowDimensions, Platform } from "react-native";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
 import Svg, {
@@ -18,11 +18,18 @@ export default function TopBar() {
 
   if (!fontsLoaded) return null;
 
-  const containerHeight = 120;
+  // 🔧 Nuevo cálculo responsive
+  const maxFontSize = 48;               // límite para que no explote en celular
+  const minFontSize = 28;               // tamaño mínimo legible
+  const fontSize = Math.max(
+    Math.min(width * 0.16, maxFontSize),
+    minFontSize
+  );
 
-  const fontSize = Math.min(width * 0.18, 64);
-  const svgHeight = Math.max(fontSize * 1.8, 24);
-  const svgWidth = width * 0.6;
+  const svgWidth = width * 0.65;        // más estrecho para móviles
+  const svgHeight = fontSize * 1.7;
+
+  const containerHeight = svgHeight + 40;  // altura dinámica según fontSize
 
   const handleConfigPress = () => {
     router.push("/screens/Settings");
@@ -32,10 +39,10 @@ export default function TopBar() {
     <View
       style={{
         backgroundColor: "#FFF",
-        paddingTop: 12,
+        paddingTop: 10,
         shadowColor: "#000",
-        shadowOpacity: 0.03,
-        shadowRadius: 3,
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
         elevation: 2,
         height: containerHeight,
         alignItems: "center",
@@ -48,7 +55,10 @@ export default function TopBar() {
         height={svgHeight}
         viewBox={`0 0 ${svgWidth} ${svgHeight}`}
         preserveAspectRatio="xMidYMid meet"
-        style={{ alignSelf: "center", paddingTop: 12 }}
+        style={{
+          alignSelf: "center",
+          overflow: "visible",
+        }}
       >
         <Defs>
           <SVGLinearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
@@ -57,12 +67,10 @@ export default function TopBar() {
           </SVGLinearGradient>
         </Defs>
 
-
         <SvgText
           fill="url(#grad)"
           fontSize={fontSize}
           fontFamily="CinzelDecorative_400Regular"
-          fontWeight="400"
           x={svgWidth / 2}
           y={svgHeight / 2}
           textAnchor="middle"
@@ -72,12 +80,13 @@ export default function TopBar() {
         </SvgText>
       </Svg>
 
+      {/* Botón Configuración */}
       <TouchableOpacity
         activeOpacity={0.7}
         onPress={handleConfigPress}
         style={{
           position: "absolute",
-          right: 20,
+          right: 18,
           width: 40,
           height: 40,
           alignItems: "center",
@@ -86,7 +95,7 @@ export default function TopBar() {
       >
         <Monicon
           name="mdi:cog"
-          size={28}
+          size={26}
           color={lightTheme.colors["primary-purple"]}
         />
       </TouchableOpacity>
