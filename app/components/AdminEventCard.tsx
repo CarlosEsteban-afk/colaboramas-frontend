@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   horizontal: {
-    width: 260,
+    width: 340,
   },
   header: {
     padding: 12,
@@ -226,9 +226,9 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   imageContainer: {
-    width: 96,
-    minHeight: 96,
-    height: 96,
+    width: 120,
+    minHeight: 120,
+    height: 120,
     alignSelf: "stretch",
     backgroundColor: "#eee",
   },
@@ -256,12 +256,12 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     justifyContent: "space-between",
-    minHeight: 96,
+    minHeight: 120,
   },
   titleRight: {
     color: "#FFF",
     fontWeight: "700",
-    fontSize: 13,
+    fontSize: 15,
   },
   metaRow: { flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 6 },
   metaText: { fontSize: 12, color: "#FFF" },

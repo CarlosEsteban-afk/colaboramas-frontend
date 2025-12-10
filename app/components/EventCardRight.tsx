@@ -31,7 +31,7 @@ export default function EventCardRight({ event, onPress }: Props) {
   const color = TYPE_COLOR[event.type] ?? "#6B31E8";
   const [modalVisible, setModalVisible] = useState(false);
   const { width: screenWidth } = useWindowDimensions();
-  const cardWidth = Math.round(Math.min(360, Math.max(260, screenWidth * 0.6)));
+  const cardWidth = Math.round(Math.min(440, Math.max(320, screenWidth * 0.75)));
 
   const displayTitle = event.title.replace(
     new RegExp(`^\\s*${event.type}\\s*[:\\-–—]\\s*`, "i"),
@@ -69,14 +69,14 @@ export default function EventCardRight({ event, onPress }: Props) {
           backgroundColor: "#F6F6F6",
           overflow: "hidden",
           alignItems: "stretch",
-          height: 120,
+          height: 150,
           width: "100%",
           maxWidth: cardWidth,
           alignSelf: "center",
         }}
       >
         {/* Parte Izquierda: Imagen */}
-        <View style={{ width: 120, height: "100%" }}>
+        <View style={{ width: 140, height: "100%" }}>
           {event.image ? (
             <Image
               source={{ uri: event.image }}
@@ -121,8 +121,8 @@ export default function EventCardRight({ event, onPress }: Props) {
           style={{ flex: 1, padding: 12, justifyContent: "space-between", height: "100%" }}
         >
           <Text
-            numberOfLines={3} // Aumentado para más espacio
-            style={{ fontWeight: "700", fontSize: 15, color: "#FFF" }}
+            numberOfLines={4}
+            style={{ fontWeight: "700", fontSize: 16, color: "#FFF" }}
           >
             {displayTitle}
           </Text>

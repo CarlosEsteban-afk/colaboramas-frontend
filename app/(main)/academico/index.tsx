@@ -118,7 +118,7 @@ export default function HomeScreen() {
             <Text style={{ color: "red" }}>{eventsError}</Text>
           ) : (
             events.map((ev) => (
-              <View key={ev.id} style={{ marginRight: 12, minWidth: 260 }}>
+              <View key={ev.id} style={{ marginRight: 12, minWidth: 320 }}>
                 <EventCardRight event={ev} onPress={() => router.push(`/academico/event/${ev.id}`)} />
               </View>
             ))

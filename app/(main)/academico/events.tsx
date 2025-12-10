@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     paddingBottom: 140,
   },
   eventWrapper: {
-    marginBottom: 16,
+    marginBottom: 22,
     width: "100%",
   },
   fab: {
