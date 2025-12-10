@@ -159,10 +159,9 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   title: {
-    fontSize: 32,
-    fontWeight: "700",
+    fontSize: 24,
+    fontWeight: "600",
     color: lightTheme.colors["primary-purple"],
-    marginBottom: 8,
     alignSelf:"center"
   },
   subtitle: { 

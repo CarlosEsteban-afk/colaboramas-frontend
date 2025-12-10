@@ -6,11 +6,13 @@ import {
   ScrollView,
   Modal,
   Animated,
+  Alert,
 } from "react-native";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../../theme";
 import { useRouter } from "expo-router";
 import useSettings from "../../../src/hooks/useSettings";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Settings() {
   const router = useRouter();
@@ -25,8 +27,22 @@ export default function Settings() {
     closeModal,
   } = useSettings();
 
+  // --- Cerrar sesión ---
+  const handleLogout = async () => {
+    console.log("LOGOUT PRESIONADO");
+    try {
+      await AsyncStorage.removeItem("token");
+      console.log("TOKEN ELIMINADO");
+      router.replace("/auth/login");
+    } catch (e) {
+      console.log("Logout error:", e);
+    }
+  };
+
   return (
     <View className="flex-1 bg-color-light-base-muted-foreground p-4">
+
+      {/* HEADER */}
       <View className="flex-row items-center justify-between mb-4">
         <TouchableOpacity
           className="flex-row items-center"
@@ -38,7 +54,7 @@ export default function Settings() {
             color={lightTheme.colors["primary-purple"]}
           />
           <Text
-            className="ml-2  font-semibold"
+            className="ml-2 font-semibold"
             style={{ color: lightTheme.colors["primary-purple"] }}
           >
             {t("settings.back")}
@@ -55,7 +71,8 @@ export default function Settings() {
         <View style={{ width: 50 }} />
       </View>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+      {/* SCROLL DE OPCIONES */}
+      <ScrollView contentContainerStyle={{ paddingBottom: 160 }}>
         <View className="bg-white rounded-lg overflow-hidden shadow-sm">
           {configs.map((conf, index) => (
             <React.Fragment key={index}>
@@ -84,9 +101,31 @@ export default function Settings() {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-4 left-4 right-4">
+      {/* FOOTER FIJO (YA FUNCIONA) */}
+      <View
+        className="absolute bottom-4 left-4 right-4"
+        pointerEvents="box-none"
+      >
+        {/* BOTÓN CERRAR SESIÓN */}
         <TouchableOpacity
-          className="p-6 bg-white rounded-lg items-center shadow-sm"
+          onPress={() =>
+            openModal({
+              title: "Cerrar sesión",
+              message: "¿Estás seguro que deseas cerrar sesión?",
+              confirmText: "Cerrar sesión",
+              onConfirm: handleLogout,
+            })
+          }
+          className="w-[80%] max-w-3xl self-center mt-6 bg-red-500 py-3 rounded-xl shadow"
+        >
+          <Text className="text-white text-center text-lg font-semibold">
+            Cerrar Sesión
+          </Text>
+        </TouchableOpacity>
+
+        {/* BOTÓN ELIMINAR CUENTA */}
+        <TouchableOpacity
+          className="p-6 bg-white rounded-lg items-center shadow-sm mt-4"
           onPress={() =>
             openModal({
               title: "Eliminar cuenta",
@@ -103,6 +142,7 @@ export default function Settings() {
         </TouchableOpacity>
       </View>
 
+      {/* MODAL DE CONFIRMACIÓN */}
       <Modal transparent visible={modalVisible} animationType="none">
         <Animated.View
           style={{

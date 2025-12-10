@@ -1,3 +1,4 @@
+// components/MultiSelectDropdown.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -11,17 +12,7 @@ import {
 } from "react-native";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
-import { useTranslation } from "react-i18next"; // ← Import
-
-type Option = string | { country: string; city: string };
-
-interface Props {
-  label: string;
-  options: Option[];
-  selected: string[];
-  setSelected: (values: string[]) => void;
-  searchable?: boolean;
-}
+import { useTranslation } from "react-i18next";
 
 export default function MultiSelectDropdown({
   label,
@@ -29,17 +20,17 @@ export default function MultiSelectDropdown({
   selected,
   setSelected,
   searchable = true,
-}: Props) {
+}: any) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const { t } = useTranslation();
 
-  const { t } = useTranslation(); // ← Inicializamos traducción
+  // 🔥 opciones deben ser SIEMPRE un array plano
+  const normalizedOptions = Array.isArray(options) ? options : [];
 
-  const filteredOptions = options.filter((item) => {
-    const value =
-      typeof item === "string" ? item : `${item.city}, ${item.country}`;
-    return value.toLowerCase().includes(search.toLowerCase());
-  });
+  const filteredOptions = normalizedOptions.filter((item) =>
+    item.toLowerCase().includes(search.toLowerCase())
+  );
 
   const toggleSelect = (value: string) => {
     if (selected.includes(value)) {
@@ -53,17 +44,11 @@ export default function MultiSelectDropdown({
     <View style={{ marginBottom: 16 }}>
       <Text style={styles.label}>{label}</Text>
 
-      {/* Input principal */}
-      <TouchableOpacity
-        style={styles.input}
-        onPress={() => setOpen(true)}
-        activeOpacity={0.7}
-      >
+      <TouchableOpacity style={styles.input} onPress={() => setOpen(true)}>
         <Text style={styles.inputText}>
-          {selected.length > 0
-            ? selected.join(", ")
-            : t("multiSelect.placeholder")} {/* ← Traducción */}
+          {selected.length > 0 ? selected.join(", ") : t("multiSelect.placeholder")}
         </Text>
+
         <Monicon
           name="mdi:chevron-down"
           size={22}
@@ -71,13 +56,7 @@ export default function MultiSelectDropdown({
         />
       </TouchableOpacity>
 
-      {/* Bottom Drawer */}
-      <Modal
-        visible={open}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setOpen(false)}
-      >
+      <Modal visible={open} animationType="slide" transparent onRequestClose={() => setOpen(false)}>
         <Pressable style={styles.overlay} onPress={() => setOpen(false)} />
 
         <View style={styles.bottomDrawer}>
@@ -86,11 +65,7 @@ export default function MultiSelectDropdown({
           <View style={styles.header}>
             <Text style={styles.drawerTitle}>{label}</Text>
             <TouchableOpacity onPress={() => setOpen(false)}>
-              <Monicon
-                name="mdi:close"
-                size={24}
-                color={lightTheme.colors["primary-purple"]}
-              />
+              <Monicon name="mdi:close" size={24} color={lightTheme.colors["primary-purple"]} />
             </TouchableOpacity>
           </View>
 
@@ -106,17 +81,13 @@ export default function MultiSelectDropdown({
 
           <FlatList
             data={filteredOptions}
-            keyExtractor={(_, i) => i.toString()}
-            contentContainerStyle={{ paddingBottom: 40 }}
+            keyExtractor={(item) => item}
             renderItem={({ item }) => {
-              const value =
-                typeof item === "string"
-                  ? item
-                  : `${item.city}, ${item.country}`;
-              const isSelected = selected.includes(value);
+              const isSelected = selected.includes(item);
+
               return (
                 <TouchableOpacity
-                  onPress={() => toggleSelect(value)}
+                  onPress={() => toggleSelect(item)}
                   style={styles.option}
                   activeOpacity={0.6}
                 >
@@ -129,8 +100,9 @@ export default function MultiSelectDropdown({
                       },
                     ]}
                   >
-                    {value}
+                    {item}
                   </Text>
+
                   {isSelected && (
                     <Monicon
                       name="mdi:check"
@@ -161,22 +133,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
     backgroundColor: "#FFF",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  inputText: {
-    fontFamily: "Lato_400Regular",
-    fontSize: 16,
-    color: "#444",
-    flex: 1,
-    marginRight: 8,
-  },
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-  },
+  inputText: { fontSize: 16, fontFamily: "Lato_400Regular", color: "#444", flex: 1, marginRight: 8 },
+  overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)" },
   bottomDrawer: {
     backgroundColor: "#FFF",
     borderTopLeftRadius: 16,
@@ -187,51 +149,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     width: "100%",
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: -2 },
-    shadowRadius: 8,
-    elevation: 6,
   },
-  drawerHandle: {
-    width: 40,
-    height: 5,
-    backgroundColor: "#CCC",
-    borderRadius: 3,
-    alignSelf: "center",
-    marginBottom: 10,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  drawerTitle: {
-    fontFamily: "Lato_700Bold",
-    fontSize: 18,
-    color: lightTheme.colors["dark-gray"],
-  },
-  searchInput: {
-    borderWidth: 1,
-    borderColor: "#EEE",
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    fontFamily: "Lato_400Regular",
-    fontSize: 15,
-    marginBottom: 10,
-  },
-  option: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 0.5,
-    borderColor: "#EEE",
-  },
-  optionText: {
-    fontFamily: "Lato_400Regular",
-    fontSize: 15,
-  },
+  drawerHandle: { width: 40, height: 5, backgroundColor: "#CCC", borderRadius: 3, alignSelf: "center", marginBottom: 10 },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 10 },
+  drawerTitle: { fontSize: 18, fontFamily: "Lato_700Bold" },
+  searchInput: { borderWidth: 1, borderColor: "#EEE", borderRadius: 8, padding: 8, marginBottom: 10 },
+  option: { paddingVertical: 10, borderBottomWidth: 0.5, borderColor: "#EEE", flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  optionText: { fontSize: 15, fontFamily: "Lato_400Regular" },
 });

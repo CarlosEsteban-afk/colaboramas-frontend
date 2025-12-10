@@ -28,7 +28,9 @@ finalConfig = withMonicon(finalConfig, {
     "material-symbols:filter-alt-outline",
     "material-symbols:filter-alt",
     "mdi:chevron-down",
-
+    "mdi:check",
+    "mdi:close",
+    "mdi:filter-variant",
   ],
   collections: [], 
 });
