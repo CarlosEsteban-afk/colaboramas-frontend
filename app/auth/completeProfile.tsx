@@ -213,3 +213,5 @@ export default function ProfileEditView() {
       </TouchableOpacity>
       </KeyboardAvoidingView>
     </AuthLayout>
+  );
+}

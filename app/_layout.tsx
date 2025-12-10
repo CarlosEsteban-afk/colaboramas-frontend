@@ -26,18 +26,19 @@ export default function RootLayout() {
   useEffect(() => {
     initI18n();
   }, []);
+
   if (!fontsLoaded) return null;
 
   return (
-      <FontsProvider>
-        <UserProvider>
-          <AuthProvider>
-            <ContactsProvider>
-              <NotificationWrapper />
-            </ContactsProvider>
-          </AuthProvider>
-        </UserProvider>
-      </FontsProvider>
+    <FontsProvider>
+      <UserProvider>
+        <AuthProvider>
+          <ContactsProvider>
+            <NotificationWrapper />
+          </ContactsProvider>
+        </AuthProvider>
+      </UserProvider>
+    </FontsProvider>
   );
 }
 
