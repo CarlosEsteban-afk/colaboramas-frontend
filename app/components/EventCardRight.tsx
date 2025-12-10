@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Pressable, Modal, ScrollView, Image } from "react-native";
+import { View, Text, Pressable, Modal, ScrollView, Image, useWindowDimensions } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTranslation } from "react-i18next";
 import { Calendar } from "lucide-react-native";
@@ -30,6 +30,8 @@ export default function EventCardRight({ event, onPress }: Props) {
   const { t } = useTranslation();
   const color = TYPE_COLOR[event.type] ?? "#6B31E8";
   const [modalVisible, setModalVisible] = useState(false);
+  const { width: screenWidth } = useWindowDimensions();
+  const cardWidth = Math.round(Math.min(360, Math.max(260, screenWidth * 0.6)));
 
   const displayTitle = event.title.replace(
     new RegExp(`^\\s*${event.type}\\s*[:\\-–—]\\s*`, "i"),
@@ -68,6 +70,7 @@ export default function EventCardRight({ event, onPress }: Props) {
           overflow: "hidden",
           alignItems: "stretch", // Cambiado para que ambos lados ocupen toda la altura
           minHeight: 120,
+          width: cardWidth,
         }}
       >
         {/* Parte Izquierda: Imagen */}

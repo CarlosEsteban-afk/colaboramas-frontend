@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import EventCardRight, { EventItem } from "../../components/EventCardRight";
 import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { useRouter } from "expo-router";
 import UserCard from "../../components/UserCard";
 import { useTranslation } from "react-i18next";
 import { useUserCard } from "../../../src/hooks/useUserCard";
@@ -66,6 +67,8 @@ export default function HomeScreen() {
     fetchEvents();
   }, []);
 
+  const router = useRouter();
+
   return (
     <View style={{ backgroundColor: "#FFF" }}>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20 }}>
@@ -102,7 +105,11 @@ export default function HomeScreen() {
           {t("home.events")}
         </Text>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 12, paddingVertical: 4 }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingLeft: 20, paddingVertical: 4 }}
+        >
           {eventsLoading ? (
             <View style={{ paddingVertical: 20 }}>
               <ActivityIndicator size="small" color={lightTheme.colors["primary-purple"]} />
@@ -111,7 +118,9 @@ export default function HomeScreen() {
             <Text style={{ color: "red" }}>{eventsError}</Text>
           ) : (
             events.map((ev) => (
-              <EventCardRight key={ev.id} event={ev} onPress={() => {}} />
+              <View key={ev.id} style={{ marginRight: 12, minWidth: 260 }}>
+                <EventCardRight event={ev} onPress={() => router.push(`/academico/event/${ev.id}`)} />
+              </View>
             ))
           )}
         </ScrollView>
