@@ -68,13 +68,15 @@ export default function EventCardRight({ event, onPress }: Props) {
           borderRadius: 8,
           backgroundColor: "#F6F6F6",
           overflow: "hidden",
-          alignItems: "center",
-          minHeight: 120,
-          width: cardWidth,
+          alignItems: "stretch",
+          height: 120,
+          width: "100%",
+          maxWidth: cardWidth,
+          alignSelf: "center",
         }}
       >
         {/* Parte Izquierda: Imagen */}
-        <View style={{ width: 120, height: 120 }}>
+        <View style={{ width: 120, height: "100%" }}>
           {event.image ? (
             <Image
               source={{ uri: event.image }}
@@ -116,7 +118,7 @@ export default function EventCardRight({ event, onPress }: Props) {
         {/* Parte Derecha: Contenido */}
         <LinearGradient
           colors={[color, `${color}CC`]}
-          style={{ flex: 1, padding: 12, justifyContent: "space-between", minHeight: 120 }}
+          style={{ flex: 1, padding: 12, justifyContent: "space-between", height: "100%" }}
         >
           <Text
             numberOfLines={3} // Aumentado para más espacio
