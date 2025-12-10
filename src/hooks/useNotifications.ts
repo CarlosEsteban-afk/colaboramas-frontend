@@ -3,6 +3,7 @@ import { useAuth } from "./useAuth";
 import { useRouter } from "expo-router";
 import messaging from "@react-native-firebase/messaging";
 import api from "../../client";
+import { Platform } from "react-native";
 
 export const useNotifications = () => {
   const { isAuthenticated } = useAuth();
@@ -37,8 +38,10 @@ export const useNotifications = () => {
           console.log("FCM Token:", fcmToken);
           // Send token to backend
           try {
+            // Then use it in your code:
             await api.post("/notifications/register-token", {
-              fcmToken: fcmToken,
+              firebaseToken: fcmToken,
+              platform: Platform.OS === "ios" ? "ios" : "android",
             });
             console.log("FCM Token registered with backend successfully");
           } catch (err) {

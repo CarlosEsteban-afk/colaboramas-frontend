@@ -35,11 +35,7 @@ export default function ProfileEditView() {
 
   return (
     <AuthLayout title="Crear Cuenta" card cardGradient showLogo={false}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
-      >
+   
       <View className={Platform.OS === "web" ? "pb-4" : ""}>
         {/* FOTO */}
         <View className="items-center mb-5">
@@ -211,7 +207,6 @@ export default function ProfileEditView() {
           ¿Ya tienes cuenta? Inicia sesión
         </Text>
       </TouchableOpacity>
-      </KeyboardAvoidingView>
     </AuthLayout>
   );
 }
