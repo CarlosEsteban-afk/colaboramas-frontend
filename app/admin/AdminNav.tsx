@@ -1,5 +1,6 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../theme";
@@ -8,6 +9,7 @@ import { useRouter, useSegments } from "expo-router";
 export default function AdminNav() {
   const router = useRouter();
   const segments = useSegments();
+  const insets = useSafeAreaInsets();
 
   // Show only when we are under the `admin` segment
   const mainSegment = segments[0] || "";
@@ -22,22 +24,30 @@ export default function AdminNav() {
     { label: "Eventos", icon: "mdi:calendar", route: "/admin/events" },
   ];
 
-  const BAR_HEIGHT = Platform.OS === "web" ? 70 : 68;
+  const BAR_HEIGHT = Platform.OS === "web" ? 70 : 64;
+  
 
   return (
     <LinearGradient
       colors={[lightTheme.colors["primary-purple"], lightTheme.colors["primary-pink"]]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={[styles.bar, { height: BAR_HEIGHT }]}
+      style={[
+        styles.bar,
+        {
+          height: BAR_HEIGHT + insets.bottom,
+          paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
+          bottom: 0,
+        },
+      ]}
     >
-      {items.map((item, index) => {
+      {items.map((item) => {
         const itemRouteSegment = item.route.split("/").pop() || "";
         const isActive = item.route === "/admin" ? currentRoute === "admin" || currentRoute === "index" : itemRouteSegment === currentRoute;
 
         return (
           <TouchableOpacity
-            key={index}
+            key={item.route}
             activeOpacity={0.85}
             onPress={() => router.push(item.route as any)}
             style={[
