@@ -74,7 +74,7 @@ export default function EventCardRight({ event, onPress }: Props) {
         }}
       >
         {/* Parte Izquierda: Imagen */}
-        <View style={{ width: 120, height: 120 }}>
+        <View style={{ width: 120, height: '100%' }}>
           {event.image ? (
             <Image
               source={{ uri: event.image }}
