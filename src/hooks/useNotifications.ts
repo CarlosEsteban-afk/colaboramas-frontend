@@ -1,9 +1,21 @@
 import { useEffect } from "react";
 import { useAuth } from "./useAuth";
 import { useRouter } from "expo-router";
-import messaging from "@react-native-firebase/messaging";
 import api from "../../client";
 import { Platform } from "react-native";
+
+// Helper to require a native module without causing Metro to statically
+// attempt to resolve it at bundle time. If the optional dependency is not
+// installed this returns null and the hook will no-op.
+function safeRequire(moduleName: string) {
+  try {
+    // Use eval to avoid static analysis by Metro bundler
+    // eslint-disable-next-line no-eval
+    return eval("require")(moduleName);
+  } catch (e) {
+    return null;
+  }
+}
 
 export const useNotifications = () => {
   const { isAuthenticated } = useAuth();
@@ -11,6 +23,13 @@ export const useNotifications = () => {
 
   useEffect(() => {
     if (!isAuthenticated) return;
+
+    const messaging = safeRequire("@react-native-firebase/messaging");
+    if (!messaging) {
+      // Optional dependency not installed — skip notification setup silently
+      console.warn("@react-native-firebase/messaging not available — notifications disabled");
+      return;
+    }
 
     // Request user permission for notifications
     const requestUserPermission = async () => {
