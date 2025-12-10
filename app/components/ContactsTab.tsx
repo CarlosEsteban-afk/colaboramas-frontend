@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, Image, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../theme";
 import { useContacts } from "../../src/hooks/useContact";
@@ -11,7 +11,13 @@ interface Props {
 
 export default function ContactsTab({ type }: Props) {
   const { t } = useTranslation();
-  const { receivedMessages, sentMessages, repliedMessages, respondToMessage, reportUser } = useContacts();
+  const {
+    receivedMessages,
+    sentMessages,
+    repliedMessages,
+    respondToMessage,
+    reportUser,
+  } = useContacts();
 
   const data =
     type === "recibidas"
@@ -48,19 +54,22 @@ export default function ContactsTab({ type }: Props) {
             }}
           >
             <View className="rounded-lg p-4 bg-transparent space-y-2">
+              {/* USER HEADER */}
               <View className="flex-row items-center space-x-3">
                 <Image
                   source={{ uri: user.imageUrl }}
                   className="w-10 h-10 rounded-full"
                 />
-                <View className="flex-col">
+                <View>
                   <Text className="text-white font-bold text-base">{user.username}</Text>
                   <Text className="text-white text-sm">{user.email}</Text>
                 </View>
               </View>
 
+              {/* MESSAGE */}
               <Text className="text-white">{c.message}</Text>
 
+              {/* RECIBIDAS */}
               {type === "recibidas" && (
                 <View className="flex-row justify-end space-x-2">
                   <TouchableOpacity
@@ -68,7 +77,9 @@ export default function ContactsTab({ type }: Props) {
                     style={{ backgroundColor: "#FF5722" }}
                     onPress={() => reportUser(user.id)}
                   >
-                    <Text className="text-white font-semibold">Reportar</Text>
+                    <Text className="text-white font-semibold">
+                      {t("contacts.actions.report") ?? "Report"}
+                    </Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -93,6 +104,7 @@ export default function ContactsTab({ type }: Props) {
                 </View>
               )}
 
+              {/* ENVIADAS */}
               {type === "enviadas" && (
                 <View className="items-end">
                   <TouchableOpacity
@@ -106,6 +118,7 @@ export default function ContactsTab({ type }: Props) {
                 </View>
               )}
 
+              {/* CONTESTADAS */}
               {type === "contestadas" && (
                 <View className="items-end">
                   <TouchableOpacity
