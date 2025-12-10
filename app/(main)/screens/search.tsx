@@ -49,7 +49,7 @@ export default function SearchScreen() {
         Buscar
       </Text>
 
-      <Text className="text-gray-500 mb-5">Explora contenido o usuarios</Text>
+      <Text className="text-gray-700 mb-5 text-md">Explora contenido o usuarios</Text>
 
       <SearchBar
         value={searchQuery}

@@ -14,7 +14,7 @@ export default function BottomBar() {
 
   if (items.length === 0) return null;
 
-  const BAR_HEIGHT = Platform.OS === "web" ? 70 : 64;
+  const BAR_HEIGHT = Platform.OS === "web" ? 80 : 50;
 
   return (
     <LinearGradient
@@ -28,8 +28,7 @@ export default function BottomBar() {
       style={[
         styles.bar,
         {
-          height: BAR_HEIGHT + insets.bottom,
-          paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
+          height: BAR_HEIGHT
         },
       ]}
     >
