@@ -98,7 +98,7 @@ export default function EventCardRight({ event, onPress }: Props) {
               position: "absolute",
               top: 8,
               left: 8,
-              backgroundColor: "rgba(255,255,255,0.25)",
+              backgroundColor: color,
               borderRadius: 999,
               paddingHorizontal: 8,
               paddingVertical: 4,
