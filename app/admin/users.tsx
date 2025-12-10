@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
   filterChipText: { color: '#333', fontWeight: '600' },
   filterChipTextActive: { color: '#fff' },
   statusRow: { flexDirection: 'row', justifyContent: 'flex-start', gap: 8, marginTop: 8, marginBottom: 8, paddingHorizontal: 8 },
-  filtersWrapper: { paddingHorizontal: 8, marginBottom: 8 },
+  filtersWrapper: { paddingHorizontal: 8, marginBottom: 8, marginTop: 8 },
   statusBtn: { paddingVertical: 8, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1, borderColor: '#eee', backgroundColor: '#fff', marginRight: 8 },
   statusBtnActive: { backgroundColor: lightTheme.colors['primary-purple'], borderColor: lightTheme.colors['primary-purple'] },
   statusBtnText: { color: '#333', fontWeight: '700' },
