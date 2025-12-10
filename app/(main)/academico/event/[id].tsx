@@ -14,6 +14,18 @@ export default function AcademicoEventDetail() {
 
   const [event, setEvent] = useState<EventItem | null>(null);
 
+  const formatDateTime = (d?: string) => {
+    if (!d) return { date: "", time: "" };
+    const parsed = new Date(d);
+    if (Number.isNaN(parsed.getTime())) return { date: d, time: "" };
+    const day = String(parsed.getDate()).padStart(2, "0");
+    const month = String(parsed.getMonth() + 1).padStart(2, "0");
+    const year = parsed.getFullYear();
+    const hours = String(parsed.getHours()).padStart(2, "0");
+    const minutes = String(parsed.getMinutes()).padStart(2, "0");
+    return { date: `${day}-${month}-${year}`, time: `${hours}:${minutes}` };
+  };
+
   useEffect(() => {
     if (!id) return;
 
@@ -57,11 +69,13 @@ export default function AcademicoEventDetail() {
   const upperKey = typeKey.toUpperCase();
   const color = TYPE_COLOR[typeKey] ?? TYPE_COLOR[upperKey] ?? "#6B31E8";
 
+  const { date: formattedDate, time: formattedTime } = formatDateTime(event.date);
+
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <LinearGradient colors={[color, `${color}CC`]} style={styles.header}>
         <Text style={styles.headerTitle}>{event.title}</Text>
-        <Text style={styles.headerSubtitle}>{event.type} • {event.date}</Text>
+        <Text style={styles.headerSubtitle}>{event.type} • {formattedDate}{formattedTime ? ` • ${formattedTime}` : ""}</Text>
       </LinearGradient>
 
       <View style={styles.card}>
