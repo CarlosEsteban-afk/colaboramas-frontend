@@ -6,6 +6,7 @@ import UserCard from "../../components/UserCard";
 import MultiSelectDropdown from "../../components/MultiSelectDropdown";
 import { lightTheme } from "../../../theme";
 import { useUserCard } from "../../../src/hooks/useUserCard";
+import { useTranslation } from "react-i18next";
 
 // ---- DATA ----
 import interestsRaw from "../../../src/data/interest.json";
@@ -13,23 +14,18 @@ import fieldsRaw from "../../../src/data/research_fields.json";
 import countriesRaw from "../../../src/data/countries.json";
 
 export default function SearchScreen() {
+  const { t } = useTranslation();
   const { users, loading, error, getUsersByRelevance } = useUserCard();
 
   const [searchQuery, setSearchQuery] = useState("");
-
-  // filtros
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const [selectedCities, setSelectedCities] = useState<string[]>([]);
-
-  // Drawer
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  // resultados visibles
   const [visibleUsers, setVisibleUsers] = useState<any[]>([]);
   const [loadCount, setLoadCount] = useState(4);
 
-  // ---- NORMALIZAR JSON ----
   const interestsList = interestsRaw.interests ?? [];
   const fieldsList = fieldsRaw.research_fields ?? [];
 
@@ -96,14 +92,19 @@ export default function SearchScreen() {
         className="text-2xl font-semibold"
         style={{ color: lightTheme.colors["primary-purple"] }}
       >
-        Buscar
+        {t("search.title")}
       </Text>
-      <Text className="text-gray-500 mb-5">Explora contenido o usuarios</Text>
+
+      <Text className="text-gray-500 mb-5">{t("search.subtitle")}</Text>
 
       {/* ------- SEARCH + BUTTON FILTERS -------- */}
       <View className="w-full flex-row justify-center items-center px-4 pb-2">
         <View className="flex-1">
-          <SearchBar value={searchQuery} onChangeText={setSearchQuery} />
+          <SearchBar
+            value={searchQuery}
+            placeholder={t("search.searchPlaceholder")}
+            onChangeText={setSearchQuery}
+          />
         </View>
 
         <TouchableOpacity
@@ -151,8 +152,8 @@ export default function SearchScreen() {
         ))}
       </ScrollView>
 
-      {loading && <Text>Cargando...</Text>}
-      {error && <Text className="text-red-500">{error}</Text>}
+      {loading && <Text>{t("search.loading")}</Text>}
+      {error && <Text className="text-red-500">{t("search.error")}</Text>}
 
       {/* --------- BOTTOM DRAWER FILTERS --------- */}
       <Modal
@@ -167,7 +168,7 @@ export default function SearchScreen() {
           <View style={styles.drawerHandle} />
 
           <View style={styles.drawerHeader}>
-            <Text style={styles.drawerTitle}>Filtros</Text>
+            <Text style={styles.drawerTitle}>{t("search.filtersTitle")}</Text>
             <TouchableOpacity onPress={() => setDrawerOpen(false)}>
               <Monicon
                 name="mdi:close"
@@ -179,21 +180,21 @@ export default function SearchScreen() {
 
           <ScrollView style={{ maxHeight: "80%" }}>
             <MultiSelectDropdown
-              label="Intereses"
+              label={t("search.filters.interests")}
               options={interestsList}
               selected={selectedInterests}
               setSelected={setSelectedInterests}
             />
 
             <MultiSelectDropdown
-              label="Campos de Investigación"
+              label={t("search.filters.fields")}
               options={fieldsList}
               selected={selectedFields}
               setSelected={setSelectedFields}
             />
 
             <MultiSelectDropdown
-              label="País / Ciudad"
+              label={t("search.filters.city")}
               options={countryCityList}
               selected={selectedCities}
               setSelected={setSelectedCities}
@@ -201,7 +202,7 @@ export default function SearchScreen() {
 
             {/* LIMPIAR FILTROS */}
             <TouchableOpacity style={styles.clearButton} onPress={resetFilters}>
-              <Text style={styles.clearText}>Limpiar filtros</Text>
+              <Text style={styles.clearText}>{t("search.clearFilters")}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>

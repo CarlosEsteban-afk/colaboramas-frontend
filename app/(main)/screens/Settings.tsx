@@ -6,19 +6,18 @@ import {
   ScrollView,
   Modal,
   Animated,
-  Alert,
 } from "react-native";
 import { Monicon } from "@monicon/native";
 import { lightTheme } from "../../../theme";
 import { useRouter } from "expo-router";
 import useSettings from "../../../src/hooks/useSettings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 
 export default function Settings() {
   const router = useRouter();
 
   const {
-    t,
     configs,
     modalVisible,
     modalConfig,
@@ -26,13 +25,11 @@ export default function Settings() {
     openModal,
     closeModal,
   } = useSettings();
-
+  const { t } = useTranslation();
   // --- Cerrar sesión ---
   const handleLogout = async () => {
-    console.log("LOGOUT PRESIONADO");
     try {
       await AsyncStorage.removeItem("token");
-      console.log("TOKEN ELIMINADO");
       router.replace("/auth/login");
     } catch (e) {
       console.log("Logout error:", e);
@@ -72,7 +69,7 @@ export default function Settings() {
       </View>
 
       {/* SCROLL DE OPCIONES */}
-      <ScrollView contentContainerStyle={{ paddingBottom: 160 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 0 }}>
         <View className="bg-white rounded-lg overflow-hidden shadow-sm">
           {configs.map((conf, index) => (
             <React.Fragment key={index}>
@@ -101,42 +98,39 @@ export default function Settings() {
         </View>
       </ScrollView>
 
-      {/* FOOTER FIJO (YA FUNCIONA) */}
-      <View
-        className="absolute bottom-4 left-4 right-4"
-        pointerEvents="box-none"
-      >
+      {/* FOOTER FIJO */}
+      <View className="absolute bottom-0 left-4 right-4 pb-24">
+
         {/* BOTÓN CERRAR SESIÓN */}
         <TouchableOpacity
           onPress={() =>
             openModal({
-              title: "Cerrar sesión",
-              message: "¿Estás seguro que deseas cerrar sesión?",
-              confirmText: "Cerrar sesión",
+              title: t("settings.logout"),
+              message: t("settings.logoutConfirmMessage"),
+              confirmText: t("settings.logoutConfirmButton"),
               onConfirm: handleLogout,
             })
           }
-          className="w-[80%] max-w-3xl self-center mt-6 bg-red-500 py-3 rounded-xl shadow"
+          className="bg-red-500 py-3 rounded-xl shadow mb-3"
         >
           <Text className="text-white text-center text-lg font-semibold">
-            Cerrar Sesión
+            {t("settings.logout")}
           </Text>
         </TouchableOpacity>
 
         {/* BOTÓN ELIMINAR CUENTA */}
         <TouchableOpacity
-          className="p-6 bg-white rounded-lg items-center shadow-sm mt-4"
+          className="bg-white py-3 rounded-xl shadow-sm border border-red-500"
           onPress={() =>
             openModal({
-              title: "Eliminar cuenta",
-              message:
-                "Esta acción es permanente y no se puede deshacer. ¿Deseas continuar?",
-              confirmText: "Eliminar",
+              title: t("settings.deleteAccount"),
+              message: t("settings.deleteConfirmMessage"),
+              confirmText: t("settings.deleteConfirmButton"),
               onConfirm: () => console.log("Eliminar cuenta confirmada"),
             })
           }
         >
-          <Text className="text-red-600 font-semibold text-base">
+          <Text className="text-red-600 text-center text-lg font-semibold">
             {t("settings.deleteAccount")}
           </Text>
         </TouchableOpacity>
@@ -168,7 +162,7 @@ export default function Settings() {
                 onPress={closeModal}
               >
                 <Text className="text-center font-semibold text-gray-700">
-                  Cancelar
+                  {t("settings.cancel")}
                 </Text>
               </TouchableOpacity>
 

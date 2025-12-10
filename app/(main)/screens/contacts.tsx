@@ -3,8 +3,10 @@ import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { lightTheme } from "../../../theme";
 import ContactsTab from "../../components/ContactsTab";
+import { useTranslation } from "react-i18next";
 
 export default function ContactsScreen() {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<"recibidas" | "enviadas" | "contestadas">("recibidas");
 
   return (
@@ -13,13 +15,11 @@ export default function ContactsScreen() {
         className="text-2xl font-semibold mb-1"
         style={{ color: lightTheme.colors["primary-purple"] }}
       >
-        Contactos
+        {t("contacts.title")}
       </Text>
-      <Text
-        className="mb-5"
-        style={{ color: lightTheme.colors["dark-gray"] }}
-      >
-        Gestiona tus solicitudes de contacto.
+
+      <Text className="mb-5" style={{ color: lightTheme.colors["dark-gray"] }}>
+        {t("contacts.description")}
       </Text>
 
       <LinearGradient
@@ -28,28 +28,31 @@ export default function ContactsScreen() {
         end={{ x: 1, y: 0 }}
         className="flex-row w-[90%] rounded-md justify-between mb-5 overflow-hidden"
       >
-        <View className="absolute inset-0 opacity-[0.01]" 
+        <View
+          className="absolute inset-0 opacity-[0.01]"
           style={{ backgroundColor: lightTheme.colors["primary-purple"] }}
         />
 
-        {["recibidas", "enviadas", "contestadas"].map((t) => {
-          const active = tab === t;
+        {(["recibidas", "enviadas", "contestadas"] as const).map((tKey) => {
+          const active = tab === tKey;
+
           return (
             <TouchableOpacity
-              key={t}
-              onPress={() => setTab(t as any)}
+              key={tKey}
+              onPress={() => setTab(tKey)}
               activeOpacity={1}
-              className={`flex-1 items-center py-2 ${active ? "" : ""}`}
-              style={active ? {
-                backgroundColor: lightTheme.colors["dark-gray"],
-                opacity: 0.6,
-              } : {}}
+              className="flex-1 items-center py-2"
+              style={
+                active
+                  ? {
+                      backgroundColor: lightTheme.colors["dark-gray"],
+                      opacity: 0.6,
+                    }
+                  : {}
+              }
             >
-              <Text
-                className={`text-base font-medium ${active ? "font-bold" : ""}`}
-                style={{ color: active ? "#FFF" : "#FFF" }}
-              >
-                {t.charAt(0).toUpperCase() + t.slice(1)}
+              <Text className="text-base font-medium text-white">
+                {t(`contacts.tabs.${tKey}`)}
               </Text>
             </TouchableOpacity>
           );

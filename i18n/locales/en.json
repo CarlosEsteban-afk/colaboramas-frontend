@@ -22,8 +22,14 @@
     "privacy": "Privacy and security",
     "about": "About",
     "deleteAccount": "Delete account",
+    "deleteConfirmMessage": "This action is permanent and can't be undone. Do you want to continue?",
+    "deleteConfirmButton": "Delete",
     "termsOfService": "Terms of service",
-    "appInfo": "App info"
+    "appInfo": "App information",
+    "logout": "Log out",
+    "logoutConfirmMessage": "Are you sure you want to log out?",
+    "logoutConfirmButton": "Log out",
+    "cancel": "Cancel"
   },
   "sendMessageModal": {
     "title": "Send message to {{name}}",
@@ -45,7 +51,7 @@
     "tabs": {
       "recibidas": "Received",
       "enviadas": "Sent",
-      "contestadas": "Answered"
+      "contestadas": "Replied"
     },
     "empty": "There are no {{type}} requests.",
     "actions": {
@@ -56,6 +62,49 @@
       "pending": "Pending",
       "accepted": "Accepted",
       "rejected": "Rejected"
+    }
+  },
+  "bottomBar": {
+    "home": "Home",
+    "search": "Search",
+    "events": "Events",
+    "contacts": "Contacts",
+    "profile": "Profile"
+  },
+  "search": {
+    "title": "Search",
+    "subtitle": "Explore content or users",
+    "searchPlaceholder": "Search...",
+    "loading": "Loading...",
+    "error": "An error occurred.",
+    "filtersTitle": "Filters",
+    "clearFilters": "Clear filters",
+    "filters": {
+      "interests": "Interests",
+      "fields": "Research fields",
+      "city": "Country / City"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit profile",
+    "save": "Save",
+    "cancel": "Cancel",
+    "changeImage": "Change image",
+    "loadingUser": "Loading user...",
+    "success": "Success",
+    "updated": "Profile updated successfully.",
+    "error": "Error",
+    "updateError": "Could not update the profile.",
+    "imageUploadError": "Could not upload the image.",
+    "notSpecified": "Not specified",
+    "fields": {
+      "username": "Profile name",
+      "motivaciones": "Motivations",
+      "actividades": "Personal interests",
+      "proyectos": "Projects",
+      "ciudad": "City",
+      "pais": "Country"
     }
   }
 }

@@ -22,8 +22,14 @@
     "privacy": "Privacidad y seguridad",
     "about": "Acerca de",
     "deleteAccount": "Eliminar cuenta",
+    "deleteConfirmMessage": "Esta acción es permanente y no se puede deshacer. ¿Deseas continuar?",
+    "deleteConfirmButton": "Eliminar",
     "termsOfService": "Términos de servicio",
-    "appInfo": "Información de la app"
+    "appInfo": "Información de la app",
+    "logout": "Cerrar sesión",
+    "logoutConfirmMessage": "¿Estás seguro que deseas cerrar sesión?",
+    "logoutConfirmButton": "Cerrar sesión",
+    "cancel": "Cancelar"
   },
   "sendMessageModal": {
     "title": "Enviar mensaje a {{name}}",
@@ -57,7 +63,51 @@
       "accepted": "Aceptada",
       "rejected": "Rechazada"
     }
+  },
+  "search": {
+    "title": "Buscar",
+    "subtitle": "Explora contenido o usuarios",
+    "searchPlaceholder": "Buscar...",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error.",
+    "filtersTitle": "Filtros",
+    "clearFilters": "Limpiar filtros",
+    "filters": {
+      "interests": "Intereses",
+      "fields": "Campos de investigación",
+      "city": "País / Ciudad"
+    }
+  },
+  "bottomBar": {
+    "home": "Inicio",
+    "search": "Buscar",
+    "events": "Eventos",
+    "contacts": "Contactos",
+    "profile": "Perfil"
+  },
+  "profile": {
+    "title": "Perfil",
+    "edit": "Editar perfil",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "changeImage": "Cambiar imagen",
+    "loadingUser": "Cargando usuario...",
+    "success": "Éxito",
+    "updated": "Perfil actualizado correctamente.",
+    "error": "Error",
+    "updateError": "No se pudo actualizar el perfil.",
+    "imageUploadError": "No se pudo subir la imagen.",
+    "notSpecified": "No especificado",
+    "fields": {
+      "username": "Nombre de perfil",
+      "motivaciones": "Motivaciones",
+      "actividades": "Intereses personales",
+      "proyectos": "Proyectos",
+      "ciudad": "Ciudad",
+      "pais": "País"
+    }
   }
+
 }
 
 

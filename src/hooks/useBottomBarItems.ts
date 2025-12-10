@@ -1,7 +1,9 @@
 import { useSegments } from "expo-router";
 import { useUser } from "../../src/hooks/useUser";
+import { useTranslation } from "react-i18next";
 
 export function useBottomBarItems() {
+  const { t } = useTranslation();
   const { user } = useUser();
   const segments = useSegments();
   const currentRoute = segments.join("/");
@@ -13,8 +15,7 @@ export function useBottomBarItems() {
     if (typeof r === "string") return r.toUpperCase();
     if (typeof r === "number") return String(r).toUpperCase();
     if (typeof r === "object") {
-      // Keys to try (including uppercase keys like ROLENAME)
-      const keys = ["ROLENAME", "ROLENAME", "name", "nombre", "role", "rol", "code", "type", "label", "value"];
+      const keys = ["ROLENAME", "name", "nombre", "role", "rol", "code", "type", "label", "value"];
       for (const k of keys) {
         if (k in r && (r as any)[k]) return String((r as any)[k]).toUpperCase();
       }
@@ -37,7 +38,6 @@ export function useBottomBarItems() {
       : [normalizeRole(user.roles)]
     : [];
 
-  // Use substring matching so JSON stringified roles are detected
   const hasAccess = rolesNormalized.some((r) =>
     allowedRoles.some((ar) => r.includes(ar))
   );
@@ -51,11 +51,11 @@ export function useBottomBarItems() {
   };
 
   const baseItems = [
-    { label: "Inicio", icon: "mdi:home-outline", route: getHomeRoute() },
-    { label: "Buscar", icon: "feather:search", route: "/screens/search" },
-    { label: "Eventos", icon: "mdi:calendar", route: "/academico/events", roles: ["ACADEMICO"] },
-    { label: "Contactos", icon: "fluent:alert-20-regular", route: "/screens/contacts" },
-    { label: "Perfil", icon: "mdi:account-circle-outline", route: "/screens/profile" },
+    { label: t("bottomBar.home"), icon: "mdi:home-outline", route: getHomeRoute() },
+    { label: t("bottomBar.search"), icon: "feather:search", route: "/screens/search" },
+    { label: t("bottomBar.events"), icon: "mdi:calendar", route: "/academico/events", roles: ["ACADEMICO"] },
+    { label: t("bottomBar.contacts"), icon: "fluent:alert-20-regular", route: "/screens/contacts" },
+    { label: t("bottomBar.profile"), icon: "mdi:account-circle-outline", route: "/screens/profile" }
   ];
 
   const items = baseItems.filter((item) => {
